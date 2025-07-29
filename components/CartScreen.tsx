@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
@@ -82,7 +82,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
           <ScrollView contentContainerStyle={styles.content}>
             {cartItems.length === 0 ? (
               <View style={styles.emptyCard}>
-                <Text style={styles.emptyIcon}>🚚</Text>
+                <Icon name="shopping-cart" size={48} color="#bbb" style={styles.emptyIcon} />
                 <Text style={styles.emptyTitle}>
                   {language === 'ar' ? 'السلة فارغة' : 'Cart is Empty'}
                 </Text>
@@ -126,7 +126,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
                           <Text style={styles.qtyBtnText}>+</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.id)}>
-                          <Text style={styles.removeBtnText}>🗑️</Text>
+                          <Icon name="delete" size={20} color="#e00" />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -186,7 +186,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
             </Text>
             {addresses.length === 0 ? (
               <View style={styles.emptyAddress}>
-                <Text style={styles.emptyAddressIcon}>📍</Text>
+                <Icon name="location-on" size={48} color="#bbb" style={styles.emptyAddressIcon} />
                 <Text style={styles.emptyAddressText}>
                   {language === 'ar' ? 'لا توجد عناوين محفوظة' : 'No saved addresses'}
                 </Text>
@@ -480,7 +480,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
     return (
       <View style={styles.container}>
         <View style={styles.confirmationCard}>
-          <Text style={styles.confirmationIcon}>✅</Text>
+          <Icon name="check-circle" size={64} color="#22c55e" style={styles.confirmationIcon} />
           <Text style={styles.confirmationTitle}>
             {language === 'ar' ? 'تم تأكيد طلبك!' : 'Order Confirmed!'}
           </Text>
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
   headerSubtitle: { fontSize: 13, color: '#666' },
   content: { padding: 24 },
   emptyCard: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', alignItems: 'center', padding: 32, marginBottom: 16 },
-  emptyIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyIcon: { marginBottom: 12 },
   emptyTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 6 },
   emptyDesc: { color: '#666', fontSize: 13, marginBottom: 16, textAlign: 'center' },
   shopBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 12, marginTop: 8 },
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   section: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginBottom: 16 },
   sectionTitle: { fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 12 },
   emptyAddress: { alignItems: 'center', padding: 32 },
-  emptyAddressIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyAddressIcon: { marginBottom: 12 },
   emptyAddressText: { color: '#666', fontSize: 14, marginBottom: 16, textAlign: 'center' },
   addAddressBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 12 },
   addAddressBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   placeOrderButton: { backgroundColor: '#007bff', borderRadius: 8, paddingVertical: 16, marginTop: 16 },
   placeOrderButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   confirmationCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 24, alignItems: 'center' },
-  confirmationIcon: { fontSize: 48, color: '#4caf50', marginBottom: 16 },
+  confirmationIcon: { marginBottom: 16 },
   confirmationTitle: { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 8 },
   confirmationMessage: { color: '#666', fontSize: 14, textAlign: 'center', marginBottom: 24 },
   confirmationButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },

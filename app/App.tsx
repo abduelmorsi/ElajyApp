@@ -151,6 +151,7 @@ function AppContent() {
       console.error('Invalid product for cart:', product);
       return;
     }
+    
     setCartItems(prev => {
       const existing = prev.find((item: any) => item.id === product.id);
       if (existing) {
@@ -261,7 +262,7 @@ function AppContent() {
     if (userType === 'patient') {
       switch (currentScreen) {
         case 'home':
-          return <HomeScreen navigateTo={navigateTo} userData={userData || {}} goBack={goBack} isMain={true} />;
+          return <HomeScreen navigateTo={navigateTo} userData={userData || {}} goBack={goBack} isMain={true} addToCart={addToCart} />;
         case 'search':
           return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} />;
         case 'product-detail':
@@ -271,7 +272,7 @@ function AppContent() {
         case 'cart':
           return <CartScreen cartItems={cartItems} setCartItems={setCartItems} navigateTo={navigateTo} />;
         case 'consult':
-          return <ConsultScreen navigateTo={navigateTo} />;
+          return <ConsultScreen navigateTo={navigateTo} goBack={goBack} />;
         case 'donations':
           return <DonationScreen navigateTo={navigateTo} userType={userType} userData={userData || {}} />;
         case 'profile':
@@ -290,7 +291,7 @@ function AppContent() {
         case 'delivery-tracking':
           return <DeliveryTracking orderId={trackingOrderId || ''} navigateTo={navigateTo} />;
         default:
-          return <HomeScreen navigateTo={navigateTo} userData={userData || {}} />;
+          return <HomeScreen navigateTo={navigateTo} userData={userData || {}} addToCart={addToCart} />;
       }
     }
 
@@ -331,7 +332,7 @@ function AppContent() {
       }
     }
 
-    return <HomeScreen navigateTo={navigateTo} userData={userData} />;
+    return <HomeScreen navigateTo={navigateTo} userData={userData} addToCart={addToCart} />;
   };
 
   return (
@@ -354,7 +355,7 @@ function AppContent() {
                           styles.tabButton,
                           isActive && styles.tabButtonActive,
                         ]}
-                        onPress={() => setCurrentScreen(tab.id)}
+                        onPress={() => navigateTo(tab.id)}
                         activeOpacity={0.7}
                       >
                         <View style={styles.tabIconContainer}>

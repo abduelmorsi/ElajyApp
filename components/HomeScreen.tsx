@@ -1,13 +1,13 @@
 
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
 // Emoji icon replacements for lucide-react icons
-type HomeScreenProps = { navigateTo: (screen: string, data?: any) => void; userData?: any; goBack?: () => void; isMain?: boolean };
-export default function HomeScreen({ navigateTo, userData, goBack, isMain }: HomeScreenProps) {
+type HomeScreenProps = { navigateTo: (screen: string, data?: any) => void; userData?: any; goBack?: () => void; isMain?: boolean; addToCart?: (product: any, quantity?: number) => void };
+export default function HomeScreen({ navigateTo, userData, goBack, isMain, addToCart }: HomeScreenProps) {
   // Helper function to render icons
   const renderIcon = (iconName: string, size: number = 16, color: string = '#6b7280') => {
     return <Icon name={icons[iconName]} size={size} color={color} />;
@@ -172,6 +172,27 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain }: Hom
 
   const handlePharmacyClick = (pharmacy: any) => {
     navigateTo('search');
+  };
+
+  const handleAddToCart = (medicine: any, event?: any) => {
+    // Prevent event propagation to avoid triggering the card's onPress
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    if (addToCart) {
+      addToCart(medicine, 1);
+      Alert.alert(
+        language === 'ar' ? 'تمت الإضافة' : 'Added to Cart',
+        language === 'ar' ? `تم إضافة ${medicine.name} إلى السلة` : `${medicine.nameEn} has been added to cart`,
+        [{ text: language === 'ar' ? 'حسناً' : 'OK' }]
+      );
+    } else {
+      Alert.alert(
+        language === 'ar' ? 'خطأ' : 'Error',
+        language === 'ar' ? 'لا يمكن إضافة الدواء إلى السلة' : 'Cannot add medicine to cart'
+      );
+    }
   };
 
   const styles = StyleSheet.create({
@@ -653,7 +674,10 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain }: Hom
                           <Text style={styles.badgeDiscount}>{medicine.discount}% {language === 'ar' ? 'خصم' : 'OFF'}</Text>
                         )}
                       </View>
-                      <TouchableOpacity style={styles.featuredAddButton}>
+                      <TouchableOpacity 
+                        style={styles.featuredAddButton}
+                        onPress={(event) => handleAddToCart(medicine, event)}
+                      >
                         {renderIcon('Plus', 16, '#fff')}
                       </TouchableOpacity>
                     </View>
