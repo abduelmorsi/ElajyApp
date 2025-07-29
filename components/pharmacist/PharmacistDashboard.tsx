@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalization, useRTL } from '../services/LocalizationService';
 const ICONS = {
   package: '📦',
@@ -40,6 +41,7 @@ interface PharmacistDashboardProps {
 export default function PharmacistDashboard({ navigateTo, userData }: PharmacistDashboardProps) {
   const { t, language } = useLocalization();
   const { isRTL, getMargin } = useRTL();
+  const insets = useSafeAreaInsets();
   const [greeting, setGreeting] = useState('');
   const [currentTime, setCurrentTime] = useState('');
 
@@ -258,178 +260,180 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      {/* Header */}
-      <View style={styles.headerBox}>
-        <View style={styles.headerRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.headerGreeting}>
-              {greeting}, {userData?.name?.split(' ')[1] || (language === 'ar' ? 'د. فاطمة' : 'Dr. Fatima')}
-            </Text>
-            <View style={styles.headerMetaRow}>
-              <View style={styles.headerMetaItem}>
-                <Text style={styles.headerMetaIcon}>{ICONS.mapPin}</Text>
-                <Text style={styles.headerMetaText}>{userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}</Text>
-              </View>
-              <Text style={styles.headerMetaDot}>•</Text>
-              <View style={styles.headerMetaItem}>
-                <Text style={styles.headerMetaIcon}>{ICONS.clock}</Text>
-                <Text style={styles.headerMetaText}>{currentTime}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.headerStatusBox}>
-            <View style={styles.headerStatusDot} />
-            <Text style={styles.headerStatusText}>{language === 'ar' ? 'مفتوح' : 'Open'}</Text>
-            <Text style={styles.headerStatusSub}>{language === 'ar' ? 'يغلق الساعة 22:00' : 'Closes at 10:00 PM'}</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Quick Actions */}
-      <View style={styles.sectionBox}>
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>{language === 'ar' ? 'الإجراءات السريعة' : 'Quick Actions'}</Text>
-          <Text style={styles.sectionIcon}>{ICONS.sparkles}</Text>
-        </View>
-        <View style={styles.quickActionsGrid}>
-          {quickActions.map((action) => (
-            <TouchableOpacity key={action.id} style={styles.quickActionCard} onPress={() => handleQuickAction(action.id)}>
-              <View style={styles.quickActionIconBox}>
-                <Text style={[styles.quickActionIcon, { backgroundColor: action.color, color: action.iconColor }]}>{action.icon}</Text>
-              </View>
-              {action.count ? (
-                <View style={styles.quickActionBadge}><Text style={styles.quickActionBadgeText}>{action.count}</Text></View>
-              ) : null}
-              <Text style={styles.quickActionTitle}>{action.title}</Text>
-              <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      {/* Today's Metrics */}
-      <View style={styles.sectionBox}>
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>{language === 'ar' ? 'مقاييس اليوم' : "Today's Metrics"}</Text>
-          <TouchableOpacity onPress={() => navigateTo('pharmacist-analytics')}>
-            <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض التفاصيل' : 'View Details'} {ICONS.barChart}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.metricsGrid}>
-          {todayMetrics.map((metric, index) => (
-            <View key={index} style={styles.metricCard}>
-              <View style={styles.metricCardRow}>
-                <Text style={[styles.metricIcon, { backgroundColor: metric.bgColor, color: metric.color }]}>{metric.icon}</Text>
-                <View style={[styles.metricChangeBox, { backgroundColor: '#dcfce7' }]}> {/* Always green for increase */}
-                  <Text style={styles.metricChangeIcon}>{ICONS.trendingUp}</Text>
-                  <Text style={styles.metricChangeText}>+{metric.change}%</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        {/* Header */}
+        <View style={[styles.headerBox, { paddingTop: insets.top + 16 }]}>
+          <View style={styles.headerRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.headerGreeting}>
+                {greeting}, {userData?.name?.split(' ')[1] || (language === 'ar' ? 'د. فاطمة' : 'Dr. Fatima')}
+              </Text>
+              <View style={styles.headerMetaRow}>
+                <View style={styles.headerMetaItem}>
+                  <Text style={styles.headerMetaIcon}>{ICONS.mapPin}</Text>
+                  <Text style={styles.headerMetaText}>{userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}</Text>
+                </View>
+                <Text style={styles.headerMetaDot}>•</Text>
+                <View style={styles.headerMetaItem}>
+                  <Text style={styles.headerMetaIcon}>{ICONS.clock}</Text>
+                  <Text style={styles.headerMetaText}>{currentTime}</Text>
                 </View>
               </View>
-              <Text style={styles.metricValue}>{metric.value}</Text>
-              <Text style={styles.metricLabel}>{metric.title}</Text>
             </View>
-          ))}
+            <View style={styles.headerStatusBox}>
+              <View style={styles.headerStatusDot} />
+              <Text style={styles.headerStatusText}>{language === 'ar' ? 'مفتوح' : 'Open'}</Text>
+              <Text style={styles.headerStatusSub}>{language === 'ar' ? 'يغلق الساعة 22:00' : 'Closes at 10:00 PM'}</Text>
+            </View>
+          </View>
         </View>
-      </View>
 
-      {/* Donation Management */}
-      <View style={styles.sectionBox}>
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>{ICONS.heart} {language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}</Text>
-          <TouchableOpacity onPress={() => navigateTo('donations')}>
-            <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} {ICONS.chevronRight}</Text>
-          </TouchableOpacity>
+        {/* Quick Actions */}
+        <View style={styles.sectionBox}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'الإجراءات السريعة' : 'Quick Actions'}</Text>
+            <Text style={styles.sectionIcon}>{ICONS.sparkles}</Text>
+          </View>
+          <View style={styles.quickActionsGrid}>
+            {quickActions.map((action) => (
+              <TouchableOpacity key={action.id} style={styles.quickActionCard} onPress={() => handleQuickAction(action.id)}>
+                <View style={styles.quickActionIconBox}>
+                  <Text style={[styles.quickActionIcon, { backgroundColor: action.color, color: action.iconColor }]}>{action.icon}</Text>
+                </View>
+                {action.count ? (
+                  <View style={styles.quickActionBadge}><Text style={styles.quickActionBadgeText}>{action.count}</Text></View>
+                ) : null}
+                <Text style={styles.quickActionTitle}>{action.title}</Text>
+                <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-        {pendingDonations.slice(0, 3).map((donation) => (
-          <TouchableOpacity key={donation.id} style={styles.donationCard} onPress={() => handleDonationAssignment(donation.id)}>
-            <View style={styles.donationHeaderRow}>
-              <Text style={styles.donationTitle}>{language === 'ar' ? donation.medicine : donation.medicineEn}</Text>
-              <View style={[styles.donationBadge, getUrgencyColor(donation.urgency)]}>
-                <Text style={styles.donationBadgeText}>
-                  {donation.urgency === 'high' ? (language === 'ar' ? 'عاجل' : 'Urgent') :
-                    donation.urgency === 'medium' ? (language === 'ar' ? 'متوسط' : 'Medium') :
-                    (language === 'ar' ? 'عادي' : 'Normal')}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.donationDetailsRow}>
-              <Text style={styles.donationDetailLabel}>{language === 'ar' ? 'الكمية:' : 'Quantity:'}</Text>
-              <Text style={styles.donationDetailValue}>{donation.quantity}</Text>
-              <Text style={styles.donationDetailLabel}>{language === 'ar' ? 'المتبرع:' : 'Donor:'}</Text>
-              <Text style={styles.donationDetailValue}>{language === 'ar' ? donation.donor : donation.donorEn}</Text>
-            </View>
-            <View style={styles.donationStatusRow}>
-              <View style={[styles.donationBadge, getStatusColor(donation.status)]}>
-                <Text style={styles.donationBadgeText}>
-                  {donation.status === 'pending_assignment'
-                    ? (language === 'ar' ? 'في انتظار التوزيع' : 'Pending Assignment')
-                    : (language === 'ar' ? 'تم التوزيع' : 'Assigned')}
-                </Text>
-              </View>
-              <Text style={styles.donationDate}>{new Date(donation.donatedAt).toLocaleDateString()}</Text>
-            </View>
-            {donation.status === 'assigned' && donation.assignedTo && (
-              <View style={styles.donationAssignedBox}>
-                <Text style={styles.donationAssignedText}>
-                  {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'} {language === 'ar' ? donation.assignedTo : donation.assignedToEn}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
 
-      {/* Recent Orders */}
-      <View style={styles.sectionBox}>
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>{language === 'ar' ? 'الطلبات الحديثة' : 'Recent Orders'}</Text>
-          <TouchableOpacity onPress={() => navigateTo('pharmacist-orders')}>
-            <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} {ICONS.chevronRight}</Text>
-          </TouchableOpacity>
-        </View>
-        {recentOrders.map((order) => (
-          <TouchableOpacity key={order.id} style={styles.orderCard} onPress={() => navigateTo('pharmacist-orders', { orderId: order.id })}>
-            <View style={styles.orderHeaderRow}>
-              <Text style={styles.orderTitle}>#{order.id}</Text>
-              <View style={[styles.orderBadge, getStatusColor(order.status)]}>
-                <Text style={styles.orderBadgeText}>
-                  {order.status === 'pending' ? (language === 'ar' ? 'في الانتظار' : 'Pending') :
-                    order.status === 'preparing' ? (language === 'ar' ? 'قيد التحضير' : 'Preparing') :
-                    (language === 'ar' ? 'جاهز' : 'Ready')}
-                </Text>
+        {/* Today's Metrics */}
+        <View style={styles.sectionBox}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'مقاييس اليوم' : "Today's Metrics"}</Text>
+            <TouchableOpacity onPress={() => navigateTo('pharmacist-analytics')}>
+              <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض التفاصيل' : 'View Details'} {ICONS.barChart}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.metricsGrid}>
+            {todayMetrics.map((metric, index) => (
+              <View key={index} style={styles.metricCard}>
+                <View style={styles.metricCardRow}>
+                  <Text style={[styles.metricIcon, { backgroundColor: metric.bgColor, color: metric.color }]}>{metric.icon}</Text>
+                  <View style={[styles.metricChangeBox, { backgroundColor: '#dcfce7' }]}> {/* Always green for increase */}
+                    <Text style={styles.metricChangeIcon}>{ICONS.trendingUp}</Text>
+                    <Text style={styles.metricChangeText}>+{metric.change}%</Text>
+                  </View>
+                </View>
+                <Text style={styles.metricValue}>{metric.value}</Text>
+                <Text style={styles.metricLabel}>{metric.title}</Text>
               </View>
-              {order.priority === 'urgent' && (
-                <View style={[styles.orderBadge, { backgroundColor: '#fee2e2' }]}> 
-                  <Text style={[styles.orderBadgeText, { color: '#b91c1c' }]}>{language === 'ar' ? 'عاجل' : 'Urgent'}</Text>
+            ))}
+          </View>
+        </View>
+
+        {/* Donation Management */}
+        <View style={styles.sectionBox}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>{ICONS.heart} {language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}</Text>
+            <TouchableOpacity onPress={() => navigateTo('donations')}>
+              <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} {ICONS.chevronRight}</Text>
+            </TouchableOpacity>
+          </View>
+          {pendingDonations.slice(0, 3).map((donation) => (
+            <TouchableOpacity key={donation.id} style={styles.donationCard} onPress={() => handleDonationAssignment(donation.id)}>
+              <View style={styles.donationHeaderRow}>
+                <Text style={styles.donationTitle}>{language === 'ar' ? donation.medicine : donation.medicineEn}</Text>
+                <View style={[styles.donationBadge, getUrgencyColor(donation.urgency)]}>
+                  <Text style={styles.donationBadgeText}>
+                    {donation.urgency === 'high' ? (language === 'ar' ? 'عاجل' : 'Urgent') :
+                      donation.urgency === 'medium' ? (language === 'ar' ? 'متوسط' : 'Medium') :
+                      (language === 'ar' ? 'عادي' : 'Normal')}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.donationDetailsRow}>
+                <Text style={styles.donationDetailLabel}>{language === 'ar' ? 'الكمية:' : 'Quantity:'}</Text>
+                <Text style={styles.donationDetailValue}>{donation.quantity}</Text>
+                <Text style={styles.donationDetailLabel}>{language === 'ar' ? 'المتبرع:' : 'Donor:'}</Text>
+                <Text style={styles.donationDetailValue}>{language === 'ar' ? donation.donor : donation.donorEn}</Text>
+              </View>
+              <View style={styles.donationStatusRow}>
+                <View style={[styles.donationBadge, getStatusColor(donation.status)]}>
+                  <Text style={styles.donationBadgeText}>
+                    {donation.status === 'pending_assignment'
+                      ? (language === 'ar' ? 'في انتظار التوزيع' : 'Pending Assignment')
+                      : (language === 'ar' ? 'تم التوزيع' : 'Assigned')}
+                  </Text>
+                </View>
+                <Text style={styles.donationDate}>{new Date(donation.donatedAt).toLocaleDateString()}</Text>
+              </View>
+              {donation.status === 'assigned' && donation.assignedTo && (
+                <View style={styles.donationAssignedBox}>
+                  <Text style={styles.donationAssignedText}>
+                    {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'} {language === 'ar' ? donation.assignedTo : donation.assignedToEn}
+                  </Text>
                 </View>
               )}
-              <Text style={styles.orderTime}>{order.time}</Text>
-            </View>
-            <View style={styles.orderDetailsRow}>
-              <Text style={styles.orderDetailLabel}>{language === 'ar' ? 'العميل:' : 'Customer:'}</Text>
-              <Text style={styles.orderDetailValue}>{language === 'ar' ? order.customer : order.customerEn}</Text>
-              <Text style={styles.orderDetailLabel}>{language === 'ar' ? 'المبلغ:' : 'Total:'}</Text>
-              <Text style={styles.orderDetailValue}>{order.total} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      {/* Quick Search */}
-      <View style={styles.sectionBox}>
-        <View style={styles.quickSearchRow}>
-          <Text style={styles.quickSearchIcon}>{ICONS.search}</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.quickSearchTitle}>{language === 'ar' ? 'البحث السريع' : 'Quick Search'}</Text>
-            <Text style={styles.quickSearchDesc}>{language === 'ar' ? 'ابحث عن الأدوية والمنتجات' : 'Search for medicines and products'}</Text>
-            <TouchableOpacity style={styles.quickSearchBtn} onPress={() => navigateTo('search')}>
-              <Text style={styles.quickSearchBtnText}>{language === 'ar' ? 'البحث الآن' : 'Search Now'}</Text>
+        {/* Recent Orders */}
+        <View style={styles.sectionBox}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'الطلبات الحديثة' : 'Recent Orders'}</Text>
+            <TouchableOpacity onPress={() => navigateTo('pharmacist-orders')}>
+              <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} {ICONS.chevronRight}</Text>
             </TouchableOpacity>
           </View>
+          {recentOrders.map((order) => (
+            <TouchableOpacity key={order.id} style={styles.orderCard} onPress={() => navigateTo('pharmacist-orders', { orderId: order.id })}>
+              <View style={styles.orderHeaderRow}>
+                <Text style={styles.orderTitle}>#{order.id}</Text>
+                <View style={[styles.orderBadge, getStatusColor(order.status)]}>
+                  <Text style={styles.orderBadgeText}>
+                    {order.status === 'pending' ? (language === 'ar' ? 'في الانتظار' : 'Pending') :
+                      order.status === 'preparing' ? (language === 'ar' ? 'قيد التحضير' : 'Preparing') :
+                      (language === 'ar' ? 'جاهز' : 'Ready')}
+                  </Text>
+                </View>
+                {order.priority === 'urgent' && (
+                  <View style={[styles.orderBadge, { backgroundColor: '#fee2e2' }]}> 
+                    <Text style={[styles.orderBadgeText, { color: '#b91c1c' }]}>{language === 'ar' ? 'عاجل' : 'Urgent'}</Text>
+                  </View>
+                )}
+                <Text style={styles.orderTime}>{order.time}</Text>
+              </View>
+              <View style={styles.orderDetailsRow}>
+                <Text style={styles.orderDetailLabel}>{language === 'ar' ? 'العميل:' : 'Customer:'}</Text>
+                <Text style={styles.orderDetailValue}>{language === 'ar' ? order.customer : order.customerEn}</Text>
+                <Text style={styles.orderDetailLabel}>{language === 'ar' ? 'المبلغ:' : 'Total:'}</Text>
+                <Text style={styles.orderDetailValue}>{order.total} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
-      </View>
-    </ScrollView>
+
+        {/* Quick Search */}
+        <View style={styles.sectionBox}>
+          <View style={styles.quickSearchRow}>
+            <Text style={styles.quickSearchIcon}>{ICONS.search}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.quickSearchTitle}>{language === 'ar' ? 'البحث السريع' : 'Quick Search'}</Text>
+              <Text style={styles.quickSearchDesc}>{language === 'ar' ? 'ابحث عن الأدوية والمنتجات' : 'Search for medicines and products'}</Text>
+              <TouchableOpacity style={styles.quickSearchBtn} onPress={() => navigateTo('search')}>
+                <Text style={styles.quickSearchBtnText}>{language === 'ar' ? 'البحث الآن' : 'Search Now'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

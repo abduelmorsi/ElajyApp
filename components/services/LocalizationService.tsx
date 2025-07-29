@@ -38,6 +38,8 @@ const translations = {
 
     // Common Actions
     'action.continue': 'متابعة',
+    'action.next': 'التالي',
+    'action.getStarted': 'ابدأ الآن',
     'action.skip': 'تخطي',
     'action.back': 'رجوع',
     'action.save': 'حفظ',
@@ -78,10 +80,10 @@ const translations = {
     // Onboarding
     'onboarding.title1': 'صيدلية في جيبك',
     'onboarding.desc1': 'اطلب أدويتك واحصل على استشارة طبية من أفضل الصيادلة في السودان',
-    'onboarding.title2': 'توصيل سريع وآمن',
-    'onboarding.desc2': 'نوصل أدويتك لباب بيتك في كل أنحاء الخرطوم وأم درمان وبحري',
-    'onboarding.title3': 'استشارة طبية مجانية',
-    'onboarding.desc3': 'احصل على نصائح طبية من صيادلة مختصين على مدار 24 ساعة',
+    'onboarding.title2': 'استشارات صيدلانية',
+    'onboarding.desc2': 'تواصل مع صيادلة مختصين واحصل على استشارات دوائية عبر التطبيق',
+    'onboarding.title3': 'توصيل الأدوية',
+    'onboarding.desc3': 'خدمة توصيل الأدوية بسرعة وأمان إلى باب منزلك في جميع أنحاء السودان',
 
     // Home Screen
     'home.greeting': 'السلام عليكم',
@@ -270,7 +272,7 @@ const translations = {
     'permission.required': 'هذا الإذن مطلوب لاستخدام هذه الميزة',
 
     // Locations
-    'location.khartoum': '��لخرطوم',
+    'location.khartoum': 'الخرطوم',
     'location.omdurman': 'أم درمان',
     'location.bahri': 'بحري',
     'location.portSudan': 'بورت سودان',
@@ -371,7 +373,10 @@ const translations = {
     'day.tuesday': 'الثلاثاء',
     'day.wednesday': 'الأربعاء',
     'day.thursday': 'الخميس',
-    'day.friday': 'الجمعة'
+    'day.friday': 'الجمعة',
+
+    // App Name
+    'app.name': 'علاجي'
   },
   
   en: {
@@ -390,6 +395,8 @@ const translations = {
 
     // Common Actions
     'action.continue': 'Continue',
+    'action.next': 'Next',
+    'action.getStarted': 'Get Started',
     'action.skip': 'Skip',
     'action.back': 'Back',
     'action.save': 'Save',
@@ -429,11 +436,11 @@ const translations = {
 
     // Onboarding
     'onboarding.title1': 'Pharmacy in Your Pocket',
-    'onboarding.desc1': 'Order your medicines and get medical consultation from Sudan\'s best pharmacists',
-    'onboarding.title2': 'Fast & Safe Delivery',
-    'onboarding.desc2': 'We deliver your medicines to your doorstep across Khartoum, Omdurman, and Bahri',
-    'onboarding.title3': 'Free Medical Consultation',
-    'onboarding.desc3': 'Get medical advice from specialized pharmacists 24/7',
+    'onboarding.desc1': 'Order your medicines and get medical advice from the best pharmacists in Sudan',
+    'onboarding.title2': 'Pharmacy Consultation',
+    'onboarding.desc2': 'Connect with expert pharmacists and get medication advice through the app',
+    'onboarding.title3': 'Medicine Delivery',
+    'onboarding.desc3': 'Fast and secure medicine delivery service to your home across Sudan',
 
     // Home Screen
     'home.greeting': 'Welcome',
@@ -545,7 +552,10 @@ const translations = {
     'unit.syrup': 'syrup',
     'unit.injection': 'injection',
     'unit.box': 'box',
-    'unit.bottle': 'bottle'
+    'unit.bottle': 'bottle',
+
+    // App Name
+    'app.name': 'Elajy'
   }
 };
 

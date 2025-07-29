@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PatientDonationFlow from './donation/PatientDonationFlow';
 import PharmacistDonationManager from './donation/PharmacistDonationManager';
@@ -13,42 +14,45 @@ interface DonationScreenProps {
 
 export default function DonationScreen({ navigateTo, userType, userData }: DonationScreenProps) {
   const { language } = useLocalization();
+  const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerLeftRow}>
-          <View style={styles.headerIconBox}>
-            <Text style={styles.headerIcon}>💚</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        {/* Header */}
+        <View style={[styles.headerRow, { paddingTop: insets.top + 16 }]}>
+          <View style={styles.headerLeftRow}>
+            <View style={styles.headerIconBox}>
+              <Text style={styles.headerIcon}>💚</Text>
+            </View>
+            <View>
+              <Text style={styles.headerTitle}>{language === 'ar' ? 'التبرعات' : 'Donations'}</Text>
+              <Text style={styles.headerSubtitle}>
+                {userType === 'patient'
+                  ? (language === 'ar' ? 'ساعد المرضى المحتاجين' : 'Help patients in need')
+                  : (language === 'ar' ? 'إدارة التبرعات والتوزيع' : 'Manage donations and distribution')}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.headerTitle}>{language === 'ar' ? 'التبرعات' : 'Donations'}</Text>
-            <Text style={styles.headerSubtitle}>
-              {userType === 'patient'
-                ? (language === 'ar' ? 'ساعد المرضى المحتاجين' : 'Help patients in need')
-                : (language === 'ar' ? 'إدارة التبرعات والتوزيع' : 'Manage donations and distribution')}
-            </Text>
-          </View>
+          <TouchableOpacity
+            style={styles.closeBtn}
+            onPress={() => navigateTo(userType === 'patient' ? 'home' : 'pharmacist-dashboard')}
+          >
+            <Text style={styles.closeBtnText}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.closeBtn}
-          onPress={() => navigateTo(userType === 'patient' ? 'home' : 'pharmacist-dashboard')}
-        >
-          <Text style={styles.closeBtnText}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.bodyContent}>
-        {userType === 'patient' ? (
-          <PatientDonationFlow navigateTo={navigateTo} />
-        ) : (
-          <PharmacistDonationManager
-            navigateTo={navigateTo}
-            userData={userData}
-          />
-        )}
-      </View>
-    </ScrollView>
+        <View style={styles.bodyContent}>
+          {userType === 'patient' ? (
+            <PatientDonationFlow navigateTo={navigateTo} />
+          ) : (
+            <PharmacistDonationManager
+              navigateTo={navigateTo}
+              userData={userData}
+            />
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Image, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Button, Image, ScrollView, StyleSheet, Switch, Text, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
 type ProfileScreenProps = {
@@ -14,6 +16,7 @@ type ProfileScreenProps = {
 export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle, currentLanguage, userData, updateUserProfile }: ProfileScreenProps) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
 
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
@@ -34,9 +37,10 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
   };
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
     <ScrollView style={styles.container}>
       {/* Profile Header */}
-      <View style={styles.profileHeader}>
+        <View style={[styles.profileHeader, { paddingTop: insets.top + 16 }]}>
         <Image
           source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150' }}
           style={styles.avatar}
@@ -46,10 +50,12 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
             {language === 'ar' ? profileData.name : profileData.nameEn}
           </Text>
           <Text style={styles.location}>
-            📍 {language === 'ar' ? profileData.location : profileData.locationEn}
+              <Icon name="location-on" size={16} color="#6b7280" style={{ marginRight: 4 }} />
+              {language === 'ar' ? profileData.location : profileData.locationEn}
           </Text>
           <Text style={styles.badge}>
-            🏆 {language === 'ar' ? `عضو ${profileData.membershipLevel}` : `${profileData.membershipLevelEn} Member`}
+              <Icon name="emoji-events" size={16} color="#6b7280" style={{ marginRight: 4 }} />
+              {language === 'ar' ? `عضو ${profileData.membershipLevel}` : `${profileData.membershipLevelEn} Member`}
           </Text>
         </View>
       </View>
@@ -101,6 +107,7 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
         <Text style={styles.footerText}>{language === 'ar' ? 'إصدار 1.0.0' : 'Version 1.0.0'}</Text>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 

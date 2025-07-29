@@ -1,32 +1,41 @@
 
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
 // Emoji icon replacements for lucide-react icons
-export default function HomeScreen({ navigateTo, userData }: { navigateTo: (screen: string, data?: any) => void; userData?: any }) {
+type HomeScreenProps = { navigateTo: (screen: string, data?: any) => void; userData?: any; goBack?: () => void; isMain?: boolean };
+export default function HomeScreen({ navigateTo, userData, goBack, isMain }: HomeScreenProps) {
+  // Helper function to render icons
+  const renderIcon = (iconName: string, size: number = 16, color: string = '#6b7280') => {
+    return <Icon name={icons[iconName]} size={size} color={color} />;
+  };
+
   const icons = {
-    Search: '🔍',
-    Bell: '🔔',
-    MapPin: '📍',
-    ShoppingBag: '🛍️',
-    Calendar: '📅',
-    Heart: '❤️',
-    Upload: '⬆️',
-    MessageCircle: '💬',
-    Star: '⭐',
-    TrendingUp: '📈',
-    Package: '📦',
-    Users: '👥',
-    Clock: '⏰',
-    Navigation: '🧭',
-    ChevronRight: '➡️',
-    Plus: '➕',
-    Sparkles: '✨',
+    Search: 'search',
+    Bell: 'notifications',
+    MapPin: 'location-on',
+    ShoppingBag: 'shopping-bag',
+    Calendar: 'calendar-today',
+    Heart: 'favorite',
+    Upload: 'cloud-upload',
+    MessageCircle: 'chat',
+    Star: 'star',
+    TrendingUp: 'trending-up',
+    Package: 'inventory',
+    Users: 'people',
+    Clock: 'schedule',
+    Navigation: 'navigation',
+    ChevronRight: 'chevron-right',
+    Plus: 'add',
+    Sparkles: 'auto-awesome',
   };
 
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [greeting, setGreeting] = useState('');
   const [currentTime, setCurrentTime] = useState('');
 
@@ -273,6 +282,9 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
     flexWrap: 'wrap',
     gap: 12,
   },
+  quickActionsGridRtl: {
+    flexDirection: 'row-reverse',
+  },
   quickActionCard: {
     width: '48%',
     backgroundColor: '#fff',
@@ -518,31 +530,40 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
   },
   });
 
+  // Render back button if goBack is provided and not the main home page
+  const renderBackButton = () => (goBack && !isMain) ? (
+    <TouchableOpacity onPress={goBack} style={{ padding: 8, marginRight: 8 }}>
+      <Text style={{ fontSize: 20 }}>{language === 'ar' ? '←' : '←'}</Text>
+    </TouchableOpacity>
+  ) : null;
+
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: insets.top }}>
       {/* Compact Header */}
       <View style={styles.header}>
+          {renderBackButton()}
         <View style={styles.headerInner}>
           <View style={{ flex: 1 }}>
             <Text style={styles.greeting}>
               {greeting}, {userData?.name || (language === 'ar' ? 'أحمد' : 'Ahmed')}
             </Text>
             <View style={styles.locationRow}>
-              <Text style={styles.icon}>{icons.MapPin}</Text>
+              {renderIcon('MapPin')}
               <Text style={styles.locationText}>{userData?.location || (language === 'ar' ? 'الخرطوم' : 'Khartoum')}</Text>
               <Text style={styles.dot}>•</Text>
-              <Text style={styles.icon}>{icons.Clock}</Text>
+              {renderIcon('Clock')}
               <Text style={styles.timeText}>{currentTime}</Text>
             </View>
           </View>
           <TouchableOpacity style={styles.bellButton} onPress={() => navigateTo('profile')}>
-            <Text style={styles.icon}>{icons.Bell}</Text>
+            {renderIcon('Bell', 20)}
             <View style={styles.bellDot} />
           </TouchableOpacity>
         </View>
         {/* Compact Search Bar */}
         <View style={styles.searchBarContainer}>
-          <Text style={styles.searchIcon}>{icons.Search}</Text>
+          {renderIcon('Search', 20)}
           <TextInput
             style={styles.searchInput}
             placeholder={language === 'ar' ? 'ابحث عن دواء أو صيدلية...' : 'Search for medicine or pharmacy...'}
@@ -558,17 +579,22 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{language === 'ar' ? 'الخدمات السريعة' : 'Quick Actions'}</Text>
-            <Text style={styles.icon}>{icons.Sparkles}</Text>
+            {renderIcon('Sparkles')}
           </View>
-          <View style={styles.quickActionsGrid}>
-            {quickActions.map((action) => (
+          <View style={[styles.quickActionsGrid, isRTL && styles.quickActionsGridRtl]}>
+            {quickActions.map((action, index) => (
               <TouchableOpacity
                 key={action.id}
-                style={styles.quickActionCard}
+                style={[
+                  styles.quickActionCard,
+                  { 
+                    marginRight: isRTL ? (index % 2 === 1 ? '4%' : 0) : (index % 2 === 0 ? '4%' : 0)
+                  }
+                ]}
                 onPress={() => handleQuickAction(action.id)}
               >
                 <View style={styles.quickActionIconContainer}>
-                  <Text style={styles.quickActionIcon}>{icons[action.icon]}</Text>
+                  {renderIcon(action.icon, 24, '#007bff')}
                 </View>
                 <View style={styles.quickActionTextContainer}>
                   <Text style={styles.quickActionTitle}>{action.title}</Text>
@@ -584,21 +610,21 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
           <View style={styles.statsGrid}>
             <View style={styles.statsCard}>
               <View style={[styles.statsIcon, { backgroundColor: '#dbeafe' }]}> 
-                <Text style={styles.statsIconText}>{icons.ShoppingBag}</Text>
+                {renderIcon('ShoppingBag', 20, '#1e40af')}
               </View>
               <Text style={styles.statsValue}>{userData.orderCount || 23}</Text>
               <Text style={styles.statsLabel}>{language === 'ar' ? 'طلب' : 'Orders'}</Text>
             </View>
             <View style={styles.statsCard}>
               <View style={[styles.statsIcon, { backgroundColor: '#bbf7d0' }]}> 
-                <Text style={styles.statsIconText}>{icons.TrendingUp}</Text>
+                {renderIcon('TrendingUp', 20, '#166534')}
               </View>
               <Text style={styles.statsValue}>{userData.savedMoney || 145}</Text>
               <Text style={styles.statsLabel}>{language === 'ar' ? 'ج.س موفرة' : 'SDG Saved'}</Text>
             </View>
             <View style={styles.statsCard}>
               <View style={[styles.statsIcon, { backgroundColor: '#fef9c3' }]}> 
-                <Text style={styles.statsIconText}>{icons.Star}</Text>
+                {renderIcon('Star', 20, '#ca8a04')}
               </View>
               <Text style={styles.statsValue}>{userData.points || 1250}</Text>
               <Text style={styles.statsLabel}>{language === 'ar' ? 'نقطة' : 'Points'}</Text>
@@ -611,7 +637,7 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{language === 'ar' ? 'أدوية مميزة' : 'Featured Medicines'}</Text>
             <TouchableOpacity onPress={() => navigateTo('search')}>
-              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض الكل' : 'View All'} {icons.ChevronRight}</Text>
+              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض الكل' : 'View All'} {renderIcon('ChevronRight', 16)}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.featuredGrid}>
@@ -634,7 +660,7 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
                         )}
                       </View>
                       <TouchableOpacity style={styles.featuredAddButton}>
-                        <Text style={styles.featuredAddButtonText}>{icons.Plus}</Text>
+                        {renderIcon('Plus', 16, '#fff')}
                       </TouchableOpacity>
                     </View>
                     <Text style={styles.featuredTitle}>{language === 'ar' ? medicine.name : medicine.nameEn}</Text>
@@ -644,7 +670,7 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
                       {medicine.originalPrice > medicine.price && (
                         <Text style={styles.featuredOriginalPrice}>{medicine.originalPrice}</Text>
                       )}
-                      <Text style={styles.featuredRating}>{icons.Star} {medicine.rating}</Text>
+                      <Text style={styles.featuredRating}>{renderIcon('Star', 14, '#fbbf24')} {medicine.rating}</Text>
                     </View>
                   </View>
                 </View>
@@ -658,7 +684,7 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{language === 'ar' ? 'الصيدليات القريبة' : 'Nearby Pharmacies'}</Text>
             <TouchableOpacity onPress={() => navigateTo('search')}>
-              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض على الخريطة' : 'View on Map'} {icons.Navigation}</Text>
+              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض على الخريطة' : 'View on Map'} {renderIcon('Navigation', 16)}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.nearbyList}>
@@ -675,17 +701,17 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
                       <Text style={styles.badgeNearby}>{pharmacy.specialOffer}</Text>
                     </View>
                     <View style={styles.nearbyDetails}>
-                      <Text style={styles.icon}>{icons.MapPin}</Text>
+                      {renderIcon('MapPin')}
                       <Text style={styles.nearbyDetailText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
-                      <Text style={styles.icon}>{icons.Clock}</Text>
+                      {renderIcon('Clock')}
                       <Text style={styles.nearbyDetailText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
-                      <Text style={styles.icon}>{icons.Star}</Text>
+                      {renderIcon('Star')}
                       <Text style={styles.nearbyDetailText}>{pharmacy.rating}</Text>
                     </View>
                   </View>
                   <View style={styles.nearbyStatusRow}>
                     <View style={[styles.nearbyStatusDot, { backgroundColor: pharmacy.isOpen ? '#22c55e' : '#ef4444' }]} />
-                    <Text style={styles.icon}>{icons.ChevronRight}</Text>
+                    {renderIcon('ChevronRight')}
                   </View>
                 </View>
               </TouchableOpacity>
@@ -694,5 +720,6 @@ export default function HomeScreen({ navigateTo, userData }: { navigateTo: (scre
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }

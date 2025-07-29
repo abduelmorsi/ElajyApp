@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Alert as RNAlert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import PharmacyCard from './product/PharmacyCard';
 import { createAvailablePharmacies, createProductSpecifications } from './product/productDetailData';
 import { calculateTotal, createEnhancedProduct, handlePhoneCall, validateAddToCart } from './product/productDetailHelpers';
 import ProductInfo from './product/ProductInfo';
 import { useLocalization } from './services/LocalizationService';
 
-export default function ProductDetailScreen({ product, addToCart, navigateTo }) {
+export default function ProductDetailScreen({ product, addToCart, navigateTo, goBack }) {
   const { language } = useLocalization();
   const [quantity, setQuantity] = useState(1);
   const [selectedPharmacy, setSelectedPharmacy] = useState(0);
@@ -72,7 +73,7 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo }) 
     <ScrollView style={styles.full} contentContainerStyle={styles.scrollContent}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerButton} onPress={() => navigateTo('search')}>
+        <TouchableOpacity style={styles.headerButton} onPress={goBack ? goBack : () => navigateTo('search')}>
           <Text style={styles.headerIcon}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
@@ -93,7 +94,10 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo }) 
 
       {/* Available Pharmacies */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>📍 {language === 'ar' ? 'متوفر في الصيدليات' : 'Available at Pharmacies'}</Text>
+        <Text style={styles.cardTitle}>
+          <Icon name="location-on" size={16} color="#6b7280" style={{ marginRight: 4 }} />
+          {language === 'ar' ? 'متوفر في الصيدليات' : 'Available at Pharmacies'}
+        </Text>
         {availablePharmacies.map((pharmacy, index) => (
           <PharmacyCard
             key={pharmacy.id}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { sudanesePharmaceuticalData, useLocalization, useRTL } from '../services/LocalizationService';
 
 // Mock analytics data with Sudanese context
@@ -100,6 +101,7 @@ type PharmacistAnalyticsProps = {
 export default function PharmacistAnalytics({ navigateTo, userData }: PharmacistAnalyticsProps) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [selectedPeriod, setSelectedPeriod] = useState('7days');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
   const [analyticsData] = useState(generateAnalyticsData());
@@ -136,11 +138,13 @@ export default function PharmacistAnalytics({ navigateTo, userData }: Pharmacist
   const [tab, setTab] = useState('overview');
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.headerTitle}>{t('analytics.title')}</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'التحليلات والإحصائيات' : 'Analytics & Statistics'}
+          </Text>
           <Text style={styles.headerDesc}>
             {language === 'ar' ? 'تحليل شامل لأداء الصيدلية' : 'Comprehensive pharmacy performance analysis'}
           </Text>
@@ -158,187 +162,187 @@ export default function PharmacistAnalytics({ navigateTo, userData }: Pharmacist
             ))}
           </View>
         </View>
-      </View>
 
-      {/* Key Metrics Cards */}
-      <View style={styles.metricsGrid}>
-        {/* Orders */}
-        <View style={styles.metricCard}>
-          <View style={styles.metricCardRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.metricLabel}>{t('analytics.totalOrders')}</Text>
-              <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalOrders)}</Text>
-              <View style={styles.metricTrendRow}>
-                <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
-                <Text style={styles.metricTrendText}>+{analyticsData.summary.growthRate}%</Text>
-              </View>
-            </View>
-            <View style={styles.metricIconBox}>
-              <Text style={styles.metricIcon}>{ICONS.package}</Text>
-            </View>
-          </View>
-        </View>
-        {/* Revenue */}
-        <View style={styles.metricCard}>
-          <View style={styles.metricCardRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.metricLabel}>{t('analytics.revenue')}</Text>
-              <Text style={styles.metricValue}>{formatCurrency(analyticsData.summary.totalRevenue)}</Text>
-              <View style={styles.metricTrendRow}>
-                <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
-                <Text style={styles.metricTrendText}>+12.3%</Text>
-              </View>
-            </View>
-            <View style={styles.metricIconBox}>
-              <Text style={styles.metricIcon}>{ICONS.dollar}</Text>
-            </View>
-          </View>
-        </View>
-        {/* Customers */}
-        <View style={styles.metricCard}>
-          <View style={styles.metricCardRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.metricLabel}>{t('analytics.customers')}</Text>
-              <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalCustomers)}</Text>
-              <View style={styles.metricTrendRow}>
-                <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
-                <Text style={styles.metricTrendText}>+8.7%</Text>
-              </View>
-            </View>
-            <View style={styles.metricIconBox}>
-              <Text style={styles.metricIcon}>{ICONS.users}</Text>
-            </View>
-          </View>
-        </View>
-        {/* Prescriptions */}
-        <View style={styles.metricCard}>
-          <View style={styles.metricCardRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.metricLabel}>{t('analytics.prescriptions')}</Text>
-              <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalPrescriptions)}</Text>
-              <View style={styles.metricTrendRow}>
-                <Text style={styles.metricTrendIcon}>{ICONS.check}</Text>
-                <Text style={styles.metricTrendText}>98.5%</Text>
-              </View>
-            </View>
-            <View style={styles.metricIconBox}>
-              <Text style={styles.metricIcon}>{ICONS.file}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Tabs */}
-      <View style={styles.tabsRow}>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'overview' && styles.tabBtnActive]} onPress={() => setTab('overview')}>
-          <Text style={[styles.tabBtnText, tab === 'overview' && styles.tabBtnTextActive]}>{t('analytics.overview')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'sales' && styles.tabBtnActive]} onPress={() => setTab('sales')}>
-          <Text style={[styles.tabBtnText, tab === 'sales' && styles.tabBtnTextActive]}>{t('analytics.sales')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'products' && styles.tabBtnActive]} onPress={() => setTab('products')}>
-          <Text style={[styles.tabBtnText, tab === 'products' && styles.tabBtnTextActive]}>{t('analytics.products')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'locations' && styles.tabBtnActive]} onPress={() => setTab('locations')}>
-          <Text style={[styles.tabBtnText, tab === 'locations' && styles.tabBtnTextActive]}>{language === 'ar' ? 'المواقع' : 'Locations'}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Tab Content */}
-      {tab === 'overview' && (
-        <View style={styles.tabContentBox}>
-          {/* Chart Placeholder */}
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>{t('analytics.trends')}</Text>
-            <Text style={styles.chartPlaceholder}>[Chart not available in React Native]</Text>
-          </View>
-          {/* Category Distribution Placeholder */}
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>{language === 'ar' ? 'توزيع المبيعات بالفئات' : 'Sales by Category'}</Text>
-            <Text style={styles.chartPlaceholder}>[Pie chart not available in React Native]</Text>
-          </View>
-          {/* Performance Indicators */}
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>{language === 'ar' ? 'مؤشرات الأداء' : 'Performance Indicators'}</Text>
-            <View style={styles.performanceRow}>
-              <Text style={styles.performanceIcon}>{ICONS.check}</Text>
-              <Text style={styles.performanceLabel}>{language === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction'}</Text>
-              <Text style={styles.performanceValue}>{analyticsData.summary.customerSatisfaction}/5</Text>
-            </View>
-            <View style={styles.performanceRow}>
-              <Text style={styles.performanceIcon}>{ICONS.activity}</Text>
-              <Text style={styles.performanceLabel}>{language === 'ar' ? 'متوسط قيمة الطلب' : 'Average Order Value'}</Text>
-              <Text style={styles.performanceValue}>{formatCurrency(analyticsData.summary.averageOrderValue)}</Text>
-            </View>
-            <View style={styles.performanceRow}>
-              <Text style={styles.performanceIcon}>{ICONS.file}</Text>
-              <Text style={styles.performanceLabel}>{language === 'ar' ? 'دقة الوصفات' : 'Prescription Accuracy'}</Text>
-              <Text style={styles.performanceValue}>{analyticsData.summary.prescriptionAccuracy}%</Text>
-            </View>
-          </View>
-        </View>
-      )}
-
-      {tab === 'sales' && (
-        <View style={styles.tabContentBox}>
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>{t('analytics.sales')} - {selectedPeriod}</Text>
-            <Text style={styles.chartPlaceholder}>[Bar chart not available in React Native]</Text>
-          </View>
-        </View>
-      )}
-
-      {tab === 'products' && (
-        <View style={styles.tabContentBox}>
-          <Text style={styles.chartTitle}>{t('analytics.topSellingProducts')}</Text>
-          {analyticsData.topProducts.map((product, index) => (
-            <View key={product.id} style={styles.productRow}>
-              <View style={styles.productRankBox}>
-                <Text style={styles.productRank}>{index + 1}</Text>
-              </View>
+        {/* Key Metrics Cards */}
+        <View style={styles.metricsGrid}>
+          {/* Orders */}
+          <View style={styles.metricCard}>
+            <View style={styles.metricCardRow}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.productName}>{language === 'ar' ? product.name : product.nameEn}</Text>
-                <Text style={styles.productBrand}>{language === 'ar' ? product.brand : product.brandEn}</Text>
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.productQty}>{formatNumber(product.soldQuantity)} {language === 'ar' ? 'وحدة' : 'units'}</Text>
-                <View style={styles.productGrowthRow}>
-                  <Text style={styles.productGrowthIcon}>{product.growth > 0 ? ICONS.trendingUp : ICONS.trendingDown}</Text>
-                  <Text style={[styles.productGrowthText, { color: product.growth > 0 ? '#22c55e' : '#e11d48' }]}>
-                    {product.growth > 0 ? '+' : ''}{product.growth.toFixed(1)}%
-                  </Text>
+                <Text style={styles.metricLabel}>{t('analytics.totalOrders')}</Text>
+                <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalOrders)}</Text>
+                <View style={styles.metricTrendRow}>
+                  <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
+                  <Text style={styles.metricTrendText}>+{analyticsData.summary.growthRate}%</Text>
                 </View>
               </View>
+              <View style={styles.metricIconBox}>
+                <Text style={styles.metricIcon}>{ICONS.package}</Text>
+              </View>
             </View>
-          ))}
+          </View>
+          {/* Revenue */}
+          <View style={styles.metricCard}>
+            <View style={styles.metricCardRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.metricLabel}>{t('analytics.revenue')}</Text>
+                <Text style={styles.metricValue}>{formatCurrency(analyticsData.summary.totalRevenue)}</Text>
+                <View style={styles.metricTrendRow}>
+                  <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
+                  <Text style={styles.metricTrendText}>+12.3%</Text>
+                </View>
+              </View>
+              <View style={styles.metricIconBox}>
+                <Text style={styles.metricIcon}>{ICONS.dollar}</Text>
+              </View>
+            </View>
+          </View>
+          {/* Customers */}
+          <View style={styles.metricCard}>
+            <View style={styles.metricCardRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.metricLabel}>{t('analytics.customers')}</Text>
+                <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalCustomers)}</Text>
+                <View style={styles.metricTrendRow}>
+                  <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
+                  <Text style={styles.metricTrendText}>+8.7%</Text>
+                </View>
+              </View>
+              <View style={styles.metricIconBox}>
+                <Text style={styles.metricIcon}>{ICONS.users}</Text>
+              </View>
+            </View>
+          </View>
+          {/* Prescriptions */}
+          <View style={styles.metricCard}>
+            <View style={styles.metricCardRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.metricLabel}>{t('analytics.prescriptions')}</Text>
+                <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalPrescriptions)}</Text>
+                <View style={styles.metricTrendRow}>
+                  <Text style={styles.metricTrendIcon}>{ICONS.check}</Text>
+                  <Text style={styles.metricTrendText}>98.5%</Text>
+                </View>
+              </View>
+              <View style={styles.metricIconBox}>
+                <Text style={styles.metricIcon}>{ICONS.file}</Text>
+              </View>
+            </View>
+          </View>
         </View>
-      )}
 
-      {tab === 'locations' && (
-        <View style={styles.tabContentBox}>
-          <Text style={styles.chartTitle}>{language === 'ar' ? 'أداء المواقع' : 'Location Performance'}</Text>
-          {analyticsData.pharmacyLocations.map((location, index) => (
-            <View key={index} style={styles.locationRow}>
-              <View style={styles.locationHeaderRow}>
-                <Text style={styles.locationIcon}>{ICONS.mapPin}</Text>
-                <Text style={styles.locationName}>{location.name}</Text>
-                <Text style={[styles.locationBadge, { backgroundColor: location.growth > 0 ? '#dcfce7' : '#f3f4f6', color: location.growth > 0 ? '#166534' : '#374151' }]}> {location.growth > 0 ? '+' : ''}{location.growth}% </Text>
+        {/* Tabs */}
+        <View style={styles.tabsRow}>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'overview' && styles.tabBtnActive]} onPress={() => setTab('overview')}>
+            <Text style={[styles.tabBtnText, tab === 'overview' && styles.tabBtnTextActive]}>{t('analytics.overview')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'sales' && styles.tabBtnActive]} onPress={() => setTab('sales')}>
+            <Text style={[styles.tabBtnText, tab === 'sales' && styles.tabBtnTextActive]}>{t('analytics.sales')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'products' && styles.tabBtnActive]} onPress={() => setTab('products')}>
+            <Text style={[styles.tabBtnText, tab === 'products' && styles.tabBtnTextActive]}>{t('analytics.products')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'locations' && styles.tabBtnActive]} onPress={() => setTab('locations')}>
+            <Text style={[styles.tabBtnText, tab === 'locations' && styles.tabBtnTextActive]}>{language === 'ar' ? 'المواقع' : 'Locations'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Tab Content */}
+        {tab === 'overview' && (
+          <View style={styles.tabContentBox}>
+            {/* Chart Placeholder */}
+            <View style={styles.chartCard}>
+              <Text style={styles.chartTitle}>{t('analytics.trends')}</Text>
+              <Text style={styles.chartPlaceholder}>[Chart not available in React Native]</Text>
+            </View>
+            {/* Category Distribution Placeholder */}
+            <View style={styles.chartCard}>
+              <Text style={styles.chartTitle}>{language === 'ar' ? 'توزيع المبيعات بالفئات' : 'Sales by Category'}</Text>
+              <Text style={styles.chartPlaceholder}>[Pie chart not available in React Native]</Text>
+            </View>
+            {/* Performance Indicators */}
+            <View style={styles.chartCard}>
+              <Text style={styles.chartTitle}>{language === 'ar' ? 'مؤشرات الأداء' : 'Performance Indicators'}</Text>
+              <View style={styles.performanceRow}>
+                <Text style={styles.performanceIcon}>{ICONS.check}</Text>
+                <Text style={styles.performanceLabel}>{language === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction'}</Text>
+                <Text style={styles.performanceValue}>{analyticsData.summary.customerSatisfaction}/5</Text>
               </View>
-              <View style={styles.locationStatsRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.locationStatLabel}>{t('analytics.revenue')}</Text>
-                  <Text style={styles.locationStatValue}>{formatCurrency(location.sales)}</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.locationStatLabel}>{t('analytics.orders')}</Text>
-                  <Text style={styles.locationStatValue}>{formatNumber(location.orders)}</Text>
-                </View>
+              <View style={styles.performanceRow}>
+                <Text style={styles.performanceIcon}>{ICONS.activity}</Text>
+                <Text style={styles.performanceLabel}>{language === 'ar' ? 'متوسط قيمة الطلب' : 'Average Order Value'}</Text>
+                <Text style={styles.performanceValue}>{formatCurrency(analyticsData.summary.averageOrderValue)}</Text>
+              </View>
+              <View style={styles.performanceRow}>
+                <Text style={styles.performanceIcon}>{ICONS.file}</Text>
+                <Text style={styles.performanceLabel}>{language === 'ar' ? 'دقة الوصفات' : 'Prescription Accuracy'}</Text>
+                <Text style={styles.performanceValue}>{analyticsData.summary.prescriptionAccuracy}%</Text>
               </View>
             </View>
-          ))}
-        </View>
-      )}
-    </ScrollView>
+          </View>
+        )}
+
+        {tab === 'sales' && (
+          <View style={styles.tabContentBox}>
+            <View style={styles.chartCard}>
+              <Text style={styles.chartTitle}>{t('analytics.sales')} - {selectedPeriod}</Text>
+              <Text style={styles.chartPlaceholder}>[Bar chart not available in React Native]</Text>
+            </View>
+          </View>
+        )}
+
+        {tab === 'products' && (
+          <View style={styles.tabContentBox}>
+            <Text style={styles.chartTitle}>{t('analytics.topSellingProducts')}</Text>
+            {analyticsData.topProducts.map((product, index) => (
+              <View key={product.id} style={styles.productRow}>
+                <View style={styles.productRankBox}>
+                  <Text style={styles.productRank}>{index + 1}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.productName}>{language === 'ar' ? product.name : product.nameEn}</Text>
+                  <Text style={styles.productBrand}>{language === 'ar' ? product.brand : product.brandEn}</Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.productQty}>{formatNumber(product.soldQuantity)} {language === 'ar' ? 'وحدة' : 'units'}</Text>
+                  <View style={styles.productGrowthRow}>
+                    <Text style={styles.productGrowthIcon}>{product.growth > 0 ? ICONS.trendingUp : ICONS.trendingDown}</Text>
+                    <Text style={[styles.productGrowthText, { color: product.growth > 0 ? '#22c55e' : '#e11d48' }]}>
+                      {product.growth > 0 ? '+' : ''}{product.growth.toFixed(1)}%
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {tab === 'locations' && (
+          <View style={styles.tabContentBox}>
+            <Text style={styles.chartTitle}>{language === 'ar' ? 'أداء المواقع' : 'Location Performance'}</Text>
+            {analyticsData.pharmacyLocations.map((location, index) => (
+              <View key={index} style={styles.locationRow}>
+                <View style={styles.locationHeaderRow}>
+                  <Text style={styles.locationIcon}>{ICONS.mapPin}</Text>
+                  <Text style={styles.locationName}>{location.name}</Text>
+                  <Text style={[styles.locationBadge, { backgroundColor: location.growth > 0 ? '#dcfce7' : '#f3f4f6', color: location.growth > 0 ? '#166534' : '#374151' }]}> {location.growth > 0 ? '+' : ''}{location.growth}% </Text>
+                </View>
+                <View style={styles.locationStatsRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.locationStatLabel}>{t('analytics.revenue')}</Text>
+                    <Text style={styles.locationStatValue}>{formatCurrency(location.sales)}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.locationStatLabel}>{t('analytics.orders')}</Text>
+                    <Text style={styles.locationStatValue}>{formatNumber(location.orders)}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
 

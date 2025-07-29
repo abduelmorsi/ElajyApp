@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
@@ -7,6 +8,7 @@ import { useLocalization, useRTL } from './services/LocalizationService';
 export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const {
     addresses,
     deliveryOptions,
@@ -64,96 +66,98 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   // Cart Step
   if (currentStep === 'cart') {
     return (
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>
-            {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
-          </Text>
-          {cartItems.length > 0 && (
-            <Text style={styles.headerSubtitle}>
-              {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        <View style={styles.container}>
+          {/* Header */}
+          <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+            <Text style={styles.headerTitle}>
+              {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
             </Text>
-          )}
-        </View>
-        <ScrollView contentContainerStyle={styles.content}>
-          {cartItems.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyIcon}>🚚</Text>
-              <Text style={styles.emptyTitle}>
-                {language === 'ar' ? 'السلة فارغة' : 'Cart is Empty'}
+            {cartItems.length > 0 && (
+              <Text style={styles.headerSubtitle}>
+                {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
               </Text>
-              <Text style={styles.emptyDesc}>
-                {language === 'ar' ? 'ابدأ بإضافة منتجات لسلة التسوق' : 'Start adding items to your cart'}
-              </Text>
-              <TouchableOpacity style={styles.shopBtn} onPress={() => navigateTo('search')}>
-                <Text style={styles.shopBtnText}>
-                  {language === 'ar' ? 'تسوق الآن' : 'Shop Now'}
+            )}
+          </View>
+          <ScrollView contentContainerStyle={styles.content}>
+            {cartItems.length === 0 ? (
+              <View style={styles.emptyCard}>
+                <Text style={styles.emptyIcon}>🚚</Text>
+                <Text style={styles.emptyTitle}>
+                  {language === 'ar' ? 'السلة فارغة' : 'Cart is Empty'}
                 </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              {/* Cart Items */}
-              {cartItems.map((item) => (
-                <View key={item.id} style={styles.cartItemCard}>
-                  <View style={styles.cartItemRow}>
-                    <Image
-                      source={{ uri: item.image }}
-                      style={styles.cartItemImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.cartItemInfo}>
-                      <Text style={styles.cartItemName}>
-                        {language === 'ar' ? item.name : item.nameEn}
-                      </Text>
-                      <Text style={styles.cartItemBrand}>
-                        {language === 'ar' ? item.brand : item.brandEn}
-                      </Text>
-                      <Text style={styles.cartItemPrice}>
-                        {item.price} {t('unit.sdg')}
-                      </Text>
-                    </View>
-                    <View style={styles.cartItemActions}>
-                      <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}>
-                        <Text style={styles.qtyBtnText}>-</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.qtyText}>{item.quantity}</Text>
-                      <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}>
-                        <Text style={styles.qtyBtnText}>+</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.id)}>
-                        <Text style={styles.removeBtnText}>🗑️</Text>
-                      </TouchableOpacity>
+                <Text style={styles.emptyDesc}>
+                  {language === 'ar' ? 'ابدأ بإضافة منتجات لسلة التسوق' : 'Start adding items to your cart'}
+                </Text>
+                <TouchableOpacity style={styles.shopBtn} onPress={() => navigateTo('search')}>
+                  <Text style={styles.shopBtnText}>
+                    {language === 'ar' ? 'تسوق الآن' : 'Shop Now'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                {/* Cart Items */}
+                {cartItems.map((item) => (
+                  <View key={item.id} style={styles.cartItemCard}>
+                    <View style={styles.cartItemRow}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={styles.cartItemImage}
+                        resizeMode="cover"
+                      />
+                      <View style={styles.cartItemInfo}>
+                        <Text style={styles.cartItemName}>
+                          {language === 'ar' ? item.name : item.nameEn}
+                        </Text>
+                        <Text style={styles.cartItemBrand}>
+                          {language === 'ar' ? item.brand : item.brandEn}
+                        </Text>
+                        <Text style={styles.cartItemPrice}>
+                          {item.price} {t('unit.sdg')}
+                        </Text>
+                      </View>
+                      <View style={styles.cartItemActions}>
+                        <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}>
+                          <Text style={styles.qtyBtnText}>-</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.qtyText}>{item.quantity}</Text>
+                        <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}>
+                          <Text style={styles.qtyBtnText}>+</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.id)}>
+                          <Text style={styles.removeBtnText}>🗑️</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
+                ))}
+                {/* Order Summary */}
+                <View style={styles.summaryCard}>
+                  <View style={styles.summaryRow}>
+                    <Text style={styles.summaryLabel}>{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</Text>
+                    <Text style={styles.summaryValue}>
+                      {calculateSubtotal()} {t('unit.sdg')}
+                    </Text>
+                  </View>
+                  <View style={styles.summaryRow}>
+                    <Text style={styles.summaryLabel}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text>
+                    <Text style={styles.summaryTotalValue}>
+                      {calculateSubtotal()} {t('unit.sdg')}
+                    </Text>
+                  </View>
                 </View>
-              ))}
-              {/* Order Summary */}
-              <View style={styles.summaryCard}>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</Text>
-                  <Text style={styles.summaryValue}>
-                    {calculateSubtotal()} {t('unit.sdg')}
+                {/* Checkout Button */}
+                <TouchableOpacity style={styles.checkoutBtn} onPress={() => setCurrentStep('delivery')}>
+                  <Text style={styles.checkoutBtnText}>
+                    {language === 'ar' ? 'متابعة للدفع' : 'Proceed to Checkout'}
                   </Text>
-                </View>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text>
-                  <Text style={styles.summaryTotalValue}>
-                    {calculateSubtotal()} {t('unit.sdg')}
-                  </Text>
-                </View>
+                </TouchableOpacity>
               </View>
-              {/* Checkout Button */}
-              <TouchableOpacity style={styles.checkoutBtn} onPress={() => setCurrentStep('delivery')}>
-                <Text style={styles.checkoutBtnText}>
-                  {language === 'ar' ? 'متابعة للدفع' : 'Proceed to Checkout'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </ScrollView>
-      </View>
+            )}
+          </ScrollView>
+        </View>
+      </SafeAreaView>
     );
   }
 

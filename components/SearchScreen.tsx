@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-// Removed react-native-vector-icons; using emoji for icons
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
-export default function SearchScreen({ navigateTo, addToCart }) {
+export default function SearchScreen({ navigateTo, addToCart, goBack }) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
 
@@ -62,16 +62,24 @@ export default function SearchScreen({ navigateTo, addToCart }) {
     addToCart && addToCart(medicine, 1);
   };
 
+  // Render back button if goBack is provided
+  const renderBackButton = () => goBack ? (
+    <TouchableOpacity onPress={goBack} style={{ padding: 8, marginRight: 8 }}>
+      <Text style={{ fontSize: 20 }}>{language === 'ar' ? '←' : '←'}</Text>
+    </TouchableOpacity>
+  ) : null;
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
+        {renderBackButton()}
         <Text style={styles.headerTitle}>
           {language === 'ar' ? 'البحث والاستكشاف' : 'Search & Explore'}
         </Text>
       </View>
 
       <View style={styles.searchContainer}>
-        <Text style={styles.searchIcon} accessibilityLabel="search">🔍</Text>
+        <Icon name="search" size={20} color="#6b7280" style={styles.searchIcon} />
         <TextInput
           placeholder={language === 'ar' ? 'ابحث عن دواء...' : 'Search medicine...'}
           style={styles.searchInput}

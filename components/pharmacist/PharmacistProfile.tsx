@@ -1,10 +1,6 @@
-// ...existing code...
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// ...existing code...
-// ...existing code...
-// ...existing code...
 import React, { useState } from 'react';
-import { Switch } from 'react-native';
+import { Switch, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { sudanesePharmaceuticalData, useLocalization, useRTL } from '../services/LocalizationService';
 
 type PharmacistProfileProps = {
@@ -19,6 +15,7 @@ type PharmacistProfileProps = {
 export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageToggle, currentLanguage, userData, updateUserProfile }: PharmacistProfileProps) {
   const { t, language } = useLocalization();
   const { isRTL, getMargin } = useRTL();
+  const insets = useSafeAreaInsets();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -46,10 +43,10 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
   // No longer need pharmacistStats or menuItems with icon references
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Profile Header */}
-      {/* ...convert the rest of the profile screen to React Native below... */}
-        <View style={styles.headerRow}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView style={styles.container}>
+        {/* Profile Header */}
+        <View style={[styles.headerRow, { paddingTop: insets.top + 16 }]}>
           <View style={styles.avatarContainer}>
             <Image
               source={{ uri: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&auto=format' }}
@@ -240,6 +237,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
         <Text style={styles.appInfoText}>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</Text>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({

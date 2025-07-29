@@ -1,29 +1,35 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useLocalization } from './services/LocalizationService';
 
 const onboardingSlides = [
   {
-    icon: '💊',
-    title: 'Find Your Medicines',
-    description: 'Search and discover medicines from verified pharmacies with detailed information and reviews.',
+    icon: 'medication',
+    titleKey: 'onboarding.title1',
+    descKey: 'onboarding.desc1',
     color: '#2563eb', // blue-500
   },
   {
-    icon: '🩺',
-    title: 'Consult Pharmacists',
-    description: 'Get expert advice from licensed pharmacists through our secure consultation platform.',
+    icon: 'medical-services',
+    titleKey: 'onboarding.title2',
+    descKey: 'onboarding.desc2',
     color: '#22c55e', // green-500
   },
   {
-    icon: '🚚',
-    title: 'Fast Delivery',
-    description: 'Order medicines for home delivery or schedule pickup from nearby pharmacies at your convenience.',
+    icon: 'local-shipping',
+    titleKey: 'onboarding.title3',
+    descKey: 'onboarding.desc3',
     color: '#a21caf', // purple-700
   },
 ];
 
 export default function OnboardingScreen({ onNext, onSkip }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { language, t, toggleLanguage } = useLocalization();
+  const insets = useSafeAreaInsets();
+  const { width: screenWidth } = Dimensions.get('window');
 
   const nextSlide = () => {
     if (currentSlide < onboardingSlides.length - 1) {
@@ -36,39 +42,39 @@ export default function OnboardingScreen({ onNext, onSkip }) {
   const slide = onboardingSlides[currentSlide];
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Skip Button */}
-      <View style={styles.skipContainer}>
+    <SafeAreaView style={[styles.container, { backgroundColor: '#f0f4ff', flex: 1 }]}>
+      {/* Top Bar: Language Switcher & Skip Button */}
+      <View style={[styles.topBar, { paddingTop: insets.top }]}> 
+        <TouchableOpacity style={styles.langBtn} onPress={toggleLanguage}>
+          <Icon name="language" size={16} color="#007bff" style={{ marginRight: 4 }} />
+          <Text style={styles.langBtnText}>{language === 'ar' ? 'EN' : 'ع'}</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={styles.skipText}>{t('action.skip')}</Text>
         </TouchableOpacity>
       </View>
-
       {/* Main Content */}
       <View style={styles.mainContent}>
         <View style={styles.card}>
           <View style={styles.iconContainer}>
             <View style={[styles.iconCircle, { backgroundColor: '#fff', borderColor: slide.color, borderWidth: 2 }]}> 
-              <Text style={{ fontSize: 48 }}>{slide.icon}</Text>
+              <Icon name={slide.icon} size={48} color={slide.color} />
             </View>
           </View>
-          <Text style={styles.title}>{slide.title}</Text>
-          <Text style={styles.description}>{slide.description}</Text>
-
+          <Text style={styles.title}>{t(slide.titleKey)}</Text>
+          <Text style={styles.description}>{t(slide.descKey)}</Text>
           {/* Slide Indicators */}
           <View style={styles.indicatorContainer}>
-            {onboardingSlides.map((_, index) => (
+            {onboardingSlides.map((_, idx2) => (
               <View
-                key={index}
-                style={[styles.indicator, index === currentSlide ? styles.indicatorActive : styles.indicatorInactive]}
+                key={idx2}
+                style={[styles.indicator, idx2 === currentSlide ? styles.indicatorActive : styles.indicatorInactive]}
               />
             ))}
           </View>
-
           <TouchableOpacity onPress={nextSlide} style={styles.nextButton}>
             <Text style={styles.nextButtonText}>
-              {currentSlide === onboardingSlides.length - 1 ? 'Get Started' : 'Next'}{' '}
-              <Text style={{ fontSize: 16 }}>➡️</Text>
+              {currentSlide === onboardingSlides.length - 1 ? t('action.getStarted') : t('action.next')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -76,8 +82,8 @@ export default function OnboardingScreen({ onNext, onSkip }) {
 
       {/* Brand */}
       <View style={styles.brandContainer}>
-        <Text style={styles.brandTitle}>PharmaCare</Text>
-        <Text style={styles.brandSubtitle}>Your trusted pharmacy companion</Text>
+        <Text style={styles.brandTitle}>{language === 'ar' ? t('app.name') : t('app.name')}</Text>
+        <Text style={styles.brandSubtitle}>{language === 'ar' ? 'دواءك دائما قريب منك' : 'YOUR MEDICINE ALWAYS NEARBY'}</Text>
       </View>
     </SafeAreaView>
   );
@@ -111,14 +117,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 32,
-    width: '100%',
-    maxWidth: 340,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
+    minHeight: 340, // ensure consistent height
+    maxWidth: 340,
   },
   iconContainer: {
     marginBottom: 24,
@@ -172,6 +178,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   brandContainer: {
     padding: 32,
@@ -186,5 +193,31 @@ const styles = StyleSheet.create({
   brandSubtitle: {
     color: '#888',
     fontSize: 14,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  langBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: '#f3f3f3',
+  },
+  langBtnIcon: {
+    fontSize: 16,
+    marginRight: 4,
+  },
+  langBtnText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#007bff',
   },
 });

@@ -1,11 +1,48 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
+
+const styles = StyleSheet.create({
+  container: { flexGrow: 1, backgroundColor: '#f9fafb', padding: 0 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
+  headerSubtitle: { fontSize: 13, color: '#666' },
+  langBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#eee', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, backgroundColor: '#f3f3f3' },
+  langBtnIcon: { fontSize: 16, marginRight: 4 },
+  langBtnText: { fontSize: 14, fontWeight: 'bold', color: '#007bff' },
+  welcomeSection: { alignItems: 'center', marginTop: 24, marginBottom: 8 },
+  welcomeTitle: { fontSize: 22, fontWeight: 'bold', color: '#222' },
+  welcomeDesc: { color: '#666', fontSize: 14, marginTop: 4 },
+  card: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', padding: 20, marginBottom: 18 },
+  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', textAlign: 'center', marginBottom: 12 },
+  userTypeRow: { flexDirection: 'row', gap: 12 },
+  userTypeBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#f3f3f3', marginHorizontal: 2 },
+  userTypeBtnActive: { backgroundColor: '#007bff', borderColor: '#007bff' },
+  userTypeIcon: { fontSize: 24, marginBottom: 4, color: '#007bff' },
+  userTypeLabel: { fontSize: 14, fontWeight: 'bold', color: '#222' },
+  authTabRow: { flexDirection: 'row', marginBottom: 12 },
+  authTabBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 8, backgroundColor: '#f3f3f3', marginHorizontal: 2 },
+  authTabBtnActive: { backgroundColor: '#007bff' },
+  authTabText: { fontSize: 14, color: '#666', fontWeight: 'bold' },
+  authTabTextActive: { color: '#fff' },
+  form: { marginTop: 4 },
+  formGroup: { marginBottom: 12 },
+  label: { fontSize: 13, color: '#444', marginBottom: 4 },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 6, padding: 10, fontSize: 14, backgroundColor: '#fff' },
+  passwordRow: { flexDirection: 'row', alignItems: 'center' },
+  eyeBtn: { marginLeft: 8, padding: 4 },
+  eyeIcon: { fontSize: 18 },
+  submitBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginTop: 8 },
+  submitBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+});
 
 export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('patient');
   const [showPassword, setShowPassword] = useState(false);
@@ -26,15 +63,23 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+      >
+        <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top }]}
+          keyboardShouldPersistTaps="handled"
+        >
       {/* Header with language switcher */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>{language === 'ar' ? 'صيدلية السودان' : 'Sudan Pharmacy'}</Text>
-          <Text style={styles.headerSubtitle}>{language === 'ar' ? 'خدمات صيدلانية متكاملة' : 'Comprehensive pharmacy services'}</Text>
+              <Text style={styles.headerTitle}>{t('app.name')}</Text>
+              <Text style={styles.headerSubtitle}>{t('auth.subtitle')}</Text>
         </View>
         <TouchableOpacity style={styles.langBtn} onPress={onLanguageToggle}>
-          <Text style={styles.langBtnIcon}>🌐</Text>
+          <Icon name="language" size={16} color="#007bff" style={{ marginRight: 4 }} />
           <Text style={styles.langBtnText}>{currentLanguage === 'ar' ? 'EN' : 'ع'}</Text>
         </TouchableOpacity>
       </View>
@@ -55,14 +100,12 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
             style={[styles.userTypeBtn, userType === 'patient' && styles.userTypeBtnActive]}
             onPress={() => setUserType('patient')}
           >
-            <Text style={styles.userTypeIcon}>👤</Text>
             <Text style={styles.userTypeLabel}>{language === 'ar' ? 'مريض' : 'Patient'}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.userTypeBtn, userType === 'pharmacist' && styles.userTypeBtnActive]}
             onPress={() => setUserType('pharmacist')}
           >
-            <Text style={styles.userTypeIcon}>👥</Text>
             <Text style={styles.userTypeLabel}>{language === 'ar' ? 'صيدلي' : 'Pharmacist'}</Text>
           </TouchableOpacity>
         </View>
@@ -129,7 +172,12 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
                 secureTextEntry={!showPassword}
               />
               <TouchableOpacity style={styles.eyeBtn} onPress={() => setShowPassword(!showPassword)}>
-                <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</Text>
+                    <Icon
+                      name={showPassword ? 'eye-off' : 'eye'}
+                      size={20}
+                      color="#888"
+                      style={styles.eyeIcon}
+                    />
               </TouchableOpacity>
             </View>
           </View>
@@ -155,39 +203,7 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
         </View>
       </View>
     </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: '#f9fafb', padding: 0 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
-  headerSubtitle: { fontSize: 13, color: '#666' },
-  langBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#eee', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, backgroundColor: '#f3f3f3' },
-  langBtnIcon: { fontSize: 16, marginRight: 4 },
-  langBtnText: { fontSize: 14, fontWeight: 'bold', color: '#007bff' },
-  welcomeSection: { alignItems: 'center', marginTop: 24, marginBottom: 8 },
-  welcomeTitle: { fontSize: 22, fontWeight: 'bold', color: '#222' },
-  welcomeDesc: { color: '#666', fontSize: 14, marginTop: 4 },
-  card: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', padding: 20, marginBottom: 18 },
-  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', textAlign: 'center', marginBottom: 12 },
-  userTypeRow: { flexDirection: 'row', gap: 12 },
-  userTypeBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 18, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#f3f3f3', marginHorizontal: 2 },
-  userTypeBtnActive: { backgroundColor: '#007bff', borderColor: '#007bff' },
-  userTypeIcon: { fontSize: 24, marginBottom: 4, color: '#007bff' },
-  userTypeLabel: { fontSize: 14, fontWeight: 'bold', color: '#222' },
-  authTabRow: { flexDirection: 'row', marginBottom: 12 },
-  authTabBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 8, backgroundColor: '#f3f3f3', marginHorizontal: 2 },
-  authTabBtnActive: { backgroundColor: '#007bff' },
-  authTabText: { fontSize: 14, color: '#666', fontWeight: 'bold' },
-  authTabTextActive: { color: '#fff' },
-  form: { marginTop: 4 },
-  formGroup: { marginBottom: 12 },
-  label: { fontSize: 13, color: '#444', marginBottom: 4 },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 6, padding: 10, fontSize: 14, backgroundColor: '#fff' },
-  passwordRow: { flexDirection: 'row', alignItems: 'center' },
-  eyeBtn: { marginLeft: 8, padding: 4 },
-  eyeIcon: { fontSize: 18 },
-  submitBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginTop: 8 },
-  submitBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-});

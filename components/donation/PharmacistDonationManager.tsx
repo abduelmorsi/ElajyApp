@@ -166,7 +166,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }: Phar
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, isRTL && { alignItems: 'flex-end' }]}> 
             {selectedPatient && (
-              <>
+              <View>
                 <Text style={styles.modalTitle}>{language === 'ar' ? 'ملف المريض' : 'Patient Profile'}</Text>
                 <View style={styles.modalHeaderBox}>
                   <Text style={styles.modalHeaderName}>{language === 'ar' ? selectedPatient.name : selectedPatient.nameEn}</Text>
@@ -202,7 +202,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }: Phar
                     <Text style={[styles.modalActionBtnText, { color: '#fff' }]}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
                   </TouchableOpacity>
                 </View>
-              </>
+              </View>
             )}
           </View>
         </View>

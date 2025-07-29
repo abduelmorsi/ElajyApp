@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization } from '../services/LocalizationService';
 
 interface PharmacyCardProps {
@@ -34,19 +35,19 @@ function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall }: Pharmac
           </View>
           <View style={styles.infoGrid}>
             <View style={styles.infoRow}>
-              <Text style={styles.icon}>📍</Text>
+              <Icon name="location-on" size={16} color="#6b7280" />
               <Text style={styles.infoText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.icon}>⏰</Text>
+              <Icon name="schedule" size={16} color="#6b7280" />
               <Text style={styles.infoText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.icon}>⭐</Text>
+              <Icon name="star" size={16} color="#6b7280" />
               <Text style={styles.infoText}>{pharmacy.rating}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.icon}>🚚</Text>
+              <Icon name="local-shipping" size={16} color="#6b7280" />
               <Text style={styles.infoText}>{pharmacy.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
             </View>
           </View>
@@ -64,7 +65,7 @@ function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall }: Pharmac
             }}
             activeOpacity={0.7}
           >
-            <Text style={styles.icon}>📞</Text>
+            <Icon name="phone" size={16} color="#007bff" />
           </TouchableOpacity>
         </View>
       </View>

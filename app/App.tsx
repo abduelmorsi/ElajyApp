@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Example icon lib
+import { useSafeAreaInsets, SafeAreaProvider } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import ErrorBoundary from '../components/ErrorBoundary';
 import { DeliveryProvider } from '../components/services/DeliveryService';
@@ -121,6 +122,7 @@ type UserData = PatientData | PharmacistData | null;
 function AppContent() {
   const { t, language, toggleLanguage } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [currentScreen, setCurrentScreen] = useState<string>('onboarding');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userType, setUserType] = useState<UserType>(null);
@@ -128,6 +130,7 @@ function AppContent() {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
 
   // Handle authentication
   const handleAuth = (type: UserType) => {
@@ -179,12 +182,23 @@ function AppContent() {
 
   // Navigation for different screens
   const navigateTo = (screen: string, data: any = null): void => {
+    setHistory(prev => [...prev, currentScreen]);
     if (screen === 'product-detail') {
       setSelectedProduct(data);
     } else if (screen === 'delivery-tracking') {
       setTrackingOrderId(data);
     }
     setCurrentScreen(screen);
+  };
+
+  const goBack = () => {
+    setHistory(prev => {
+      if (prev.length === 0) return prev;
+      const newHistory = [...prev];
+      const lastScreen = newHistory.pop();
+      if (lastScreen) setCurrentScreen(lastScreen);
+      return newHistory;
+    });
   };
 
   // Skip onboarding
@@ -216,6 +230,20 @@ function AppContent() {
 
   const currentTabs: TabType[] = userType === 'patient' ? patientTabs : pharmacistTabs;
 
+  // Function to map emoji names to Material Icons
+  const getIconName = (emojiName: string): string => {
+    const iconMap: { [key: string]: string } = {
+      'home': 'home',
+      'message-circle': 'chat',
+      'search': 'search',
+      'shopping-cart': 'shopping-cart',
+      'user': 'person',
+      'package': 'inventory',
+      'pharmacy': 'local-pharmacy',
+    };
+    return iconMap[emojiName] || 'help-outline';
+  };
+
   // Render current screen
   const renderScreen = () => {
     if (!isAuthenticated) {
@@ -233,13 +261,13 @@ function AppContent() {
     if (userType === 'patient') {
       switch (currentScreen) {
         case 'home':
-          return <HomeScreen navigateTo={navigateTo} userData={userData || {}} />;
+          return <HomeScreen navigateTo={navigateTo} userData={userData || {}} goBack={goBack} isMain={true} />;
         case 'search':
-          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} />;
+          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} />;
         case 'product-detail':
-          return <ProductDetailScreen product={selectedProduct} addToCart={addToCart} navigateTo={navigateTo} />;
+          return <ProductDetailScreen product={selectedProduct} addToCart={addToCart} navigateTo={navigateTo} goBack={goBack} />;
         case 'prescription':
-          return <PrescriptionScreen navigateTo={navigateTo} />;
+          return <PrescriptionScreen navigateTo={navigateTo} goBack={goBack} />;
         case 'cart':
           return <CartScreen cartItems={cartItems} setCartItems={setCartItems} navigateTo={navigateTo} />;
         case 'consult':
@@ -272,7 +300,7 @@ function AppContent() {
         case 'pharmacist-dashboard':
           return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
         case 'search':
-          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} />;
+          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} />;
         case 'pharmacist-orders':
           return <PharmacistOrders navigateTo={navigateTo} userData={userData || {}} />;
         case 'pharmacist-inventory':
@@ -315,29 +343,33 @@ function AppContent() {
               {renderScreen()}
             </View>
             {isAuthenticated && (
-              <View style={styles.bottomNav}>
+              <View style={[styles.bottomNav, { paddingBottom: insets.bottom }]}> 
                 <View style={[styles.tabRow, isRTL && styles.tabRowRtl]}>
                   {currentTabs.map((tab, index) => {
                     const isActive = currentScreen === tab.id;
-                    const isCenter = index === Math.floor(currentTabs.length / 2);
                     return (
                       <TouchableOpacity
                         key={tab.id}
                         style={[
                           styles.tabButton,
                           isActive && styles.tabButtonActive,
-                          isCenter && styles.tabButtonCenter,
                         ]}
                         onPress={() => setCurrentScreen(tab.id)}
+                        activeOpacity={0.7}
                       >
-                        {/* Replace below with your icon component */}
-                        <Text style={[styles.iconPlaceholder, isActive && styles.iconActive]}>{tab.icon}</Text>
+                        <View style={styles.tabIconContainer}>
+                          <Icon 
+                            name={getIconName(tab.icon)} 
+                            size={22} 
+                            color={isActive ? '#007bff' : '#6b7280'} 
+                          />
                         {'badge' in tab && tab.badge !== undefined && tab.badge > 0 && (
                           <View style={styles.badge}>
                             <Text style={styles.badgeText}>{tab.badge}</Text>
                           </View>
                         )}
-                        <Text style={[styles.tabLabel, isActive && styles.tabLabelActive, isCenter && styles.tabLabelCenter]}>
+                        </View>
+                        <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
                           {tab.label}
                         </Text>
                       </TouchableOpacity>
@@ -356,11 +388,17 @@ function AppContent() {
 
 export default function App() {
   return (
+    <SafeAreaProvider>
     <ErrorBoundary>
       <LocalizationProvider defaultLanguage="ar">
+          <InventoryProvider>
+            <DeliveryProvider>
         <AppContent />
+            </DeliveryProvider>
+          </InventoryProvider>
       </LocalizationProvider>
     </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
 
@@ -372,7 +410,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   rtl: {
-    flexDirection: 'row-reverse',
+    // Don't reverse the main container direction
   },
   content: {
     flex: 1,
@@ -380,17 +418,18 @@ const styles = StyleSheet.create({
   bottomNav: {
     backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#e5e7eb',
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
   },
   tabRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
   },
   tabRowRtl: {
     flexDirection: 'row-reverse',
@@ -398,48 +437,46 @@ const styles = StyleSheet.create({
   tabButton: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 12,
+    marginHorizontal: 2,
+    minHeight: 56,
   },
   tabButtonActive: {
-    backgroundColor: '#007bff',
-    borderRadius: 8,
+    backgroundColor: '#f0f9ff',
   },
-  tabButtonCenter: {
-    height: 56,
-    marginHorizontal: 4,
+  tabIconContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
   },
   tabLabel: {
-    fontSize: 10,
-    color: '#888',
+    fontSize: 11,
+    color: '#6b7280',
     textAlign: 'center',
-    marginTop: 2,
+    fontWeight: '500',
   },
   tabLabelActive: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  tabLabelCenter: {
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
-  iconPlaceholder: {
-    fontSize: 20,
-    color: '#888',
-    marginBottom: 2,
-  },
-  iconActive: {
-    color: '#fff',
+    color: '#007bff',
+    fontWeight: '600',
   },
   badge: {
     position: 'absolute',
-    top: 2,
-    right: 12,
-    backgroundColor: 'red',
-    borderRadius: 8,
-    paddingHorizontal: 4,
-    minWidth: 16,
+    top: -4,
+    right: -8,
+    backgroundColor: '#ef4444',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    minWidth: 18,
+    height: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   badgeText: {
     color: '#fff',

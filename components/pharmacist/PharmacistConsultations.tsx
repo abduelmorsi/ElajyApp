@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalization, useRTL } from '../services/LocalizationService';
 
 const ICONS = {
   arrowLeft: '←',
@@ -81,6 +83,9 @@ type PharmacistConsultationsProps = {
 };
 
 export default function PharmacistConsultations({ navigateTo }: PharmacistConsultationsProps) {
+  const { t, language } = useLocalization();
+  const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [selectedConsultation, setSelectedConsultation] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState(chatMessages);
@@ -211,64 +216,68 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
   const [tab, setTab] = useState('active');
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigateTo('pharmacist-dashboard')}>
-          <Text style={styles.headerBackIcon}>{ICONS.arrowLeft}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Consultations</Text>
-        <View style={{ width: 24 }} />
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigateTo('pharmacist-dashboard')}>
+            <Text style={styles.headerBackIcon}>{ICONS.arrowLeft}</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'الاستشارات الطبية' : 'Medical Consultations'}
+          </Text>
+          <View style={{ width: 24 }} />
+        </View>
 
-      {/* Tabs */}
-      <View style={styles.tabsRow}>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'active' && styles.tabBtnActive]} onPress={() => setTab('active')}>
-          <Text style={[styles.tabBtnText, tab === 'active' && styles.tabBtnTextActive]}>Active ({activeConsultations.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'waiting' && styles.tabBtnActive]} onPress={() => setTab('waiting')}>
-          <Text style={[styles.tabBtnText, tab === 'waiting' && styles.tabBtnTextActive]}>Waiting ({waitingConsultations.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'completed' && styles.tabBtnActive]} onPress={() => setTab('completed')}>
-          <Text style={[styles.tabBtnText, tab === 'completed' && styles.tabBtnTextActive]}>Completed</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Tabs */}
+        <View style={styles.tabsRow}>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'active' && styles.tabBtnActive]} onPress={() => setTab('active')}>
+            <Text style={[styles.tabBtnText, tab === 'active' && styles.tabBtnTextActive]}>Active ({activeConsultations.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'waiting' && styles.tabBtnActive]} onPress={() => setTab('waiting')}>
+            <Text style={[styles.tabBtnText, tab === 'waiting' && styles.tabBtnTextActive]}>Waiting ({waitingConsultations.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabBtn, tab === 'completed' && styles.tabBtnActive]} onPress={() => setTab('completed')}>
+            <Text style={[styles.tabBtnText, tab === 'completed' && styles.tabBtnTextActive]}>Completed</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Tab Content */}
-      <ScrollView style={styles.tabContent} contentContainerStyle={styles.tabContentContainer}>
-        {tab === 'active' && (
-          activeConsultations.length === 0 ? (
-            <View style={styles.emptyBox}>
-              <Text style={styles.emptyIcon}>{ICONS.message}</Text>
-              <Text style={styles.emptyTitle}>No Active Consultations</Text>
-              <Text style={styles.emptyDesc}>Active patient consultations will appear here</Text>
-            </View>
-          ) : (
-            activeConsultations.map((consultation) => (
+        {/* Tab Content */}
+        <ScrollView style={styles.tabContent} contentContainerStyle={styles.tabContentContainer}>
+          {tab === 'active' && (
+            activeConsultations.length === 0 ? (
+              <View style={styles.emptyBox}>
+                <Text style={styles.emptyIcon}>{ICONS.message}</Text>
+                <Text style={styles.emptyTitle}>No Active Consultations</Text>
+                <Text style={styles.emptyDesc}>Active patient consultations will appear here</Text>
+              </View>
+            ) : (
+              activeConsultations.map((consultation) => (
+                <ConsultationCard key={consultation.id} consultation={consultation} />
+              ))
+            )
+          )}
+          {tab === 'waiting' && (
+            waitingConsultations.length === 0 ? (
+              <View style={styles.emptyBox}>
+                <Text style={styles.emptyIcon}>{ICONS.clock}</Text>
+                <Text style={styles.emptyTitle}>No Waiting Consultations</Text>
+                <Text style={styles.emptyDesc}>Patients waiting for consultation will appear here</Text>
+              </View>
+            ) : (
+              waitingConsultations.map((consultation) => (
+                <ConsultationCard key={consultation.id} consultation={consultation} />
+              ))
+            )
+          )}
+          {tab === 'completed' && (
+            completedConsultations.map((consultation) => (
               <ConsultationCard key={consultation.id} consultation={consultation} />
             ))
-          )
-        )}
-        {tab === 'waiting' && (
-          waitingConsultations.length === 0 ? (
-            <View style={styles.emptyBox}>
-              <Text style={styles.emptyIcon}>{ICONS.clock}</Text>
-              <Text style={styles.emptyTitle}>No Waiting Consultations</Text>
-              <Text style={styles.emptyDesc}>Patients waiting for consultation will appear here</Text>
-            </View>
-          ) : (
-            waitingConsultations.map((consultation) => (
-              <ConsultationCard key={consultation.id} consultation={consultation} />
-            ))
-          )
-        )}
-        {tab === 'completed' && (
-          completedConsultations.map((consultation) => (
-            <ConsultationCard key={consultation.id} consultation={consultation} />
-          ))
-        )}
-      </ScrollView>
-    </View>
+          )}
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalization, useRTL } from '../services/LocalizationService';
 
 // Define the interface for PharmacistInventory's props
 interface PharmacistInventoryProps {
@@ -90,10 +92,41 @@ const inventoryItems: InventoryItem[] = [ // Apply the InventoryItem type to the
 // Apply the interface to the component's function signature
 
 export default function PharmacistInventory({ navigateTo, userData }: PharmacistInventoryProps) {
+  const { t, language } = useLocalization();
+  const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#2563eb' }}>Pharmacist Inventory (React Native shell)</Text>
-      {/* TODO: Convert the rest of the UI to React Native */}
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'إدارة المخزون' : 'Inventory Management'}
+          </Text>
+        </View>
+
+        {/* TODO: Convert the rest of the UI to React Native */}
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2563eb',
+  },
+});

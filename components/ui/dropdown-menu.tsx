@@ -42,7 +42,7 @@ const DropdownMenuTrigger = ({ children, onPress, style }: { children: React.Rea
 
 const DropdownMenuItem = ({ label, onPress, checked, radio, destructive, shortcut }: { label: string; onPress: () => void; checked?: boolean; radio?: boolean; destructive?: boolean; shortcut?: string }) => (
   <TouchableOpacity onPress={onPress} style={[styles.menuItem, destructive && styles.menuItemDestructive]}>
-    {checked ? <Text style={styles.menuIcon}>✔️</Text> : radio ? <Text style={styles.menuIcon}>◉</Text> : <Text style={styles.menuIcon} />}
+          {checked ? <Text style={styles.menuIcon}>✔️</Text> : radio ? <Text style={styles.menuIcon}>◉</Text> : <Text style={styles.menuIcon}> </Text>}
     <Text style={[styles.menuItemLabel, destructive && styles.menuItemLabelDestructive]}>{label}</Text>
     {shortcut && <Text style={styles.menuShortcut}>{shortcut}</Text>}
   </TouchableOpacity>

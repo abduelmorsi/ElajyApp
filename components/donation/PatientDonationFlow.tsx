@@ -309,12 +309,12 @@ export default function PatientDonationFlow({ navigateTo }) {
   );
 
   return (
-    <>
+    <View>
       {currentStep === 'select-pharmacy' && renderPharmacySelection()}
       {currentStep === 'select-medicines' && renderMedicineSelection()}
       {currentStep === 'confirm-donation' && renderConfirmDonation()}
       {currentStep === 'donation-complete' && renderDonationComplete()}
-    </>
+    </View>
   );
 }
 

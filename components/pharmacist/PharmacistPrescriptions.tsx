@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalization, useRTL } from '../services/LocalizationService';
 
 const prescriptions = [
   {
@@ -47,6 +49,9 @@ type PharmacistPrescriptionsProps = {
 };
 
 export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescriptionsProps) {
+  const { t, language } = useLocalization();
+  const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [tab, setTab] = useState<'pending' | 'verified' | 'rejected'>('pending');
 
@@ -264,31 +269,35 @@ export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescr
     );
   };
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')}>
-          <Text style={styles.headerIcon}>{'←'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Prescription Verification</Text>
-        <View style={{ width: 24 }} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')}>
+            <Text style={styles.headerIcon}>{'←'}</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'إدارة الوصفات الطبية' : 'Prescription Management'}
+          </Text>
+          <View style={{ width: 24 }} />
+        </View>
+        {/* Tabs */}
+        <View style={styles.tabsRow}>
+          <TouchableOpacity style={[styles.tab, tab === 'pending' && styles.tabActive]} onPress={() => setTab('pending')}>
+            <Text style={styles.tabText}>Pending ({pendingPrescriptions.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, tab === 'verified' && styles.tabActive]} onPress={() => setTab('verified')}>
+            <Text style={styles.tabText}>Verified ({verifiedPrescriptions.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, tab === 'rejected' && styles.tabActive]} onPress={() => setTab('rejected')}>
+            <Text style={styles.tabText}>Rejected ({rejectedPrescriptions.length})</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {renderTabContent()}
+        </ScrollView>
       </View>
-      {/* Tabs */}
-      <View style={styles.tabsRow}>
-        <TouchableOpacity style={[styles.tab, tab === 'pending' && styles.tabActive]} onPress={() => setTab('pending')}>
-          <Text style={styles.tabText}>Pending ({pendingPrescriptions.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'verified' && styles.tabActive]} onPress={() => setTab('verified')}>
-          <Text style={styles.tabText}>Verified ({verifiedPrescriptions.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'rejected' && styles.tabActive]} onPress={() => setTab('rejected')}>
-          <Text style={styles.tabText}>Rejected ({rejectedPrescriptions.length})</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {renderTabContent()}
-      </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

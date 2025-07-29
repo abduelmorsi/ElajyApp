@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalization, useRTL } from '../services/LocalizationService';
 
 // Define the interface for PharmacistOrders's props
 interface PharmacistOrdersProps {
@@ -81,6 +83,9 @@ const orders = [
 export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrdersProps) {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [tab, setTab] = useState<'pending' | 'processing' | 'ready' | 'completed'>('pending');
+  const { t, language } = useLocalization();
+  const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -237,14 +242,14 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
           {/* Actions */}
           <View style={styles.actionColumn}>
             {selectedOrder.status === 'pending' && (
-              <>
+              <View>
                 <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'processing')}>
                   <Text style={styles.buttonText}>Accept Order</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'cancelled')}>
                   <Text style={styles.buttonText}>Decline Order</Text>
                 </TouchableOpacity>
-              </>
+              </View>
             )}
             {selectedOrder.status === 'processing' && (
               <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'ready')}>
@@ -310,34 +315,38 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
     );
   };
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')}>
-          <Text style={styles.headerIcon}>{'←'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Order Management</Text>
-        <View style={{ width: 24 }} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')}>
+            <Text style={styles.headerIcon}>{'←'}</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'إدارة الطلبات' : 'Order Management'}
+          </Text>
+          <View style={{ width: 24 }} />
+        </View>
+        {/* Tabs */}
+        <View style={styles.tabsRow}>
+          <TouchableOpacity style={[styles.tab, tab === 'pending' && styles.tabActive]} onPress={() => setTab('pending')}>
+            <Text style={styles.tabText}>Pending ({pendingOrders.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, tab === 'processing' && styles.tabActive]} onPress={() => setTab('processing')}>
+            <Text style={styles.tabText}>Processing ({processingOrders.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, tab === 'ready' && styles.tabActive]} onPress={() => setTab('ready')}>
+            <Text style={styles.tabText}>Ready ({readyOrders.length})</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, tab === 'completed' && styles.tabActive]} onPress={() => setTab('completed')}>
+            <Text style={styles.tabText}>Completed</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {renderTabContent()}
+        </ScrollView>
       </View>
-      {/* Tabs */}
-      <View style={styles.tabsRow}>
-        <TouchableOpacity style={[styles.tab, tab === 'pending' && styles.tabActive]} onPress={() => setTab('pending')}>
-          <Text style={styles.tabText}>Pending ({pendingOrders.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'processing' && styles.tabActive]} onPress={() => setTab('processing')}>
-          <Text style={styles.tabText}>Processing ({processingOrders.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'ready' && styles.tabActive]} onPress={() => setTab('ready')}>
-          <Text style={styles.tabText}>Ready ({readyOrders.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'completed' && styles.tabActive]} onPress={() => setTab('completed')}>
-          <Text style={styles.tabText}>Completed</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {renderTabContent()}
-      </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
