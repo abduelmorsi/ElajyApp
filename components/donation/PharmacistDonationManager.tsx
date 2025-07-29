@@ -56,21 +56,21 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
         <View style={styles.donorInfo}>
           <Icon name="person" size={20} color="#6b7280" />
           <Text style={styles.donorName}>{donation.donor}</Text>
-        </View>
+          </View>
         <View style={[styles.statusBadge, { backgroundColor: donation.status === 'pending' ? '#fef3c7' : '#dcfce7' }]}>
           <Icon name={ICONS.check} size={14} color={donation.status === 'pending' ? '#92400e' : '#166534'} />
           <Text style={[styles.statusText, { color: donation.status === 'pending' ? '#92400e' : '#166534' }]}>
             {donation.status === 'pending' ? (language === 'ar' ? 'في الانتظار' : 'Pending') : (language === 'ar' ? 'تم التوزيع' : 'Assigned')}
-          </Text>
+            </Text>
         </View>
       </View>
-      
+
       <View style={styles.medicinesList}>
         {donation.medicines.map((medicine, index) => (
           <Text key={index} style={styles.medicineItem}>• {medicine}</Text>
         ))}
       </View>
-      
+
       <View style={styles.donationFooter}>
         <View style={styles.donationMeta}>
           <Icon name={ICONS.package} size={16} color="#6b7280" />
@@ -89,7 +89,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
             <Icon name={ICONS.phone} size={16} color="#007bff" />
             <Text style={[styles.actionButtonText, { color: '#007bff' }]}>{language === 'ar' ? 'اتصال' : 'Contact'}</Text>
           </TouchableOpacity>
-        </View>
+                </View>
       )}
       
       {donation.status === 'assigned' && donation.assignedTo && (
@@ -97,9 +97,9 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
           <Text style={styles.assignedText}>
             {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'} {donation.assignedTo}
           </Text>
-        </View>
+                    </View>
       )}
-    </View>
+                </View>
   );
 
   return (
@@ -108,23 +108,23 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
         <View style={styles.body}>
           {/* Tabs */}
           <View style={styles.tabsContainer}>
-            <TouchableOpacity
+                  <TouchableOpacity
               style={[styles.tab, selectedTab === 'pending' && styles.activeTab]}
               onPress={() => setSelectedTab('pending')}
-            >
+                  >
               <Text style={[styles.tabText, selectedTab === 'pending' && styles.activeTabText]}>
                 {language === 'ar' ? 'في الانتظار' : 'Pending'} ({pendingDonations.length})
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+                  </TouchableOpacity>
+                  <TouchableOpacity
               style={[styles.tab, selectedTab === 'assigned' && styles.activeTab]}
               onPress={() => setSelectedTab('assigned')}
-            >
+                  >
               <Text style={[styles.tabText, selectedTab === 'assigned' && styles.activeTabText]}>
                 {language === 'ar' ? 'تم التوزيع' : 'Assigned'} ({assignedDonations.length})
               </Text>
-            </TouchableOpacity>
-          </View>
+                  </TouchableOpacity>
+                </View>
 
           {/* Donations List */}
           <View style={styles.donationsList}>
@@ -132,7 +132,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
             {selectedTab === 'assigned' && assignedDonations.map(renderDonationCard)}
           </View>
         </View>
-      </ScrollView>
+    </ScrollView>
     </SafeAreaView>
   );
 }

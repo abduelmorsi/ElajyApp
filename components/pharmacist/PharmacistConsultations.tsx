@@ -128,7 +128,7 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
           </View>
           <Text style={styles.topic}>{consultation.topic}</Text>
           <Text style={styles.lastMessage}>{consultation.lastMessage}</Text>
-        </View>
+            </View>
         <View style={styles.cardMeta}>
           <Text style={styles.time}>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
           {consultation.unreadCount > 0 && (
@@ -173,7 +173,7 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
         >
           <View style={styles.chatContainer}>
             <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
-              {messages.map((message) => (
+          {messages.map((message) => (
                 <View key={message.id} style={[
                   styles.messageContainer,
                   message.sender === 'pharmacist' ? styles.pharmacistMessage : styles.patientMessage
@@ -189,24 +189,24 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
                       {message.message}
                     </Text>
                     <Text style={styles.messageTime}>{message.timestamp}</Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
 
             <View style={styles.inputContainer}>
-              <TextInput
+          <TextInput
                 style={styles.textInput}
-                value={newMessage}
-                onChangeText={setNewMessage}
+            value={newMessage}
+            onChangeText={setNewMessage}
                 placeholder={language === 'ar' ? 'اكتب رسالة...' : 'Type a message...'}
                 multiline
-              />
+          />
               <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
                 <Icon name="send" size={20} color="#fff" />
-              </TouchableOpacity>
-            </View>
-          </View>
+          </TouchableOpacity>
+        </View>
+      </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
@@ -218,19 +218,19 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Icon name="arrow-back" size={24} color="#222" />
-        </TouchableOpacity>
+          </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>{language === 'ar' ? 'الاستشارات' : 'Consultations'}</Text>
         </View>
         <View style={{ width: 40 }} />
-      </View>
+        </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
         <View style={styles.body}>
           {consultations.map((consultation) => (
-            <ConsultationCard key={consultation.id} consultation={consultation} />
+                <ConsultationCard key={consultation.id} consultation={consultation} />
           ))}
-        </View>
+              </View>
         </ScrollView>
     </SafeAreaView>
   );

@@ -210,7 +210,7 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
                 <View style={styles.headerMetaItem}>
                 <Icon name="schedule" size={16} color="#6b7280" />
                   <Text style={styles.headerMetaText}>{currentTime}</Text>
-              </View>
+                </View>
               </View>
             </View>
             <View style={styles.headerStatusBox}>

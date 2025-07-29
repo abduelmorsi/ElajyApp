@@ -315,7 +315,7 @@ function AppContent() {
         case 'pharmacist-consultations':
           return <PharmacistConsultations navigateTo={navigateTo} goBack={goBack} />;
         case 'pharmacist-analytics':
-          return <PharmacistAnalytics navigateTo={navigateTo} userData={userData || {}} />;
+          return <PharmacistAnalytics navigateTo={navigateTo} goBack={goBack} userData={userData || {}} />;
         case 'donations':
           return <DonationScreen navigateTo={navigateTo} goBack={goBack} userType={userType} userData={userData || {}} />;
         case 'pharmacist-profile':
