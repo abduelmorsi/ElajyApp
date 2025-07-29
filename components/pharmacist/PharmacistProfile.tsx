@@ -150,7 +150,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
         <Text style={styles.sectionTitleText}>{language === 'ar' ? 'المعلومات المهنية' : 'Professional Information'}</Text>
         <View style={styles.card}>
           <View style={styles.infoRow}>
-            <Icon name="description" size={18} color="#6c757d" />
+            <Icon name="description" size={18} color="#6c757d" style={styles.infoIcon} />
             <View style={styles.infoTextBox}>
               <Text style={styles.infoLabel}>{language === 'ar' ? 'رقم الترخيص' : 'License Number'}</Text>
               <Text style={styles.infoValue}>{pharmacistData.licenseNumber}</Text>
@@ -159,7 +159,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
-            <Icon name="phone" size={18} color="#6c757d" />
+            <Icon name="phone" size={18} color="#6c757d" style={styles.infoIcon} />
             <View style={styles.infoTextBox}>
               <Text style={styles.infoLabel}>{language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</Text>
               <Text style={styles.infoValue}>{pharmacistData.phone}</Text>
@@ -170,7 +170,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
-            <Icon name="email" size={18} color="#6c757d" />
+            <Icon name="email" size={18} color="#6c757d" style={styles.infoIcon} />
             <View style={styles.infoTextBox}>
               <Text style={styles.infoLabel}>{language === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</Text>
               <Text style={styles.infoValue}>{pharmacistData.email}</Text>
@@ -188,7 +188,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
         <View style={styles.card}>
           {/* Language */}
           <View style={styles.settingRow}>
-            <Icon name="language" size={18} color="#6c757d" />
+            <Icon name="language" size={18} color="#6c757d" style={styles.settingIcon} />
             <View style={styles.settingTextBox}>
               <Text style={styles.settingLabel}>{language === 'ar' ? 'اللغة' : 'Language'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'العربية' : 'English'}</Text>
@@ -200,7 +200,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           <View style={styles.separator} />
           {/* Notifications */}
           <View style={styles.settingRow}>
-            <Icon name="notifications" size={18} color="#6c757d" />
+            <Icon name="notifications" size={18} color="#6c757d" style={styles.settingIcon} />
             <View style={styles.settingTextBox}>
               <Text style={styles.settingLabel}>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'تنبيهات الطلبات والوصفات' : 'Order and prescription alerts'}</Text>
@@ -210,7 +210,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           <View style={styles.separator} />
           {/* Dark Mode */}
           <View style={styles.settingRow}>
-            <Icon name="dark-mode" size={18} color="#6c757d" />
+            <Icon name="dark-mode" size={18} color="#6c757d" style={styles.settingIcon} />
             <View style={styles.settingTextBox}>
               <Text style={styles.settingLabel}>{language === 'ar' ? 'الوضع الليلي' : 'Dark Mode'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'تغيير مظهر التطبيق' : 'Change app appearance'}</Text>
@@ -263,7 +263,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
         ].map((item, idx) => (
           <TouchableOpacity key={idx} style={styles.menuCard} onPress={item.action}>
             <View style={styles.menuRow}>
-              <Icon name={item.icon} size={20} color="#6c757d" />
+              <Icon name={item.icon} size={20} color="#6c757d" style={styles.menuIcon} />
               <View style={styles.menuTextBox}>
                 <Text style={styles.menuTitle}>{item.title}</Text>
                 <Text style={styles.menuDesc}>{item.description}</Text>
