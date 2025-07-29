@@ -1,22 +1,13 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from '../services/LocalizationService';
-
-const ICONS = {
-  arrowLeft: '←',
-  message: '💬',
-  phone: '📞',
-  video: '🎥',
-  clock: '⏰',
-  user: '👤',
-  send: '📤',
-};
 
 const consultations = [
   {
     id: "CONS-001",
-    patient: "John Doe",
+    patient: "Ahmed Mohamed",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
     status: "active",
     startTime: "2024-01-15T10:30:00",
@@ -27,7 +18,7 @@ const consultations = [
   },
   {
     id: "CONS-002", 
-    patient: "Sarah Smith",
+    patient: "Fatima Ali",
     avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100",
     status: "waiting",
     startTime: "2024-01-15T11:15:00",
@@ -38,7 +29,7 @@ const consultations = [
   },
   {
     id: "CONS-003",
-    patient: "Mike Johnson", 
+    patient: "Mohamed Hassan", 
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
     status: "completed",
     startTime: "2024-01-15T09:00:00",
@@ -77,7 +68,6 @@ const chatMessages = [
   }
 ];
 
-
 type PharmacistConsultationsProps = {
   navigateTo: (screen: string, data?: any) => void;
 };
@@ -105,56 +95,46 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return { backgroundColor: '#dcfce7', color: '#166534' };
-      case 'waiting': return { backgroundColor: '#fef9c3', color: '#b45309' };
-      case 'completed': return { backgroundColor: '#f3f4f6', color: '#374151' };
-      default: return { backgroundColor: '#f3f4f6', color: '#374151' };
+      case 'active': return { backgroundColor: '#DCFCE7', color: '#166534' };
+      case 'waiting': return { backgroundColor: '#FEF3C7', color: '#92400E' };
+      case 'completed': return { backgroundColor: '#F3F4F6', color: '#374151' };
+      default: return { backgroundColor: '#F3F4F6', color: '#374151' };
     }
   };
 
-  const activeConsultations = consultations.filter(c => c.status === 'active');
-  const waitingConsultations = consultations.filter(c => c.status === 'waiting');
-  const completedConsultations = consultations.filter(c => c.status === 'completed');
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'active': return 'fiber-manual-record';
+      case 'waiting': return 'schedule';
+      case 'completed': return 'check-circle';
+      default: return 'help';
+    }
+  };
 
   const ConsultationCard = ({ consultation }) => (
     <TouchableOpacity style={styles.card} onPress={() => setSelectedConsultation(consultation)}>
-      <View style={styles.cardRow}>
-        <View style={styles.avatarBox}>
-          <Image source={{ uri: consultation.avatar }} style={styles.avatarImg} />
-          <View style={[styles.statusDot, 
-            consultation.status === 'active' ? { backgroundColor: '#22c55e' } :
-            consultation.status === 'waiting' ? { backgroundColor: '#fde047' } :
-            { backgroundColor: '#a3a3a3' }
-          ]} />
-        </View>
-        <View style={{ flex: 1 }}>
+      <View style={styles.cardHeader}>
+        <Image source={{ uri: consultation.avatar }} style={styles.avatar} />
+        <View style={styles.cardInfo}>
           <View style={styles.cardHeaderRow}>
-            <View>
-              <Text style={styles.cardPatient}>{consultation.patient}</Text>
-              <Text style={styles.cardTopic}>{consultation.topic}</Text>
-            </View>
-            <View style={styles.badgeRow}>
-              <View style={[styles.badge, getStatusColor(consultation.status)]}>
-                <Text style={styles.badgeText}>{consultation.status}</Text>
-              </View>
-              {consultation.unreadCount > 0 && (
-                <View style={[styles.badge, { backgroundColor: '#007bff' }]}> 
-                  <Text style={[styles.badgeText, { color: '#fff' }]}>{consultation.unreadCount}</Text>
-                </View>
-              )}
+            <Text style={styles.patientName}>{consultation.patient}</Text>
+            <View style={[styles.statusBadge, getStatusColor(consultation.status)]}>
+              <Icon name={getStatusIcon(consultation.status)} size={12} color={getStatusColor(consultation.status).color} />
+              <Text style={[styles.statusText, { color: getStatusColor(consultation.status).color }]}>
+                {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
+              </Text>
             </View>
           </View>
-          <Text style={styles.cardLastMsg}>{consultation.lastMessage}</Text>
-          <View style={styles.cardFooterRow}>
-            <View style={styles.cardFooterLeft}>
-              <Text style={styles.cardFooterIcon}>{consultation.type === 'video' ? ICONS.video : ICONS.message}</Text>
-              <Text style={styles.cardFooterType}>{consultation.type}</Text>
+          <Text style={styles.topic}>{consultation.topic}</Text>
+          <Text style={styles.lastMessage}>{consultation.lastMessage}</Text>
+        </View>
+        <View style={styles.cardMeta}>
+          <Text style={styles.time}>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+          {consultation.unreadCount > 0 && (
+            <View style={styles.unreadBadge}>
+              <Text style={styles.unreadCount}>{consultation.unreadCount}</Text>
             </View>
-            <View style={styles.cardFooterRight}>
-              <Text style={styles.cardFooterIcon}>{ICONS.clock}</Text>
-              <Text style={styles.cardFooterTime}>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-            </View>
-          </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -162,182 +142,291 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
 
   if (selectedConsultation) {
     return (
-      <View style={styles.chatContainer}>
-        {/* Chat Header */}
-        <View style={styles.chatHeader}>
-          <TouchableOpacity style={styles.headerBackBtn} onPress={() => setSelectedConsultation(null)}>
-            <Text style={styles.headerBackIcon}>{ICONS.arrowLeft}</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        {/* Fixed Header */}
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <TouchableOpacity onPress={() => setSelectedConsultation(null)} style={styles.backButton}>
+            <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
-          <Image source={{ uri: selectedConsultation.avatar }} style={styles.headerAvatar} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.headerPatient}>{selectedConsultation.patient}</Text>
-            <Text style={styles.headerTopic}>{selectedConsultation.topic}</Text>
-          </View>
-          <View style={styles.headerActionRow}>
-            <TouchableOpacity style={styles.headerActionBtn}><Text style={styles.headerActionIcon}>{ICONS.phone}</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.headerActionBtn}><Text style={styles.headerActionIcon}>{ICONS.video}</Text></TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Messages */}
-        <ScrollView style={styles.messagesScroll} contentContainerStyle={styles.messagesContent}>
-          {messages.map((message) => (
-            <View
-              key={message.id}
-              style={[styles.messageRow, message.sender === 'pharmacist' ? styles.messageRowRight : styles.messageRowLeft]}
-            >
-              <View style={[styles.messageBubble, message.sender === 'pharmacist' ? styles.messageBubblePharmacist : styles.messageBubblePatient]}>
-                <Text style={styles.messageText}>{message.message}</Text>
-                <Text style={[styles.messageTime, message.sender === 'pharmacist' ? styles.messageTimePharmacist : styles.messageTimePatient]}>{message.timestamp}</Text>
-              </View>
+          <View style={styles.headerInfo}>
+            <Image source={{ uri: selectedConsultation.avatar }} style={styles.headerAvatar} />
+            <View>
+              <Text style={styles.headerTitle}>{selectedConsultation.patient}</Text>
+              <Text style={styles.headerSubtitle}>{selectedConsultation.topic}</Text>
             </View>
-          ))}
-        </ScrollView>
-
-        {/* Message Input */}
-        <View style={styles.inputRow}>
-          <TextInput
-            style={styles.input}
-            placeholder="Type your response..."
-            value={newMessage}
-            onChangeText={setNewMessage}
-            onSubmitEditing={handleSendMessage}
-            returnKeyType="send"
-          />
-          <TouchableOpacity style={styles.sendBtn} onPress={handleSendMessage}>
-            <Text style={styles.sendBtnIcon}>{ICONS.send}</Text>
-          </TouchableOpacity>
+          </View>
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.actionButton}>
+              <Icon name="call" size={20} color="#007bff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton}>
+              <Icon name="videocam" size={20} color="#007bff" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+
+        <View style={styles.chatContainer}>
+          <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
+            {messages.map((message) => (
+              <View key={message.id} style={[
+                styles.messageContainer,
+                message.sender === 'pharmacist' ? styles.pharmacistMessage : styles.patientMessage
+              ]}>
+                <View style={[
+                  styles.messageBubble,
+                  message.sender === 'pharmacist' ? styles.pharmacistBubble : styles.patientBubble
+                ]}>
+                  <Text style={[
+                    styles.messageText,
+                    message.sender === 'pharmacist' ? styles.pharmacistText : styles.patientText
+                  ]}>
+                    {message.message}
+                  </Text>
+                  <Text style={styles.messageTime}>{message.timestamp}</Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+          
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.textInput}
+              value={newMessage}
+              onChangeText={setNewMessage}
+              placeholder={language === 'ar' ? 'اكتب رسالة...' : 'Type a message...'}
+              multiline
+            />
+            <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+              <Icon name="send" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
     );
   }
 
-  // Tab state
-  const [tab, setTab] = useState('active');
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-          <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigateTo('pharmacist-dashboard')}>
-            <Text style={styles.headerBackIcon}>{ICONS.arrowLeft}</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>
-            {language === 'ar' ? 'الاستشارات الطبية' : 'Medical Consultations'}
-          </Text>
-          <View style={{ width: 24 }} />
-        </View>
-
-        {/* Tabs */}
-        <View style={styles.tabsRow}>
-          <TouchableOpacity style={[styles.tabBtn, tab === 'active' && styles.tabBtnActive]} onPress={() => setTab('active')}>
-            <Text style={[styles.tabBtnText, tab === 'active' && styles.tabBtnTextActive]}>Active ({activeConsultations.length})</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.tabBtn, tab === 'waiting' && styles.tabBtnActive]} onPress={() => setTab('waiting')}>
-            <Text style={[styles.tabBtnText, tab === 'waiting' && styles.tabBtnTextActive]}>Waiting ({waitingConsultations.length})</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.tabBtn, tab === 'completed' && styles.tabBtnActive]} onPress={() => setTab('completed')}>
-            <Text style={[styles.tabBtnText, tab === 'completed' && styles.tabBtnTextActive]}>Completed</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Tab Content */}
-        <ScrollView style={styles.tabContent} contentContainerStyle={styles.tabContentContainer}>
-          {tab === 'active' && (
-            activeConsultations.length === 0 ? (
-              <View style={styles.emptyBox}>
-                <Text style={styles.emptyIcon}>{ICONS.message}</Text>
-                <Text style={styles.emptyTitle}>No Active Consultations</Text>
-                <Text style={styles.emptyDesc}>Active patient consultations will appear here</Text>
-              </View>
-            ) : (
-              activeConsultations.map((consultation) => (
-                <ConsultationCard key={consultation.id} consultation={consultation} />
-              ))
-            )
-          )}
-          {tab === 'waiting' && (
-            waitingConsultations.length === 0 ? (
-              <View style={styles.emptyBox}>
-                <Text style={styles.emptyIcon}>{ICONS.clock}</Text>
-                <Text style={styles.emptyTitle}>No Waiting Consultations</Text>
-                <Text style={styles.emptyDesc}>Patients waiting for consultation will appear here</Text>
-              </View>
-            ) : (
-              waitingConsultations.map((consultation) => (
-                <ConsultationCard key={consultation.id} consultation={consultation} />
-              ))
-            )
-          )}
-          {tab === 'completed' && (
-            completedConsultations.map((consultation) => (
-              <ConsultationCard key={consultation.id} consultation={consultation} />
-            ))
-          )}
-        </ScrollView>
+      {/* Fixed Header */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <Text style={styles.headerTitle}>{language === 'ar' ? 'الاستشارات' : 'Consultations'}</Text>
       </View>
+
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
+        <View style={styles.body}>
+          {consultations.map((consultation) => (
+            <ConsultationCard key={consultation.id} consultation={consultation} />
+          ))}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#fff' },
-  headerBackBtn: { padding: 6, marginRight: 8 },
-  headerBackIcon: { fontSize: 22, color: '#888' },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#2d7d6b' },
-  tabsRow: { flexDirection: 'row', backgroundColor: '#e5e7eb', borderRadius: 8, margin: 16, marginBottom: 0 },
-  tabBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 8 },
-  tabBtnActive: { backgroundColor: '#2d7d6b' },
-  tabBtnText: { color: '#222', fontSize: 15 },
-  tabBtnTextActive: { color: '#fff', fontWeight: 'bold' },
-  tabContent: { flex: 1, paddingHorizontal: 16, marginTop: 12 },
-  tabContentContainer: { paddingBottom: 32 },
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 14, elevation: 1 },
-  cardRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  avatarBox: { marginRight: 12, position: 'relative' },
-  avatarImg: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#eee' },
-  statusDot: { position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: '#fff' },
-  cardHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 4 },
-  cardPatient: { fontSize: 15, fontWeight: 'bold', color: '#222' },
-  cardTopic: { fontSize: 12, color: '#555' },
-  badgeRow: { flexDirection: 'row', alignItems: 'center' },
-  badge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 4, minWidth: 32, alignItems: 'center', justifyContent: 'center' },
-  badgeText: { fontSize: 12, fontWeight: 'bold' },
-  cardLastMsg: { fontSize: 12, color: '#888', marginBottom: 4 },
-  cardFooterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cardFooterLeft: { flexDirection: 'row', alignItems: 'center' },
-  cardFooterRight: { flexDirection: 'row', alignItems: 'center' },
-  cardFooterIcon: { fontSize: 13, marginRight: 4 },
-  cardFooterType: { fontSize: 12, color: '#555' },
-  cardFooterTime: { fontSize: 12, color: '#555' },
-  emptyBox: { alignItems: 'center', justifyContent: 'center', marginTop: 48 },
-  emptyIcon: { fontSize: 48, color: '#bbb', marginBottom: 12 },
-  emptyTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 4 },
-  emptyDesc: { color: '#888', fontSize: 13 },
-  chatContainer: { flex: 1, backgroundColor: '#f9fafb' },
-  chatHeader: { flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#fff' },
-  headerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#eee', marginRight: 10 },
-  headerPatient: { fontSize: 15, fontWeight: 'bold', color: '#222' },
-  headerTopic: { fontSize: 12, color: '#555' },
-  headerActionRow: { flexDirection: 'row', alignItems: 'center' },
-  headerActionBtn: { marginLeft: 8, padding: 6, backgroundColor: '#e5e7eb', borderRadius: 8 },
-  headerActionIcon: { fontSize: 18 },
-  messagesScroll: { flex: 1, padding: 16 },
-  messagesContent: { paddingBottom: 32 },
-  messageRow: { flexDirection: 'row', marginBottom: 10 },
-  messageRowLeft: { justifyContent: 'flex-start' },
-  messageRowRight: { justifyContent: 'flex-end' },
-  messageBubble: { maxWidth: '80%', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12 },
-  messageBubblePharmacist: { backgroundColor: '#2d7d6b' },
-  messageBubblePatient: { backgroundColor: '#e5e7eb' },
-  messageText: { fontSize: 14, color: '#fff' },
-  messageTime: { fontSize: 11, marginTop: 2 },
-  messageTimePharmacist: { color: '#fff', opacity: 0.7 },
-  messageTimePatient: { color: '#555' },
-  inputRow: { flexDirection: 'row', alignItems: 'center', padding: 12, borderTopWidth: 1, borderTopColor: '#eee', backgroundColor: '#fff' },
-  input: { flex: 1, backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, marginRight: 8 },
-  sendBtn: { backgroundColor: '#2d7d6b', borderRadius: 8, padding: 10 },
-  sendBtnIcon: { color: '#fff', fontSize: 18 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#f9fafb' 
+  },
+  body: {
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  backButton: { 
+    padding: 8 
+  },
+  headerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#eee',
+    marginRight: 10,
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    color: '#555',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    marginLeft: 8,
+    padding: 6,
+    backgroundColor: '#e5e7eb',
+    borderRadius: 8,
+  },
+  card: { 
+    backgroundColor: '#fff', 
+    borderRadius: 12, 
+    padding: 16, 
+    marginBottom: 14, 
+    elevation: 1 
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#eee',
+    marginRight: 12,
+  },
+  cardInfo: {
+    flex: 1,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  patientName: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 4,
+    minWidth: 32,
+    justifyContent: 'center',
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+  topic: {
+    fontSize: 12,
+    color: '#555',
+    marginBottom: 4,
+  },
+  lastMessage: {
+    fontSize: 12,
+    color: '#888',
+  },
+  cardMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  time: {
+    fontSize: 12,
+    color: '#555',
+  },
+  unreadBadge: {
+    backgroundColor: '#007bff',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  unreadCount: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  chatContainer: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+    paddingHorizontal: 16,
+    paddingBottom: 32,
+  },
+  messagesContainer: {
+    flex: 1,
+  },
+  messagesContent: {
+    paddingBottom: 32,
+  },
+  messageContainer: {
+    marginBottom: 10,
+  },
+  pharmacistMessage: {
+    alignItems: 'flex-end',
+  },
+  patientMessage: {
+    alignItems: 'flex-start',
+  },
+  messageBubble: {
+    maxWidth: '80%',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  pharmacistBubble: {
+    backgroundColor: '#2d7d6b',
+  },
+  patientBubble: {
+    backgroundColor: '#e5e7eb',
+  },
+  messageText: {
+    fontSize: 14,
+  },
+  pharmacistText: {
+    color: '#fff',
+  },
+  patientText: {
+    color: '#555',
+  },
+  messageTime: {
+    fontSize: 11,
+    marginTop: 2,
+    color: '#888',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    backgroundColor: '#fff',
+  },
+  textInput: {
+    flex: 1,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 14,
+    marginRight: 8,
+    maxHeight: 100,
+  },
+  sendButton: {
+    backgroundColor: '#2d7d6b',
+    borderRadius: 8,
+    padding: 10,
+  },
 });
