@@ -63,7 +63,7 @@ const translations = {
 
     // Authentication
     'auth.welcome': 'مرحباً بك في علاجي',
-    'auth.subtitle': 'خدمات صيدلانية متكاملة في راحة بيتك',
+    'auth.subtitle': 'سجل دخولك للوصول إلى خدماتنا',
     'auth.patient': 'مريض',
     'auth.pharmacist': 'صيدلي',
     'auth.signin': 'تسجيل الدخول',

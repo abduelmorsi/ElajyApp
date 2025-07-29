@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: '#f9fafb', padding: 0 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  logoContainer: { alignItems: 'center', justifyContent: 'center' },
+  logo: { width: 32, height: 32 },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
   headerSubtitle: { fontSize: 13, color: '#666' },
   langBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#eee', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, backgroundColor: '#f3f3f3' },
@@ -32,8 +34,8 @@ const styles = StyleSheet.create({
   formGroup: { marginBottom: 12 },
   label: { fontSize: 13, color: '#444', marginBottom: 4 },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 6, padding: 10, fontSize: 14, backgroundColor: '#fff' },
-  passwordRow: { flexDirection: 'row', alignItems: 'center' },
-  eyeBtn: { marginLeft: 8, padding: 4 },
+  passwordRow: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ddd', borderRadius: 6, backgroundColor: '#fff' },
+  eyeBtn: { padding: 10, marginRight: 4 },
   eyeIcon: { fontSize: 18 },
   submitBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginTop: 8 },
   submitBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
@@ -74,9 +76,12 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
         >
       {/* Header with language switcher */}
       <View style={styles.header}>
-        <View>
-              <Text style={styles.headerTitle}>{t('app.name')}</Text>
-              <Text style={styles.headerSubtitle}>{t('auth.subtitle')}</Text>
+        <View style={styles.logoContainer}>
+          <Image 
+            source={require('../assets/images/icon.png')} 
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
         <TouchableOpacity style={styles.langBtn} onPress={onLanguageToggle}>
           <Icon name="language" size={16} color="#007bff" style={{ marginRight: 4 }} />
@@ -165,14 +170,14 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
             <Text style={styles.label}>{language === 'ar' ? 'كلمة المرور' : 'Password'}</Text>
             <View style={styles.passwordRow}>
               <TextInput
-                style={[styles.input, { flex: 1 }]}
+                style={[styles.input, { flex: 1, borderWidth: 0, marginRight: 0 }]}
                 value={formData.password}
                 onChangeText={text => handleInputChange('password', text)}
                 placeholder={language === 'ar' ? 'أدخل كلمة المرور' : 'Enter your password'}
                 secureTextEntry={!showPassword}
               />
               <TouchableOpacity style={styles.eyeBtn} onPress={() => setShowPassword(!showPassword)}>
-                    <Icon
+                    <MCIcon
                       name={showPassword ? 'eye-off' : 'eye'}
                       size={20}
                       color="#888"

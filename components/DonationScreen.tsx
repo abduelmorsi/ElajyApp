@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
   headerContent: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#222',
-    marginBottom: 2,
   },
   headerSubtitle: {
     fontSize: 13,
