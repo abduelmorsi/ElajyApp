@@ -176,7 +176,7 @@ export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-      <View style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: insets.top }}>
         {/* Header */}
         <View style={{ 
           flexDirection: 'row', 
@@ -184,17 +184,18 @@ export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
           backgroundColor: '#fff', 
           borderBottomWidth: 1, 
           borderColor: '#eee', 
-          paddingHorizontal: 24, 
+          paddingHorizontal: 8, 
           paddingVertical: 16,
-          paddingTop: insets.top + 16
+          paddingBottom: 8
         }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#222' }}>
             {language === 'ar' ? 'الاستشارات الطبية' : 'Medical Consultations'}
           </Text>
         </View>
 
-        {/* Service Overview */}
-        <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, borderWidth: 1, borderColor: '#bae6fd', padding: 16, marginBottom: 16 }}>
+        <View style={{ paddingVertical: 12 }}>
+          {/* Service Overview */}
+          <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, borderWidth: 1, borderColor: '#bae6fd', padding: 16, marginHorizontal: 8, marginBottom: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ width: 40, height: 40, backgroundColor: '#bae6fd', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
               <Text style={{ fontSize: 20 }}>💬</Text>
@@ -211,12 +212,12 @@ export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
           </View>
         </View>
 
-        {/* Consultation Types */}
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 10 }}>
-            {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
-          </Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          {/* Consultation Types */}
+          <View style={{ marginHorizontal: 8, marginBottom: 20 }}>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 10 }}>
+              {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
+            </Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <TouchableOpacity style={{ flex: 1, backgroundColor: '#dbeafe', borderRadius: 10, alignItems: 'center', padding: 14, marginRight: 6 }} onPress={() => setConsultationType('chat')}>
               <Text style={{ fontSize: 22, marginBottom: 6 }}>💬</Text>
               <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'محادثة نصية' : 'Text Chat'}</Text>
@@ -235,8 +236,8 @@ export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
           </View>
         </View>
 
-        {/* Available Pharmacists */}
-        <View style={{ marginBottom: 20 }}>
+          {/* Available Pharmacists */}
+          <View style={{ marginHorizontal: 8, marginBottom: 20 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? 'الصيادلة المتاحون' : 'Available Pharmacists'}</Text>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}>
@@ -281,8 +282,8 @@ export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
           ))}
         </View>
 
-        {/* FAQ Section */}
-        <View style={{ backgroundColor: '#f3f4f6', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginBottom: 24 }}>
+          {/* FAQ Section */}
+          <View style={{ backgroundColor: '#f3f4f6', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginHorizontal: 8, marginBottom: 24 }}>
           <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 15, marginBottom: 8 }}>{language === 'ar' ? 'أسئلة شائعة' : 'Frequently Asked Questions'}</Text>
           <View style={{ marginBottom: 10 }}>
             <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 13, marginBottom: 2 }}>{language === 'ar' ? 'ما هي مدة الاستشارة؟' : 'How long is a consultation?'}</Text>
@@ -293,7 +294,8 @@ export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
             <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'نعم، جميع المعلومات والاستشارات سرية تماماً' : 'Yes, all information and consultations are completely confidential'}</Text>
           </View>
         </View>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

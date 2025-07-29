@@ -280,7 +280,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain }: Hom
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    justifyContent: 'space-between',
   },
   quickActionsGridRtl: {
     flexDirection: 'row-reverse',
@@ -326,7 +326,6 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain }: Hom
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 18,
-    gap: 8,
   },
   statsCard: {
     flex: 1,
@@ -582,15 +581,10 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain }: Hom
             {renderIcon('Sparkles')}
           </View>
           <View style={[styles.quickActionsGrid, isRTL && styles.quickActionsGridRtl]}>
-            {quickActions.map((action, index) => (
+            {quickActions.map((action) => (
               <TouchableOpacity
                 key={action.id}
-                style={[
-                  styles.quickActionCard,
-                  { 
-                    marginRight: isRTL ? (index % 2 === 1 ? '4%' : 0) : (index % 2 === 0 ? '4%' : 0)
-                  }
-                ]}
+                style={styles.quickActionCard}
                 onPress={() => handleQuickAction(action.id)}
               >
                 <View style={styles.quickActionIconContainer}>

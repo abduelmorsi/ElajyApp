@@ -406,8 +406,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9fafb',
-    maxWidth: 480,
-    alignSelf: 'center',
   },
   rtl: {
     // Don't reverse the main container direction
