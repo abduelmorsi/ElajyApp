@@ -129,7 +129,7 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
           shadowRadius: 4,
         }}>
           <TouchableOpacity style={{ padding: 8, marginRight: 8 }} onPress={() => setSelectedPharmacist(null)}>
-            <Text style={{ fontSize: 20 }}>{language === 'ar' ? '←' : '←'}</Text>
+            <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
           <Image source={{ uri: selectedPharmacist.avatar }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }} />
           <View style={{ flex: 1 }}>
@@ -233,7 +233,7 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
               console.log('Back button pressed in ConsultScreen');
               goBack();
             }} style={{ padding: 8, marginRight: 8 }}>
-              <Text style={{ fontSize: 20 }}>{language === 'ar' ? '←' : '←'}</Text>
+              <Icon name="arrow-back" size={24} color="#222" />
             </TouchableOpacity>
           )}
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#222' }}>

@@ -243,7 +243,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
 
         <View style={styles.body}>
-          <View style={styles.searchContainer}>
+      <View style={styles.searchContainer}>
         <Icon name="search" size={20} color="#6b7280" style={styles.searchIcon} />
         <TextInput
           placeholder={language === 'ar' ? 'ابحث عن دواء...' : 'Search medicine...'}
@@ -387,42 +387,42 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
           </View>
         </View>
       ) : viewMode === 'list' ? (
-        <FlatList
-          data={filteredMedicines}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigateTo('product-detail', item)}
-            >
-              <Image source={{ uri: item.image }} style={styles.cardImage} />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>
-                  {language === 'ar' ? item.name : item.nameEn}
-                </Text>
-                <Text style={styles.cardBrand}>
-                  {language === 'ar' ? item.brand : item.brandEn}
-                </Text>
-                <Text style={styles.cardPrice}>
-                  {item.price} {language === 'ar' ? 'ج.س' : 'SDG'}
-                </Text>
-                <Text style={item.inStock ? styles.inStock : styles.outOfStock}>
-                  {item.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
-                </Text>
-                {item.inStock && (
-                  <TouchableOpacity
-                    onPress={() => handleAddToCart(item)}
-                    style={styles.addButton}
-                  >
-                    <Text style={styles.addButtonText}>
-                      {language === 'ar' ? 'أضف' : 'Add'}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+      <FlatList
+        data={filteredMedicines}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigateTo('product-detail', item)}
+          >
+            <Image source={{ uri: item.image }} style={styles.cardImage} />
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>
+                {language === 'ar' ? item.name : item.nameEn}
+              </Text>
+              <Text style={styles.cardBrand}>
+                {language === 'ar' ? item.brand : item.brandEn}
+              </Text>
+              <Text style={styles.cardPrice}>
+                {item.price} {language === 'ar' ? 'ج.س' : 'SDG'}
+              </Text>
+              <Text style={item.inStock ? styles.inStock : styles.outOfStock}>
+                {item.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
+              </Text>
+              {item.inStock && (
+                <TouchableOpacity
+                  onPress={() => handleAddToCart(item)}
+                  style={styles.addButton}
+                >
+                  <Text style={styles.addButtonText}>
+                    {language === 'ar' ? 'أضف' : 'Add'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+      />
       ) : viewMode === 'grid' ? (
         <FlatList
           data={filteredMedicines}
@@ -499,7 +499,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
         />
       )}
         </View>
-        </ScrollView>
+    </ScrollView>
       </SafeAreaView>
   );
 }

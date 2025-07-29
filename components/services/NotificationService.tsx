@@ -124,7 +124,7 @@ export const NotificationProvider: React.FC<{
 
   useEffect(() => {
     // Disabled sample notifications
-    setNotifications([]);
+      setNotifications([]);
   }, [userType]);
 
   const unreadCount = notifications.filter(n => !n.read).length;

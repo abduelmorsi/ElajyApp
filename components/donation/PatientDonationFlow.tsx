@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { donationMedicines, participatingPharmacies } from './donationData';
 import { calculateDonationTotal, getDemandColor } from './donationHelpers';
@@ -49,7 +50,7 @@ export default function PatientDonationFlow({ navigateTo }) {
       <View style={styles.introCard}>
         <View style={styles.introContent}>
           <View style={styles.introIconBox}>
-            <Text style={styles.introIcon}>❤️</Text>
+            <Icon name="favorite" size={32} color="#ef4444" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.introTitle}>
@@ -62,11 +63,11 @@ export default function PatientDonationFlow({ navigateTo }) {
             </Text>
             <View style={styles.introStatsRow}>
               <View style={styles.introStatBox}>
-                <Text style={styles.introStatIcon}>👥</Text>
+                <Icon name="people" size={20} color="#22c55e" />
                 <Text style={styles.introStatText}>{language === 'ar' ? '450+ مريض استفاد' : '450+ Patients Helped'}</Text>
               </View>
               <View style={styles.introStatBox}>
-                <Text style={styles.introStatIcon}>📦</Text>
+                <Icon name="inventory" size={20} color="#22c55e" />
                 <Text style={styles.introStatText}>{language === 'ar' ? '1,240 دواء تم التبرع به' : '1,240 Medicines Donated'}</Text>
               </View>
             </View>
@@ -76,7 +77,7 @@ export default function PatientDonationFlow({ navigateTo }) {
 
       {/* Search */}
       <View style={styles.searchBox}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <Icon name="search" size={20} color="#6b7280" />
         <TextInput
           style={styles.searchInput}
           placeholder={language === 'ar' ? 'ابحث عن صيدلية...' : 'Search for pharmacy...'}
@@ -100,39 +101,32 @@ export default function PatientDonationFlow({ navigateTo }) {
               activeOpacity={0.8}
             >
               <View style={styles.pharmacyCardContent}>
-                <View style={styles.pharmacyImageBox}>
-                  {/* No image property in pharmacy data, use a placeholder or skip */}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.pharmacyHeaderRow}>
-                    <View style={{ flex: 1 }}>
-                      <View style={styles.pharmacyNameRow}>
-                        <Text style={styles.pharmacyName}>
-                          {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
-                        </Text>
-                      </View>
-                      <View style={styles.pharmacyLocationRow}>
-                        <Text style={styles.pharmacyLocationIcon}>📍</Text>
-                        <Text style={styles.pharmacyLocationText}>
-                          {language === 'ar' ? pharmacy.address : pharmacy.addressEn}
-                        </Text>
-                      </View>
-                      <View style={styles.pharmacyStatsRow}>
-                        <View style={styles.pharmacyStatBox}>
-                          <Text style={styles.pharmacyStatIcon}>⭐</Text>
-                          <Text style={styles.pharmacyStatText}>{pharmacy.rating}</Text>
-                        </View>
-                        <Text style={styles.pharmacyStatText}>{pharmacy.donationsReceived} {language === 'ar' ? 'تبرع' : 'donations'}</Text>
-                        <Text style={styles.pharmacyStatText}>{pharmacy.donationsDistributed} {language === 'ar' ? 'دواء وُزع' : 'medicines distributed'}</Text>
-                      </View>
-                      <View style={styles.pharmacyProgramsRow}>
-                        {(language === 'ar' ? pharmacy.specialServices : pharmacy.specialServicesEn).map((program, index) => (
-                          <Text key={index} style={styles.pharmacyProgramBadge}>{program}</Text>
-                        ))}
-                      </View>
-                    </View>
-                    <Text style={styles.arrowIcon}>➡️</Text>
+                <View style={styles.pharmacyInfo}>
+                  <Text style={styles.pharmacyName}>
+                    {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
+                  </Text>
+                  <View style={styles.pharmacyLocationRow}>
+                    <Icon name="location-on" size={16} color="#6b7280" />
+                    <Text style={styles.pharmacyLocation}>
+                      {language === 'ar' ? pharmacy.address : pharmacy.addressEn}
+                    </Text>
                   </View>
+                  <Text style={styles.pharmacyStats}>
+                    {language === 'ar' ? `${pharmacy.donationsDistributed} دواء تم توزيعه` : `${pharmacy.donationsDistributed} medicines distributed`}
+                  </Text>
+                </View>
+                <View style={styles.pharmacyActions}>
+                  <View style={styles.demandIndicator}>
+                    <View style={[styles.demandDot, { backgroundColor: '#22c55e' }]} />
+                    <Text style={styles.demandText}>
+                      {language === 'ar' ? 'متاح للتبرع' : 'Available for Donation'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={styles.selectButton}>
+                    <Text style={styles.selectButtonText}>
+                      {language === 'ar' ? 'اختر' : 'Select'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </TouchableOpacity>
@@ -141,7 +135,6 @@ export default function PatientDonationFlow({ navigateTo }) {
       </View>
     </ScrollView>
   );
-// ...existing code...
 
   const renderMedicineSelection = () => (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -276,7 +269,7 @@ export default function PatientDonationFlow({ navigateTo }) {
   const renderDonationComplete = () => (
     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
       <View style={styles.completeIconBox}>
-        <Text style={styles.completeIcon}>✅</Text>
+        <Icon name="check-circle" size={40} color="#059669" />
       </View>
       <View style={styles.completeTextBox}>
         <Text style={styles.completeTitle}>{language === 'ar' ? 'شكراً لك على تبرعك!' : 'Thank you for your donation!'}</Text>
@@ -336,22 +329,17 @@ const styles = StyleSheet.create({
   sectionTitle: { fontWeight: 'bold', fontSize: 16, color: '#222', marginBottom: 10 },
   pharmacyCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginBottom: 12, elevation: 1 },
   pharmacyCardContent: { flexDirection: 'row', alignItems: 'center', padding: 12 },
-  pharmacyImageBox: { width: 56, height: 56, borderRadius: 8, backgroundColor: '#f3f3f3', marginRight: 12, overflow: 'hidden' },
-  pharmacyImage: { width: 56, height: 56, borderRadius: 8 },
-  pharmacyHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 4 },
-  pharmacyNameRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
-  pharmacyName: { fontWeight: 'bold', fontSize: 15, color: '#222', marginRight: 6 },
-  pharmacyBadge: { backgroundColor: '#e6f7ff', color: '#007bff', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, fontSize: 11, marginLeft: 4 },
+  pharmacyInfo: { flex: 1 },
+  pharmacyName: { fontWeight: 'bold', fontSize: 15, color: '#222', marginBottom: 2 },
   pharmacyLocationRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
-  pharmacyLocationIcon: { fontSize: 13, color: '#888', marginRight: 2 },
-  pharmacyLocationText: { color: '#666', fontSize: 13 },
-  pharmacyStatsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  pharmacyStatBox: { flexDirection: 'row', alignItems: 'center', marginRight: 8 },
-  pharmacyStatIcon: { fontSize: 13, color: '#fbbf24', marginRight: 2 },
-  pharmacyStatText: { color: '#888', fontSize: 12, marginRight: 8 },
-  pharmacyProgramsRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 },
-  pharmacyProgramBadge: { backgroundColor: '#e0e7ff', color: '#3730a3', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, fontSize: 11, marginRight: 4, marginBottom: 2 },
-  arrowIcon: { fontSize: 18, color: '#bbb', marginLeft: 8 },
+  pharmacyLocation: { color: '#666', fontSize: 13 },
+  pharmacyStats: { color: '#888', fontSize: 12 },
+  pharmacyActions: { alignItems: 'center' },
+  demandIndicator: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, marginBottom: 8 },
+  demandDot: { width: 8, height: 8, borderRadius: 4, marginRight: 4 },
+  demandText: { color: '#444', fontSize: 12 },
+  selectButton: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
+  selectButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
   selectedPharmacyCard: { backgroundColor: '#e6f7ff', borderRadius: 10, padding: 12, marginBottom: 16 },
   selectedPharmacyContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   selectedPharmacyLabel: { fontSize: 14, color: '#007bff', fontWeight: 'bold' },

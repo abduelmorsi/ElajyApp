@@ -276,7 +276,7 @@ function AppContent() {
         case 'consult':
           return <ConsultScreen navigateTo={navigateTo} goBack={goBack} />;
         case 'donations':
-          return <DonationScreen navigateTo={navigateTo} userType={userType} userData={userData || {}} />;
+          return <DonationScreen navigateTo={navigateTo} goBack={goBack} userType={userType} userData={userData || {}} />;
         case 'profile':
           return <ProfileScreen 
             navigateTo={navigateTo} 
@@ -313,11 +313,11 @@ function AppContent() {
         case 'pharmacist-prescriptions':
           return <PharmacistPrescriptions navigateTo={navigateTo} />;
         case 'pharmacist-consultations':
-          return <PharmacistConsultations navigateTo={navigateTo} />;
+          return <PharmacistConsultations navigateTo={navigateTo} goBack={goBack} />;
         case 'pharmacist-analytics':
           return <PharmacistAnalytics navigateTo={navigateTo} userData={userData || {}} />;
         case 'donations':
-          return <DonationScreen navigateTo={navigateTo} userType={userType} userData={userData || {}} />;
+          return <DonationScreen navigateTo={navigateTo} goBack={goBack} userType={userType} userData={userData || {}} />;
         case 'pharmacist-profile':
           return <PharmacistProfile 
             navigateTo={navigateTo}

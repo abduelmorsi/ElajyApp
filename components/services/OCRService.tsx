@@ -217,7 +217,7 @@ export class OCRService {
   public async terminate(): Promise<void> {
     try {
       this.isInitialized = false;
-    } catch (error) {
+  } catch (error) {
       console.error('Error terminating OCR:', error);
     }
   }

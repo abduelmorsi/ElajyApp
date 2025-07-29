@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from '../services/LocalizationService';
@@ -70,9 +70,10 @@ const chatMessages = [
 
 type PharmacistConsultationsProps = {
   navigateTo: (screen: string, data?: any) => void;
+  goBack?: () => void;
 };
 
-export default function PharmacistConsultations({ navigateTo }: PharmacistConsultationsProps) {
+export default function PharmacistConsultations({ navigateTo, goBack }: PharmacistConsultationsProps) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
   const insets = useSafeAreaInsets();
@@ -149,7 +150,7 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
             <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
           <View style={styles.headerInfo}>
-            <Image source={{ uri: selectedConsultation.avatar }} style={styles.headerAvatar} />
+          <Image source={{ uri: selectedConsultation.avatar }} style={styles.headerAvatar} />
             <View>
               <Text style={styles.headerTitle}>{selectedConsultation.patient}</Text>
               <Text style={styles.headerSubtitle}>{selectedConsultation.topic}</Text>
@@ -165,42 +166,48 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
           </View>
         </View>
 
-        <View style={styles.chatContainer}>
-          <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
-            {messages.map((message) => (
-              <View key={message.id} style={[
-                styles.messageContainer,
-                message.sender === 'pharmacist' ? styles.pharmacistMessage : styles.patientMessage
-              ]}>
-                <View style={[
-                  styles.messageBubble,
-                  message.sender === 'pharmacist' ? styles.pharmacistBubble : styles.patientBubble
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }} 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
+          <View style={styles.chatContainer}>
+            <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
+              {messages.map((message) => (
+                <View key={message.id} style={[
+                  styles.messageContainer,
+                  message.sender === 'pharmacist' ? styles.pharmacistMessage : styles.patientMessage
                 ]}>
-                  <Text style={[
-                    styles.messageText,
-                    message.sender === 'pharmacist' ? styles.pharmacistText : styles.patientText
+                  <View style={[
+                    styles.messageBubble,
+                    message.sender === 'pharmacist' ? styles.pharmacistBubble : styles.patientBubble
                   ]}>
-                    {message.message}
-                  </Text>
-                  <Text style={styles.messageTime}>{message.timestamp}</Text>
+                    <Text style={[
+                      styles.messageText,
+                      message.sender === 'pharmacist' ? styles.pharmacistText : styles.patientText
+                    ]}>
+                      {message.message}
+                    </Text>
+                    <Text style={styles.messageTime}>{message.timestamp}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </ScrollView>
-          
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              value={newMessage}
-              onChangeText={setNewMessage}
-              placeholder={language === 'ar' ? 'اكتب رسالة...' : 'Type a message...'}
-              multiline
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-              <Icon name="send" size={20} color="#fff" />
-            </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textInput}
+                value={newMessage}
+                onChangeText={setNewMessage}
+                placeholder={language === 'ar' ? 'اكتب رسالة...' : 'Type a message...'}
+                multiline
+              />
+              <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+                <Icon name="send" size={20} color="#fff" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
@@ -209,7 +216,13 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       {/* Fixed Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
-        <Text style={styles.headerTitle}>{language === 'ar' ? 'الاستشارات' : 'Consultations'}</Text>
+        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <Icon name="arrow-back" size={24} color="#222" />
+        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>{language === 'ar' ? 'الاستشارات' : 'Consultations'}</Text>
+        </View>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
@@ -218,7 +231,7 @@ export default function PharmacistConsultations({ navigateTo }: PharmacistConsul
             <ConsultationCard key={consultation.id} consultation={consultation} />
           ))}
         </View>
-      </ScrollView>
+        </ScrollView>
     </SafeAreaView>
   );
 }
@@ -246,6 +259,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 18,
@@ -286,12 +303,15 @@ const styles = StyleSheet.create({
     borderRadius: 12, 
     padding: 16, 
     marginBottom: 14, 
-    elevation: 1 
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   cardHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'flex-start',
   },
   avatar: {
     width: 48,
@@ -302,6 +322,7 @@ const styles = StyleSheet.create({
   },
   cardInfo: {
     flex: 1,
+    marginRight: 12,
   },
   cardHeaderRow: {
     flexDirection: 'row',
@@ -310,53 +331,56 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   patientName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#222',
+    flex: 1,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    marginLeft: 4,
-    minWidth: 32,
-    justifyContent: 'center',
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginLeft: 8,
   },
   statusText: {
-    fontSize: 12,
-    fontWeight: 'bold',
+    fontSize: 11,
+    fontWeight: '500',
     marginLeft: 4,
   },
   topic: {
-    fontSize: 12,
-    color: '#555',
+    fontSize: 14,
+    color: '#666',
     marginBottom: 4,
   },
   lastMessage: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#888',
+    lineHeight: 18,
   },
   cardMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginTop: 8,
+    minHeight: 48,
   },
   time: {
     fontSize: 12,
-    color: '#555',
+    color: '#999',
+    marginBottom: 4,
   },
   unreadBadge: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#ef4444',
     borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 6,
-    paddingVertical: 2,
   },
   unreadCount: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
   },
   chatContainer: {

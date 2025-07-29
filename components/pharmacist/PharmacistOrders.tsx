@@ -25,13 +25,13 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   // Sample orders data
-  const orders = [
-    {
+const orders = [
+  {
       id: 'ORD-001',
       customer: 'Ahmed Mohamed',
       phone: '+249 912 345 678',
       address: 'Khartoum, Sudan',
-      items: [
+    items: [
         { name: 'Paracetamol 500mg', quantity: 2, price: 15 },
         { name: 'Amoxicillin 250mg', quantity: 1, price: 25 }
       ],
@@ -46,7 +46,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
       customer: 'Fatima Ali',
       phone: '+249 987 654 321',
       address: 'Omdurman, Sudan',
-      items: [
+    items: [
         { name: 'Vitamin C 1000mg', quantity: 1, price: 30 }
       ],
       total: 30,
@@ -60,7 +60,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
       customer: 'Mohamed Hassan',
       phone: '+249 876 543 210',
       address: 'Khartoum North, Sudan',
-      items: [
+    items: [
         { name: 'Insulin Vial', quantity: 2, price: 150 },
         { name: 'Syringes', quantity: 10, price: 5 }
       ],
@@ -75,7 +75,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
       customer: 'Sara Ahmed',
       phone: '+249 765 432 109',
       address: 'Port Sudan, Sudan',
-      items: [
+    items: [
         { name: 'Aspirin 100mg', quantity: 1, price: 20 }
       ],
       total: 20,
@@ -142,7 +142,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
         <View>
           <Text style={styles.orderId}>#{order.id}</Text>
           <Text style={styles.orderTime}>{new Date(order.orderTime).toLocaleTimeString()}</Text>
-        </View>
+          </View>
         <View style={[styles.badge, getStatusColor(order.status)]}>
           <Icon name={getStatusIcon(order.status)} size={14} color={getStatusColor(order.status).color} />
           <Text style={[styles.badgeText, { color: getStatusColor(order.status).color }]}>
@@ -193,83 +193,83 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
 
         <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
           <View style={styles.body}>
-            {/* Order Info */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <View>
-                  <Text style={styles.orderId}>Order #{selectedOrder.id}</Text>
-                  <Text style={styles.orderTime}>{new Date(selectedOrder.orderTime).toLocaleString()}</Text>
-                </View>
+          {/* Order Info */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View>
+                <Text style={styles.orderId}>Order #{selectedOrder.id}</Text>
+                <Text style={styles.orderTime}>{new Date(selectedOrder.orderTime).toLocaleString()}</Text>
+              </View>
                 <View style={[styles.badge, getStatusColor(selectedOrder.status)]}>
                   <Icon name={getStatusIcon(selectedOrder.status)} size={14} color={getStatusColor(selectedOrder.status).color} />
                   <Text style={[styles.badgeText, { color: getStatusColor(selectedOrder.status).color }]}>
                     {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
                   </Text>
                 </View>
-              </View>
-              <View style={styles.infoRow}>
+            </View>
+            <View style={styles.infoRow}>
                 <Icon name="phone" size={16} color="#6b7280" />
-                <View>
-                  <Text style={styles.customer}>{selectedOrder.customer}</Text>
-                  <Text style={styles.phone}>{selectedOrder.phone}</Text>
-                </View>
+              <View>
+                <Text style={styles.customer}>{selectedOrder.customer}</Text>
+                <Text style={styles.phone}>{selectedOrder.phone}</Text>
               </View>
-              <View style={styles.infoRow}>
+            </View>
+            <View style={styles.infoRow}>
                 <Icon name="location-on" size={16} color="#6b7280" />
-                <View>
-                  <Text style={styles.deliveryTypeLabel}>{selectedOrder.deliveryType === 'delivery' ? 'Delivery Address' : 'Pickup'}</Text>
-                  <Text style={styles.address}>{selectedOrder.address}</Text>
-                </View>
+              <View>
+                <Text style={styles.deliveryTypeLabel}>{selectedOrder.deliveryType === 'delivery' ? 'Delivery Address' : 'Pickup'}</Text>
+                <Text style={styles.address}>{selectedOrder.address}</Text>
               </View>
             </View>
-            {/* Items */}
-            <View style={styles.card}>
+          </View>
+          {/* Items */}
+          <View style={styles.card}>
               <Text style={styles.sectionTitle}>{language === 'ar' ? 'المنتجات المطلوبة' : 'Items Ordered'}</Text>
-              {selectedOrder.items.map((item, index) => (
-                <View key={index} style={styles.itemRow}>
-                  <View>
-                    <Text style={styles.itemText}>{item.name}</Text>
-                    <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
-                  </View>
-                  <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
-                </View>
-              ))}
-              <View style={styles.separator} />
-              <View style={styles.summaryRow}>
-                <Text>Total</Text>
-                <Text>${selectedOrder.total.toFixed(2)}</Text>
-              </View>
-              <View style={styles.summaryRow}>
-                <Text style={styles.paymentLabel}>Payment</Text>
-                <Text style={styles.paymentValue}>{selectedOrder.paymentMethod}</Text>
-              </View>
-            </View>
-            {/* Actions */}
-            <View style={styles.actionColumn}>
-              {selectedOrder.status === 'pending' && (
+            {selectedOrder.items.map((item, index) => (
+              <View key={index} style={styles.itemRow}>
                 <View>
-                  <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'processing')}>
-                    <Text style={styles.buttonText}>Accept Order</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'cancelled')}>
-                    <Text style={styles.buttonText}>Decline Order</Text>
-                  </TouchableOpacity>
+                  <Text style={styles.itemText}>{item.name}</Text>
+                  <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
                 </View>
-              )}
-              {selectedOrder.status === 'processing' && (
-                <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'ready')}>
-                  <Text style={styles.buttonText}>Mark as Ready</Text>
+                <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
+              </View>
+            ))}
+            <View style={styles.separator} />
+            <View style={styles.summaryRow}>
+              <Text>Total</Text>
+              <Text>${selectedOrder.total.toFixed(2)}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.paymentLabel}>Payment</Text>
+              <Text style={styles.paymentValue}>{selectedOrder.paymentMethod}</Text>
+            </View>
+          </View>
+          {/* Actions */}
+          <View style={styles.actionColumn}>
+            {selectedOrder.status === 'pending' && (
+              <View>
+                <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'processing')}>
+                  <Text style={styles.buttonText}>Accept Order</Text>
                 </TouchableOpacity>
-              )}
-              {selectedOrder.status === 'ready' && (
-                <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'completed')}>
-                  <Text style={styles.buttonText}>Mark as Completed</Text>
+                <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'cancelled')}>
+                  <Text style={styles.buttonText}>Decline Order</Text>
                 </TouchableOpacity>
-              )}
-              <TouchableOpacity style={[styles.button, styles.outlineButton]} onPress={() => Alert.alert('Call Customer', selectedOrder.phone)}>
+              </View>
+            )}
+            {selectedOrder.status === 'processing' && (
+              <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'ready')}>
+                <Text style={styles.buttonText}>Mark as Ready</Text>
+              </TouchableOpacity>
+            )}
+            {selectedOrder.status === 'ready' && (
+              <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'completed')}>
+                <Text style={styles.buttonText}>Mark as Completed</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={[styles.button, styles.outlineButton]} onPress={() => Alert.alert('Call Customer', selectedOrder.phone)}>
                 <Icon name="phone" size={16} color="#007bff" />
                 <Text style={[styles.buttonText, { color: '#007bff' }]}> Call Customer</Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -324,11 +324,11 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
       {/* Fixed Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>{language === 'ar' ? 'إدارة الطلبات' : 'Order Management'}</Text>
-      </View>
+        </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
         <View style={styles.body}>
-          {/* Tabs */}
+        {/* Tabs */}
           <View style={styles.tabsContainer}>
             <TouchableOpacity
               style={[styles.tab, tab === 'pending' && styles.activeTab]}
@@ -337,7 +337,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
               <Text style={[styles.tabText, tab === 'pending' && styles.activeTabText]}>
                 {language === 'ar' ? 'في الانتظار' : 'Pending'}
               </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tab, tab === 'processing' && styles.activeTab]}
               onPress={() => setTab('processing')}
@@ -345,7 +345,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
               <Text style={[styles.tabText, tab === 'processing' && styles.activeTabText]}>
                 {language === 'ar' ? 'قيد المعالجة' : 'Processing'}
               </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tab, tab === 'ready' && styles.activeTab]}
               onPress={() => setTab('ready')}
@@ -353,7 +353,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
               <Text style={[styles.tabText, tab === 'ready' && styles.activeTabText]}>
                 {language === 'ar' ? 'جاهز' : 'Ready'}
               </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tab, tab === 'completed' && styles.activeTab]}
               onPress={() => setTab('completed')}
@@ -361,7 +361,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
               <Text style={[styles.tabText, tab === 'completed' && styles.activeTabText]}>
                 {language === 'ar' ? 'مكتمل' : 'Completed'}
               </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
           </View>
 
           {/* Orders List */}
@@ -369,7 +369,7 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
             {renderTabContent()}
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
     </SafeAreaView>
   );
 }

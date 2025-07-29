@@ -453,7 +453,7 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
                   {language === 'ar' ? 'حفظ الوصفة' : 'Save Prescription'}
                 </Text>
               </TouchableOpacity>
-            </View>
+      </View>
           )}
         </SafeAreaView>
       </Modal>
