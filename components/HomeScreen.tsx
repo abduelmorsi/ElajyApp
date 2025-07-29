@@ -205,8 +205,13 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     borderBottomWidth: 1,
     borderColor: '#f3f4f6',
     paddingHorizontal: 16,
-    paddingTop: 16,
     paddingBottom: 8,
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   headerInner: {
     flexDirection: 'row',
@@ -559,10 +564,9 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: insets.top }}>
-      {/* Compact Header */}
-      <View style={styles.header}>
-          {renderBackButton()}
+      {/* Fixed Header */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        {renderBackButton()}
         <View style={styles.headerInner}>
           <View style={{ flex: 1 }}>
             <Text style={styles.greeting}>
@@ -593,6 +597,8 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
           />
         </View>
       </View>
+
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
 
       <View style={styles.body}>
         {/* Compact Quick Actions with fixed text boundaries and black titles */}
@@ -651,7 +657,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{language === 'ar' ? 'أدوية مميزة' : 'Featured Medicines'}</Text>
-            <TouchableOpacity onPress={() => navigateTo('search')}>
+            <TouchableOpacity onPress={() => navigateTo('search', { viewMode: 'list', showAllMedicines: true })}>
               <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض الكل' : 'View All'} {renderIcon('ChevronRight', 16)}</Text>
             </TouchableOpacity>
           </View>

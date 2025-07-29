@@ -111,37 +111,52 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
   if (selectedPharmacist) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+                {/* Fixed Chat Header */}
+        <View style={{ 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          backgroundColor: '#fff', 
+          borderBottomWidth: 1, 
+          borderColor: '#eee', 
+          paddingVertical: 14, 
+          paddingHorizontal: 12, 
+          paddingTop: insets.top + 14,
+          zIndex: 1000,
+          elevation: 3,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        }}>
+          <TouchableOpacity style={{ padding: 8, marginRight: 8 }} onPress={() => setSelectedPharmacist(null)}>
+            <Text style={{ fontSize: 20 }}>{language === 'ar' ? '←' : '←'}</Text>
+          </TouchableOpacity>
+          <Image source={{ uri: selectedPharmacist.avatar }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: selectedPharmacist.isOnline ? '#22c55e' : '#aaa', marginRight: 4 }} />
+              <Text style={{ color: '#666', fontSize: 12 }}>
+                {selectedPharmacist.isOnline
+                  ? (language === 'ar' ? 'متصل' : 'Online')
+                  : (language === 'ar' ? 'غير متصل' : 'Offline')}
+              </Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
+              <Icon name="call" size={16} color="#007bff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
+              <Icon name="videocam" size={16} color="#007bff" />
+            </TouchableOpacity>
+          </View>
+        </View>
         <KeyboardAvoidingView 
           style={{ flex: 1 }} 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-          {/* Consultation Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingVertical: 14, paddingHorizontal: 12, paddingTop: insets.top + 14 }}>
-            <TouchableOpacity style={{ padding: 8, marginRight: 8 }} onPress={() => setSelectedPharmacist(null)}>
-              <Text style={{ fontSize: 20 }}>{language === 'ar' ? '←' : '←'}</Text>
-            </TouchableOpacity>
-            <Image source={{ uri: selectedPharmacist.avatar }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }} />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: selectedPharmacist.isOnline ? '#22c55e' : '#aaa', marginRight: 4 }} />
-                <Text style={{ color: '#666', fontSize: 12 }}>
-                  {selectedPharmacist.isOnline
-                    ? (language === 'ar' ? 'متصل' : 'Online')
-                    : (language === 'ar' ? 'غير متصل' : 'Offline')}
-                </Text>
-              </View>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-                <Icon name="call" size={16} color="#007bff" />
-              </TouchableOpacity>
-              <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-                <Icon name="videocam" size={16} color="#007bff" />
-              </TouchableOpacity>
-            </View>
-          </View>
           {/* Chat Area */}
           <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
             {/* Welcome Message */}
@@ -195,18 +210,24 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: insets.top }}>
-        {/* Header */}
-        <View style={{ 
-          flexDirection: 'row', 
-          alignItems: 'center', 
-          backgroundColor: '#fff', 
-          borderBottomWidth: 1, 
-          borderColor: '#eee', 
-          paddingHorizontal: 8, 
-          paddingVertical: 16,
-          paddingBottom: 8
-        }}>
+      {/* Fixed Header */}
+      <View style={{ 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        backgroundColor: '#fff', 
+        borderBottomWidth: 1, 
+        borderColor: '#eee', 
+        paddingHorizontal: 8, 
+        paddingVertical: 16,
+        paddingBottom: 8,
+        paddingTop: insets.top,
+        zIndex: 1000,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      }}>
           {goBack && (
             <TouchableOpacity onPress={() => {
               console.log('Back button pressed in ConsultScreen');
@@ -219,6 +240,8 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
             {language === 'ar' ? 'الاستشارات الطبية' : 'Medical Consultations'}
           </Text>
         </View>
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: 0 }}>
 
         <View style={{ paddingVertical: 12 }}>
           {/* Service Overview */}

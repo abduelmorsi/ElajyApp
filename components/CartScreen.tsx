@@ -67,19 +67,18 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   if (currentStep === 'cart') {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-        <View style={styles.container}>
-          {/* Header */}
-          <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-            <Text style={styles.headerTitle}>
-              {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
+        {/* Fixed Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
+          </Text>
+          {cartItems.length > 0 && (
+            <Text style={styles.headerSubtitle}>
+              {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
             </Text>
-            {cartItems.length > 0 && (
-              <Text style={styles.headerSubtitle}>
-                {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
-              </Text>
-            )}
-          </View>
-          <ScrollView contentContainerStyle={styles.content}>
+          )}
+        </View>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
             {cartItems.length === 0 ? (
               <View style={styles.emptyCard}>
                 <Icon name="shopping-cart" size={48} color="#bbb" style={styles.emptyIcon} />
@@ -156,7 +155,6 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
               </View>
             )}
           </ScrollView>
-        </View>
       </SafeAreaView>
     );
   }
@@ -528,7 +526,19 @@ const styles = StyleSheet.create({
   instructionsLabel: { fontSize: 15, color: '#222', fontWeight: 'bold', marginBottom: 6 },
   instructionsInput: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 12, fontSize: 14, color: '#222', minHeight: 60, textAlignVertical: 'top', borderWidth: 1, borderColor: '#eee' },
   container: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  header: { 
+    backgroundColor: '#fff', 
+    borderBottomWidth: 1, 
+    borderColor: '#eee', 
+    paddingHorizontal: 24, 
+    paddingVertical: 16,
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
   headerSubtitle: { fontSize: 13, color: '#666' },
   content: { padding: 24 },

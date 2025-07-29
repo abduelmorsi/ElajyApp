@@ -38,9 +38,8 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-    <ScrollView style={styles.container}>
-      {/* Profile Header */}
-        <View style={[styles.profileHeader, { paddingTop: insets.top + 16 }]}>
+      {/* Fixed Header */}
+      <View style={[styles.profileHeader, { paddingTop: insets.top + 16 }]}>
         <Image
           source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150' }}
           style={styles.avatar}
@@ -59,6 +58,8 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
           </Text>
         </View>
       </View>
+
+      <ScrollView style={styles.container}>
 
       {/* Settings */}
       <View style={styles.section}>
@@ -118,9 +119,20 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   profileHeader: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderColor: '#f3f4f6',
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   avatar: {
     width: 64,

@@ -18,14 +18,17 @@ import * as Location from 'expo-location';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
-export default function SearchScreen({ navigateTo, addToCart, goBack }) {
+export default function SearchScreen({ navigateTo, addToCart, goBack, navigationData }) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('map');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>(
+    navigationData?.viewMode || 'map'
+  );
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showAllMedicines, setShowAllMedicines] = useState(navigationData?.showAllMedicines || false);
   const [region, setRegion] = useState({
     latitude: 15.5007, // Khartoum coordinates
     longitude: 32.5599,
@@ -152,11 +155,18 @@ export default function SearchScreen({ navigateTo, addToCart, goBack }) {
     },
   ];
 
-  const filteredMedicines = medicines.filter((medicine) =>
-    (language === 'ar' ? medicine.name : medicine.nameEn)
+  const filteredMedicines = medicines.filter((medicine) => {
+    // If showAllMedicines is true, show all medicines regardless of search query
+    if (showAllMedicines && !searchQuery) return true;
+    
+    // If no search query, don't show any medicines (unless showAllMedicines is true)
+    if (!searchQuery) return false;
+    
+    // Filter by search query
+    return (language === 'ar' ? medicine.name : medicine.nameEn)
       .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-  );
+      .includes(searchQuery.toLowerCase());
+  });
 
   const handleAddToCart = (medicine) => {
     if (!medicine.inStock) {
@@ -222,13 +232,15 @@ export default function SearchScreen({ navigateTo, addToCart, goBack }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      {/* Fixed Header */}
+      <View style={styles.header}>
+        {renderBackButton()}
+        <Text style={styles.headerTitle}>
+          {language === 'ar' ? 'البحث والاستكشاف' : 'Search & Explore'}
+        </Text>
+      </View>
+
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
-                <View style={styles.header}>
-          {renderBackButton()}
-          <Text style={styles.headerTitle}>
-            {language === 'ar' ? 'البحث والاستكشاف' : 'Search & Explore'}
-          </Text>
-        </View>
 
         <View style={styles.body}>
           <View style={styles.searchContainer}>
@@ -503,6 +515,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   headerTitle: { fontSize: 20, fontWeight: 'bold' },
   body: {

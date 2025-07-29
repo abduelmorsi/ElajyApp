@@ -276,18 +276,19 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: insets.top }}>
-        {/* Header */}
-        <View style={styles.header}>
-          {goBack && (
-            <TouchableOpacity onPress={goBack} style={styles.backButton}>
-              <Text style={{ fontSize: 20 }}>←</Text>
-            </TouchableOpacity>
-          )}
-          <Text style={styles.headerTitle}>
-            {language === 'ar' ? 'الوصفات الطبية' : 'Prescriptions'}
-          </Text>
-        </View>
+      {/* Fixed Header */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        {goBack && (
+          <TouchableOpacity onPress={goBack} style={styles.backButton}>
+            <Text style={{ fontSize: 20 }}>←</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.headerTitle}>
+          {language === 'ar' ? 'الوصفات الطبية' : 'Prescriptions'}
+        </Text>
+      </View>
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: 0 }}>
 
         <View style={styles.body}>
           {/* Upload Section */}
@@ -469,7 +470,13 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingBottom: 8
+    paddingBottom: 8,
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   backButton: {
     padding: 8,

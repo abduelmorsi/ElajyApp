@@ -131,6 +131,7 @@ function AppContent() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
+  const [navigationData, setNavigationData] = useState<any>(null);
 
   // Handle authentication
   const handleAuth = (type: UserType) => {
@@ -184,6 +185,7 @@ function AppContent() {
   // Navigation for different screens
   const navigateTo = (screen: string, data: any = null): void => {
     setHistory(prev => [...prev, currentScreen]);
+    setNavigationData(data);
     if (screen === 'product-detail') {
       setSelectedProduct(data);
     } else if (screen === 'delivery-tracking') {
@@ -264,7 +266,7 @@ function AppContent() {
         case 'home':
           return <HomeScreen navigateTo={navigateTo} userData={userData || {}} goBack={goBack} isMain={true} addToCart={addToCart} />;
         case 'search':
-          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} />;
+          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} navigationData={navigationData} />;
         case 'product-detail':
           return <ProductDetailScreen product={selectedProduct} addToCart={addToCart} navigateTo={navigateTo} goBack={goBack} />;
         case 'prescription':
@@ -301,7 +303,7 @@ function AppContent() {
         case 'pharmacist-dashboard':
           return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
         case 'search':
-          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} />;
+          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} navigationData={navigationData} />;
         case 'pharmacist-orders':
           return <PharmacistOrders navigateTo={navigateTo} userData={userData || {}} />;
         case 'pharmacist-inventory':
@@ -390,15 +392,15 @@ function AppContent() {
 export default function App() {
   return (
     <SafeAreaProvider>
-    <ErrorBoundary>
-      <LocalizationProvider defaultLanguage="ar">
+      <ErrorBoundary>
+        <LocalizationProvider defaultLanguage="ar">
           <InventoryProvider>
             <DeliveryProvider>
-        <AppContent />
+              <AppContent />
             </DeliveryProvider>
           </InventoryProvider>
-      </LocalizationProvider>
-    </ErrorBoundary>
+        </LocalizationProvider>
+      </ErrorBoundary>
     </SafeAreaProvider>
   );
 }
