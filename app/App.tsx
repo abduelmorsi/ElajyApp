@@ -23,6 +23,7 @@ import PrescriptionScreen from '../components/PrescriptionScreen';
 import ProductDetailScreen from '../components/ProductDetailScreen';
 import ProfileScreen from '../components/ProfileScreen';
 import SearchScreen from '../components/SearchScreen';
+import SplashScreen from '../components/SplashScreen';
 
 // Import pharmacist portal components
 import PharmacistAnalytics from '../components/pharmacist/PharmacistAnalytics';
@@ -123,7 +124,7 @@ function AppContent() {
   const { t, language, toggleLanguage } = useLocalization();
   const { isRTL } = useRTL();
   const insets = useSafeAreaInsets();
-  const [currentScreen, setCurrentScreen] = useState<string>('onboarding');
+  const [currentScreen, setCurrentScreen] = useState<string>('splash');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userType, setUserType] = useState<UserType>(null);
   const [userData, setUserData] = useState<UserData>(null);
@@ -251,6 +252,8 @@ function AppContent() {
   const renderScreen = () => {
     if (!isAuthenticated) {
       switch (currentScreen) {
+        case 'splash':
+          return <SplashScreen onFinish={() => setCurrentScreen('onboarding')} />;
         case 'onboarding':
           return <OnboardingScreen onNext={() => setCurrentScreen('auth')} onSkip={skipOnboarding} />;
         case 'auth':
