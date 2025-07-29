@@ -28,60 +28,60 @@ export default function PharmacistOrders({ navigateTo, userData }: PharmacistOrd
 const orders = [
   {
       id: 'ORD-001',
-      customer: 'Ahmed Mohamed',
+      customer: language === 'ar' ? 'أحمد محمد' : 'Ahmed Mohamed',
       phone: '+249 912 345 678',
-      address: 'Khartoum, Sudan',
+      address: language === 'ar' ? 'الخرطوم، السودان' : 'Khartoum, Sudan',
     items: [
-        { name: 'Paracetamol 500mg', quantity: 2, price: 15 },
-        { name: 'Amoxicillin 250mg', quantity: 1, price: 25 }
+        { name: language === 'ar' ? 'باراسيتامول 500 مجم' : 'Paracetamol 500mg', quantity: 2, price: 15 },
+        { name: language === 'ar' ? 'أموكسيسيلين 250 مجم' : 'Amoxicillin 250mg', quantity: 1, price: 25 }
       ],
       total: 55,
       status: 'pending' as const,
       orderTime: '2024-01-15T10:30:00',
-      paymentMethod: 'Cash on Delivery',
+      paymentMethod: language === 'ar' ? 'الدفع عند الاستلام' : 'Cash on Delivery',
       deliveryType: 'delivery' as const
     },
     {
       id: 'ORD-002',
-      customer: 'Fatima Ali',
+      customer: language === 'ar' ? 'فاطمة علي' : 'Fatima Ali',
       phone: '+249 987 654 321',
-      address: 'Omdurman, Sudan',
+      address: language === 'ar' ? 'أم درمان، السودان' : 'Omdurman, Sudan',
     items: [
-        { name: 'Vitamin C 1000mg', quantity: 1, price: 30 }
+        { name: language === 'ar' ? 'فيتامين سي 1000 مجم' : 'Vitamin C 1000mg', quantity: 1, price: 30 }
       ],
       total: 30,
       status: 'processing' as const,
       orderTime: '2024-01-15T09:15:00',
-      paymentMethod: 'Mobile Money',
+      paymentMethod: language === 'ar' ? 'المال الإلكتروني' : 'Mobile Money',
       deliveryType: 'pickup' as const
     },
     {
       id: 'ORD-003',
-      customer: 'Mohamed Hassan',
+      customer: language === 'ar' ? 'محمد حسن' : 'Mohamed Hassan',
       phone: '+249 876 543 210',
-      address: 'Khartoum North, Sudan',
+      address: language === 'ar' ? 'الخرطوم بحري، السودان' : 'Khartoum North, Sudan',
     items: [
-        { name: 'Insulin Vial', quantity: 2, price: 150 },
-        { name: 'Syringes', quantity: 10, price: 5 }
+        { name: language === 'ar' ? 'أنسولين' : 'Insulin Vial', quantity: 2, price: 150 },
+        { name: language === 'ar' ? 'محاقن' : 'Syringes', quantity: 10, price: 5 }
       ],
       total: 350,
       status: 'ready' as const,
       orderTime: '2024-01-15T08:45:00',
-      paymentMethod: 'Bank Transfer',
+      paymentMethod: language === 'ar' ? 'تحويل بنكي' : 'Bank Transfer',
       deliveryType: 'delivery' as const
     },
     {
       id: 'ORD-004',
-      customer: 'Sara Ahmed',
+      customer: language === 'ar' ? 'سارة أحمد' : 'Sara Ahmed',
       phone: '+249 765 432 109',
-      address: 'Port Sudan, Sudan',
+      address: language === 'ar' ? 'بورت سودان، السودان' : 'Port Sudan, Sudan',
     items: [
-        { name: 'Aspirin 100mg', quantity: 1, price: 20 }
+        { name: language === 'ar' ? 'أسبرين 100 مجم' : 'Aspirin 100mg', quantity: 1, price: 20 }
       ],
       total: 20,
       status: 'completed' as const,
       orderTime: '2024-01-14T16:30:00',
-      paymentMethod: 'Cash',
+      paymentMethod: language === 'ar' ? 'نقداً' : 'Cash',
       deliveryType: 'pickup' as const
     }
   ];
@@ -146,11 +146,11 @@ const orders = [
         <View style={[styles.badge, getStatusColor(order.status)]}>
           <Icon name={getStatusIcon(order.status)} size={14} color={getStatusColor(order.status).color} />
           <Text style={[styles.badgeText, { color: getStatusColor(order.status).color }]}>
-            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            {t(`pharmacist.orders.${order.status}`)}
           </Text>
         </View>
       </View>
-      <View style={styles.orderInfo}>
+              <View style={styles.orderInfo}>
         <View style={styles.infoRow}>
           <Icon name="person" size={16} color="#6b7280" />
           <Text style={styles.customerName}>{order.customer}</Text>
@@ -160,7 +160,7 @@ const orders = [
           <Text style={styles.address}>{order.address}</Text>
         </View>
         <View style={styles.orderSummary}>
-          <Text style={styles.itemCount}>{order.items.length} items</Text>
+          <Text style={styles.itemCount}>{order.items.length} {t('pharmacist.orders.items')}</Text>
           <Text style={styles.total}>${order.total.toFixed(2)}</Text>
         </View>
       </View>
@@ -168,11 +168,11 @@ const orders = [
         <View style={styles.actionRow}>
           <TouchableOpacity style={[styles.actionButton, styles.acceptButton]} onPress={() => updateOrderStatus(order.id, 'processing')}>
             <Icon name="check" size={16} color="#fff" />
-            <Text style={styles.actionButtonText}>Accept</Text>
+            <Text style={styles.actionButtonText}>{t('pharmacist.orders.confirmOrder')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionButton, styles.declineButton]} onPress={() => updateOrderStatus(order.id, 'cancelled')}>
             <Icon name="close" size={16} color="#fff" />
-            <Text style={styles.actionButtonText}>Decline</Text>
+            <Text style={styles.actionButtonText}>{t('pharmacist.orders.rejectOrder')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -187,7 +187,7 @@ const orders = [
           <TouchableOpacity onPress={() => setSelectedOrder(null)} style={styles.backButton}>
             <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{language === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}</Text>
+          <Text style={styles.headerTitle}>{t('pharmacist.orders.viewDetails')}</Text>
           <View style={{ width: 24 }} />
         </View>
 
@@ -202,9 +202,9 @@ const orders = [
               </View>
                 <View style={[styles.badge, getStatusColor(selectedOrder.status)]}>
                   <Icon name={getStatusIcon(selectedOrder.status)} size={14} color={getStatusColor(selectedOrder.status).color} />
-                  <Text style={[styles.badgeText, { color: getStatusColor(selectedOrder.status).color }]}>
-                    {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
-                  </Text>
+                                  <Text style={[styles.badgeText, { color: getStatusColor(selectedOrder.status).color }]}>
+                  {t(`pharmacist.orders.${selectedOrder.status}`)}
+                </Text>
                 </View>
             </View>
             <View style={styles.infoRow}>
@@ -217,30 +217,30 @@ const orders = [
             <View style={styles.infoRow}>
                 <Icon name="location-on" size={16} color="#6b7280" />
               <View>
-                <Text style={styles.deliveryTypeLabel}>{selectedOrder.deliveryType === 'delivery' ? 'Delivery Address' : 'Pickup'}</Text>
+                <Text style={styles.deliveryTypeLabel}>{selectedOrder.deliveryType === 'delivery' ? t('search.delivery') : t('search.pickup')}</Text>
                 <Text style={styles.address}>{selectedOrder.address}</Text>
               </View>
             </View>
           </View>
           {/* Items */}
           <View style={styles.card}>
-              <Text style={styles.sectionTitle}>{language === 'ar' ? 'المنتجات المطلوبة' : 'Items Ordered'}</Text>
+              <Text style={styles.sectionTitle}>{t('pharmacist.orders.items')}</Text>
             {selectedOrder.items.map((item, index) => (
               <View key={index} style={styles.itemRow}>
                 <View>
                   <Text style={styles.itemText}>{item.name}</Text>
-                  <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
+                  <Text style={styles.itemQty}>{t('product.quantity')}: {item.quantity}</Text>
                 </View>
                 <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
               </View>
             ))}
             <View style={styles.separator} />
             <View style={styles.summaryRow}>
-              <Text>Total</Text>
+              <Text>{t('pharmacist.orders.orderTotal')}</Text>
               <Text>${selectedOrder.total.toFixed(2)}</Text>
             </View>
             <View style={styles.summaryRow}>
-              <Text style={styles.paymentLabel}>Payment</Text>
+              <Text style={styles.paymentLabel}>{t('cart.payment')}</Text>
               <Text style={styles.paymentValue}>{selectedOrder.paymentMethod}</Text>
             </View>
           </View>
@@ -249,26 +249,26 @@ const orders = [
             {selectedOrder.status === 'pending' && (
               <View>
                 <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'processing')}>
-                  <Text style={styles.buttonText}>Accept Order</Text>
+                  <Text style={styles.buttonText}>{t('pharmacist.orders.confirmOrder')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => updateOrderStatus(selectedOrder.id, 'cancelled')}>
-                  <Text style={styles.buttonText}>Decline Order</Text>
+                  <Text style={styles.buttonText}>{t('pharmacist.orders.rejectOrder')}</Text>
                 </TouchableOpacity>
               </View>
             )}
             {selectedOrder.status === 'processing' && (
               <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'ready')}>
-                <Text style={styles.buttonText}>Mark as Ready</Text>
+                <Text style={styles.buttonText}>{t('pharmacist.orders.markAsCompleted')}</Text>
               </TouchableOpacity>
             )}
             {selectedOrder.status === 'ready' && (
               <TouchableOpacity style={styles.button} onPress={() => updateOrderStatus(selectedOrder.id, 'completed')}>
-                <Text style={styles.buttonText}>Mark as Completed</Text>
+                <Text style={styles.buttonText}>{t('pharmacist.orders.markAsCompleted')}</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={[styles.button, styles.outlineButton]} onPress={() => Alert.alert('Call Customer', selectedOrder.phone)}>
+            <TouchableOpacity style={[styles.button, styles.outlineButton]} onPress={() => Alert.alert(t('action.call'), selectedOrder.phone)}>
                 <Icon name="phone" size={16} color="#007bff" />
-                <Text style={[styles.buttonText, { color: '#007bff' }]}> Call Customer</Text>
+                <Text style={[styles.buttonText, { color: '#007bff' }]}> {t('action.call')}</Text>
             </TouchableOpacity>
             </View>
           </View>
@@ -285,22 +285,22 @@ const orders = [
     switch (tab) {
       case 'pending':
         data = orders.filter(order => order.status === 'pending');
-        emptyText = language === 'ar' ? 'لا توجد طلبات في الانتظار' : 'No pending orders';
+        emptyText = t('pharmacist.orders.noOrders');
         emptyIcon = 'schedule';
         break;
       case 'processing':
         data = orders.filter(order => order.status === 'processing');
-        emptyText = language === 'ar' ? 'لا توجد طلبات قيد المعالجة' : 'No processing orders';
+        emptyText = t('pharmacist.orders.noOrders');
         emptyIcon = 'inventory';
         break;
       case 'ready':
         data = orders.filter(order => order.status === 'ready');
-        emptyText = language === 'ar' ? 'لا توجد طلبات جاهزة' : 'No ready orders';
+        emptyText = t('pharmacist.orders.noOrders');
         emptyIcon = 'check-circle';
         break;
       case 'completed':
         data = orders.filter(order => order.status === 'completed');
-        emptyText = language === 'ar' ? 'لا توجد طلبات مكتملة' : 'No completed orders';
+        emptyText = t('pharmacist.orders.noOrders');
         emptyIcon = 'done';
         break;
     }
@@ -327,7 +327,7 @@ const orders = [
           <Icon name="arrow-back" size={24} color="#222" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>{language === 'ar' ? 'إدارة الطلبات' : 'Order Management'}</Text>
+          <Text style={styles.headerTitle}>{t('pharmacist.orders.title')}</Text>
         </View>
         <View style={{ width: 40 }} />
       </View>
@@ -341,7 +341,7 @@ const orders = [
               onPress={() => setTab('pending')}
             >
               <Text style={[styles.tabText, tab === 'pending' && styles.activeTabText]}>
-                {language === 'ar' ? 'في الانتظار' : 'Pending'}
+                {t('pharmacist.orders.pending')}
               </Text>
           </TouchableOpacity>
             <TouchableOpacity
@@ -349,7 +349,7 @@ const orders = [
               onPress={() => setTab('processing')}
             >
               <Text style={[styles.tabText, tab === 'processing' && styles.activeTabText]}>
-                {language === 'ar' ? 'قيد المعالجة' : 'Processing'}
+                {t('pharmacist.orders.processing')}
               </Text>
           </TouchableOpacity>
             <TouchableOpacity
@@ -357,7 +357,7 @@ const orders = [
               onPress={() => setTab('ready')}
             >
               <Text style={[styles.tabText, tab === 'ready' && styles.activeTabText]}>
-                {language === 'ar' ? 'جاهز' : 'Ready'}
+                {t('pharmacist.orders.ready')}
               </Text>
           </TouchableOpacity>
             <TouchableOpacity
@@ -365,7 +365,7 @@ const orders = [
               onPress={() => setTab('completed')}
             >
               <Text style={[styles.tabText, tab === 'completed' && styles.activeTabText]}>
-                {language === 'ar' ? 'مكتمل' : 'Completed'}
+                {t('pharmacist.orders.completed')}
               </Text>
           </TouchableOpacity>
           </View>

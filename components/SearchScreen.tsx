@@ -234,10 +234,17 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       {/* Fixed Header */}
       <View style={styles.header}>
-        {renderBackButton()}
-        <Text style={styles.headerTitle}>
-          {language === 'ar' ? 'البحث والاستكشاف' : 'Search & Explore'}
-        </Text>
+        <View style={styles.headerLeft}>
+          {renderBackButton()}
+        </View>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'البحث والاستكشاف' : 'Search & Explore'}
+          </Text>
+        </View>
+        <View style={styles.headerRight}>
+          {/* Empty space to balance the layout */}
+        </View>
       </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
@@ -522,7 +529,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  headerTitle: { fontSize: 20, fontWeight: 'bold' },
+  headerLeft: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  headerCenter: {
+    flex: 2,
+    alignItems: 'center',
+  },
+  headerRight: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  headerTitle: { 
+    fontSize: 20, 
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   body: {
     paddingHorizontal: 16,
     paddingVertical: 12,

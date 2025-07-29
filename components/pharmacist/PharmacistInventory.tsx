@@ -35,60 +35,7 @@ interface InventoryItem {
   status: 'normal' | 'low' | 'critical'; // Specific literal types
 }
 
-const inventoryItems: InventoryItem[] = [ // Apply the InventoryItem type to the array
-  {
-    id: 1,
-    name: "Paracetamol 500mg",
-    brand: "Generic",
-    currentStock: 45,
-    minStock: 20,
-    maxStock: 100,
-    price: 12.99,
-    supplier: "MedSupply Inc",
-    expiryDate: "2025-06-15",
-    location: "A1-B2",
-    status: "normal"
-  },
-  {
-    id: 2,
-    name: "Vitamin D3 1000IU",
-    brand: "HealthPlus",
-    currentStock: 8,
-    minStock: 15,
-    maxStock: 50,
-    price: 24.99,
-    supplier: "VitaCorr",
-    expiryDate: "2025-12-30",
-    location: "B2-C1",
-    status: "low"
-  },
-  {
-    id: 3,
-    name: "Amoxicillin 250mg",
-    brand: "Amoxil",
-    currentStock: 3,
-    minStock: 10,
-    maxStock: 30,
-    price: 25.99,
-    supplier: "PharmaCorp",
-    expiryDate: "2024-08-20",
-    location: "C1-D3",
-    status: "critical"
-  },
-  {
-    id: 4,
-    name: "Ibuprofen 400mg",
-    brand: "Advil",
-    currentStock: 67,
-    minStock: 25,
-    maxStock: 75,
-    price: 18.99,
-    supplier: "MedSupply Inc",
-    expiryDate: "2025-03-10",
-    location: "A2-B1",
-    status: "normal"
-  }
-];
+// Sample inventory data - will be moved inside component
 
 // Apply the interface to the component's function signature
 
@@ -101,6 +48,62 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
   const [addStockModalVisible, setAddStockModalVisible] = useState(false);
   const [addNewMedicineModalVisible, setAddNewMedicineModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+
+  // Sample inventory data with Arabic localization
+  const inventoryItems: InventoryItem[] = [
+    {
+      id: 1,
+      name: language === 'ar' ? "باراسيتامول 500 مجم" : "Paracetamol 500mg",
+      brand: language === 'ar' ? "عام" : "Generic",
+      currentStock: 45,
+      minStock: 20,
+      maxStock: 100,
+      price: 12.99,
+      supplier: language === 'ar' ? "شركة إمداد الأدوية" : "MedSupply Inc",
+      expiryDate: "2025-06-15",
+      location: "A1-B2",
+      status: "normal"
+    },
+    {
+      id: 2,
+      name: language === 'ar' ? "فيتامين د3 1000 وحدة" : "Vitamin D3 1000IU",
+      brand: language === 'ar' ? "هيلث بلس" : "HealthPlus",
+      currentStock: 8,
+      minStock: 15,
+      maxStock: 50,
+      price: 24.99,
+      supplier: language === 'ar' ? "فيتاكور" : "VitaCorr",
+      expiryDate: "2025-12-30",
+      location: "B2-C1",
+      status: "low"
+    },
+    {
+      id: 3,
+      name: language === 'ar' ? "أموكسيسيلين 250 مجم" : "Amoxicillin 250mg",
+      brand: language === 'ar' ? "أموكسيل" : "Amoxil",
+      currentStock: 3,
+      minStock: 10,
+      maxStock: 30,
+      price: 25.99,
+      supplier: language === 'ar' ? "فارماكورب" : "PharmaCorp",
+      expiryDate: "2024-08-20",
+      location: "C1-D3",
+      status: "critical"
+    },
+    {
+      id: 4,
+      name: language === 'ar' ? "إيبوبروفين 400 مجم" : "Ibuprofen 400mg",
+      brand: language === 'ar' ? "أدفيل" : "Advil",
+      currentStock: 67,
+      minStock: 25,
+      maxStock: 75,
+      price: 18.99,
+      supplier: language === 'ar' ? "شركة إمداد الأدوية" : "MedSupply Inc",
+      expiryDate: "2025-03-10",
+      location: "A2-B1",
+      status: "normal"
+    }
+  ];
   const [editForm, setEditForm] = useState({
     name: '',
     brand: '',
@@ -343,7 +346,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
          </TouchableOpacity>
          <View style={styles.headerContent}>
            <Text style={styles.headerTitle}>
-             {language === 'ar' ? 'إدارة المخزون' : 'Inventory Management'}
+             {t('pharmacist.inventory.title')}
            </Text>
          </View>
          <TouchableOpacity onPress={handleAddNewMedicine} style={styles.addButton}>
@@ -358,7 +361,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
             <View style={styles.summaryCard}>
               <View style={styles.summaryCardRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'إجمالي المنتجات' : 'Total Items'}</Text>
+                  <Text style={styles.summaryLabel}>{t('pharmacist.inventory.quantity')}</Text>
                   <Text style={styles.summaryValue}>{inventoryItems.length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
@@ -370,7 +373,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
             <View style={styles.summaryCard}>
               <View style={styles.summaryCardRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'منخفض المخزون' : 'Low Stock'}</Text>
+                  <Text style={styles.summaryLabel}>{t('pharmacist.inventory.lowStock')}</Text>
                   <Text style={styles.summaryValue}>{inventoryItems.filter(item => item.status === 'low').length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
@@ -382,7 +385,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
             <View style={styles.summaryCard}>
               <View style={styles.summaryCardRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'حرج' : 'Critical'}</Text>
+                  <Text style={styles.summaryLabel}>{t('pharmacist.inventory.outOfStock')}</Text>
                   <Text style={styles.summaryValue}>{inventoryItems.filter(item => item.status === 'critical').length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
@@ -394,7 +397,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
             <View style={styles.summaryCard}>
               <View style={styles.summaryCardRow}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'قريب من الانتهاء' : 'Expiring Soon'}</Text>
+                  <Text style={styles.summaryLabel}>{t('pharmacist.inventory.expiryDate')}</Text>
                   <Text style={styles.summaryValue}>{inventoryItems.filter(item => new Date(item.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)).length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
@@ -411,7 +414,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
               onPress={() => setSelectedFilter('all')}
             >
               <Text style={[styles.filterTabText, selectedFilter === 'all' && styles.activeFilterTabText]}>
-                {language === 'ar' ? 'الكل' : 'All'}
+                {t('pharmacist.inventory.all')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -419,7 +422,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
               onPress={() => setSelectedFilter('low')}
             >
               <Text style={[styles.filterTabText, selectedFilter === 'low' && styles.activeFilterTabText]}>
-                {language === 'ar' ? 'منخفض' : 'Low'}
+                {t('pharmacist.inventory.low')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -427,7 +430,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
               onPress={() => setSelectedFilter('critical')}
             >
               <Text style={[styles.filterTabText, selectedFilter === 'critical' && styles.activeFilterTabText]}>
-                {language === 'ar' ? 'حرج' : 'Critical'}
+                {t('pharmacist.inventory.critical')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -435,7 +438,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
               onPress={() => setSelectedFilter('expiring')}
             >
               <Text style={[styles.filterTabText, selectedFilter === 'expiring' && styles.activeFilterTabText]}>
-                {language === 'ar' ? 'منتهي الصلاحية' : 'Expiring'}
+                {t('pharmacist.inventory.expiring')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -460,22 +463,22 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
                 <View style={styles.inventoryDetails}>
                   <View style={styles.detailRow}>
                     <Icon name="inventory" size={16} color="#6b7280" />
-                    <Text style={styles.detailLabel}>{language === 'ar' ? 'المخزون الحالي:' : 'Current Stock:'}</Text>
+                    <Text style={styles.detailLabel}>{t('pharmacist.inventory.currentStock')}:</Text>
                     <Text style={styles.detailValue}>{item.currentStock}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Icon name="location-on" size={16} color="#6b7280" />
-                    <Text style={styles.detailLabel}>{language === 'ar' ? 'الموقع:' : 'Location:'}</Text>
+                    <Text style={styles.detailLabel}>{t('pharmacist.inventory.location')}:</Text>
                     <Text style={styles.detailValue}>{item.location}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Icon name="attach-money" size={16} color="#6b7280" />
-                    <Text style={styles.detailLabel}>{language === 'ar' ? 'السعر:' : 'Price:'}</Text>
+                    <Text style={styles.detailLabel}>{t('pharmacist.inventory.price')}:</Text>
                     <Text style={styles.detailValue}>{formatCurrency(item.price)}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Icon name="event" size={16} color="#6b7280" />
-                    <Text style={styles.detailLabel}>{language === 'ar' ? 'تاريخ الانتهاء:' : 'Expiry:'}</Text>
+                    <Text style={styles.detailLabel}>{t('pharmacist.inventory.expiry')}:</Text>
                     <Text style={styles.detailValue}>{new Date(item.expiryDate).toLocaleDateString()}</Text>
                   </View>
                 </View>
@@ -483,11 +486,11 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
                 <View style={styles.inventoryActions}>
                   <TouchableOpacity style={styles.actionButton} onPress={() => handleEditItem(item)}>
                     <Icon name="edit" size={16} color="#007bff" />
-                    <Text style={styles.actionButtonText}>{language === 'ar' ? 'تعديل' : 'Edit'}</Text>
+                    <Text style={styles.actionButtonText}>{t('pharmacist.inventory.edit')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionButton} onPress={() => handleAddStock(item)}>
                     <Icon name="add" size={16} color="#10b981" />
-                    <Text style={styles.actionButtonText}>{language === 'ar' ? 'إضافة مخزون' : 'Add Stock'}</Text>
+                    <Text style={styles.actionButtonText}>{t('pharmacist.inventory.addStock')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -506,7 +509,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{language === 'ar' ? 'تعديل المنتج' : 'Edit Product'}</Text>
+              <Text style={styles.modalTitle}>{t('pharmacist.inventory.editProduct')}</Text>
               <TouchableOpacity onPress={() => setEditModalVisible(false)}>
                 <Icon name="close" size={24} color="#666" />
               </TouchableOpacity>
@@ -514,85 +517,85 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
 
             <ScrollView style={styles.modalBody}>
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'اسم المنتج' : 'Product Name'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.productName')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.name}
                   onChangeText={(text) => setEditForm({...editForm, name: text})}
-                  placeholder={language === 'ar' ? 'أدخل اسم المنتج' : 'Enter product name'}
+                  placeholder={t('pharmacist.inventory.enterProductName')}
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'العلامة التجارية' : 'Brand'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.category')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.brand}
                   onChangeText={(text) => setEditForm({...editForm, brand: text})}
-                  placeholder={language === 'ar' ? 'أدخل العلامة التجارية' : 'Enter brand'}
+                  placeholder={t('pharmacist.inventory.enterBrand')}
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'السعر' : 'Price'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.price')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.price}
                   onChangeText={(text) => setEditForm({...editForm, price: text})}
-                  placeholder={language === 'ar' ? 'أدخل السعر' : 'Enter price'}
+                  placeholder={t('pharmacist.inventory.enterPrice')}
                   keyboardType="numeric"
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'الحد الأدنى للمخزون' : 'Minimum Stock'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.minQuantity')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.minStock}
                   onChangeText={(text) => setEditForm({...editForm, minStock: text})}
-                  placeholder={language === 'ar' ? 'أدخل الحد الأدنى' : 'Enter minimum stock'}
+                  placeholder={t('pharmacist.inventory.enterMinimum')}
                   keyboardType="numeric"
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'الحد الأقصى للمخزون' : 'Maximum Stock'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.maximumStock')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.maxStock}
                   onChangeText={(text) => setEditForm({...editForm, maxStock: text})}
-                  placeholder={language === 'ar' ? 'أدخل الحد الأقصى' : 'Enter maximum stock'}
+                  placeholder={t('pharmacist.inventory.enterMaximum')}
                   keyboardType="numeric"
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'الموقع' : 'Location'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.location')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.location}
                   onChangeText={(text) => setEditForm({...editForm, location: text})}
-                  placeholder={language === 'ar' ? 'أدخل الموقع' : 'Enter location'}
+                  placeholder={t('pharmacist.inventory.enterLocation')}
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>{language === 'ar' ? 'المورد' : 'Supplier'}</Text>
+                <Text style={styles.inputLabel}>{t('pharmacist.inventory.manufacturer')}</Text>
                 <TextInput
                   style={styles.textInput}
                   value={editForm.supplier}
                   onChangeText={(text) => setEditForm({...editForm, supplier: text})}
-                  placeholder={language === 'ar' ? 'أدخل اسم المورد' : 'Enter supplier name'}
+                  placeholder={t('pharmacist.inventory.enterSupplier')}
                 />
               </View>
             </ScrollView>
 
             <View style={styles.modalActions}>
               <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setEditModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>{language === 'ar' ? 'إلغاء' : 'Cancel'}</Text>
+                <Text style={styles.cancelButtonText}>{t('pharmacist.inventory.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modalButton, styles.saveButton]} onPress={saveEditChanges}>
-                <Text style={styles.saveButtonText}>{language === 'ar' ? 'حفظ' : 'Save'}</Text>
+                <Text style={styles.saveButtonText}>{t('pharmacist.inventory.saveProduct')}</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -14,7 +14,7 @@ interface DonationScreenProps {
 }
 
 export default function DonationScreen({ navigateTo, goBack, userType, userData }: DonationScreenProps) {
-  const { language } = useLocalization();
+  const { t, language } = useLocalization();
   const insets = useSafeAreaInsets();
 
   const handleBackPress = () => {
@@ -33,7 +33,7 @@ export default function DonationScreen({ navigateTo, goBack, userType, userData 
           <Icon name="arrow-back" size={24} color="#222" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>{language === 'ar' ? 'التبرعات' : 'Donations'}</Text>
+          <Text style={styles.headerTitle}>{t('pharmacist.donation.title')}</Text>
         </View>
         <View style={{ width: 24 }} />
       </View>

@@ -22,16 +22,21 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
   const pendingDonations = [
     {
       id: 1,
-      donor: 'Ahmed Mohamed',
-      medicines: ['Paracetamol 500mg', 'Amoxicillin 250mg'],
+      donor: language === 'ar' ? 'أحمد محمد' : 'Ahmed Mohamed',
+      medicines: [
+        language === 'ar' ? 'باراسيتامول 500 مجم' : 'Paracetamol 500mg', 
+        language === 'ar' ? 'أموكسيسيلين 250 مجم' : 'Amoxicillin 250mg'
+      ],
       quantity: 5,
       date: '2024-01-15',
       status: 'pending'
     },
     {
       id: 2,
-      donor: 'Fatima Ali',
-      medicines: ['Vitamin C 1000mg'],
+      donor: language === 'ar' ? 'فاطمة علي' : 'Fatima Ali',
+      medicines: [
+        language === 'ar' ? 'فيتامين سي 1000 مجم' : 'Vitamin C 1000mg'
+      ],
       quantity: 3,
       date: '2024-01-14',
       status: 'pending'
@@ -41,10 +46,12 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
   const assignedDonations = [
     {
       id: 3,
-      donor: 'Mohamed Hassan',
-      medicines: ['Insulin Regular'],
+      donor: language === 'ar' ? 'محمد حسن' : 'Mohamed Hassan',
+      medicines: [
+        language === 'ar' ? 'أنسولين عادي' : 'Insulin Regular'
+      ],
       quantity: 2,
-      assignedTo: 'Sara Ahmed',
+      assignedTo: language === 'ar' ? 'سارة أحمد' : 'Sara Ahmed',
       date: '2024-01-13',
       status: 'assigned'
     }
@@ -60,8 +67,8 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
         <View style={[styles.statusBadge, { backgroundColor: donation.status === 'pending' ? '#fef3c7' : '#dcfce7' }]}>
           <Icon name={ICONS.check} size={14} color={donation.status === 'pending' ? '#92400e' : '#166534'} />
           <Text style={[styles.statusText, { color: donation.status === 'pending' ? '#92400e' : '#166534' }]}>
-            {donation.status === 'pending' ? (language === 'ar' ? 'في الانتظار' : 'Pending') : (language === 'ar' ? 'تم التوزيع' : 'Assigned')}
-            </Text>
+            {t(`pharmacist.donation.${donation.status}`)}
+          </Text>
         </View>
       </View>
 
@@ -74,7 +81,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
       <View style={styles.donationFooter}>
         <View style={styles.donationMeta}>
           <Icon name={ICONS.package} size={16} color="#6b7280" />
-          <Text style={styles.quantityText}>{donation.quantity} {language === 'ar' ? 'قطعة' : 'items'}</Text>
+          <Text style={styles.quantityText}>{donation.quantity} {t('pharmacist.donation.quantity')}</Text>
         </View>
         <Text style={styles.dateText}>{donation.date}</Text>
       </View>
@@ -83,11 +90,11 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
         <View style={styles.actionButtons}>
           <TouchableOpacity style={[styles.actionButton, styles.assignButton]}>
             <Icon name="person-add" size={16} color="#fff" />
-            <Text style={styles.actionButtonText}>{language === 'ar' ? 'توزيع' : 'Assign'}</Text>
+            <Text style={styles.actionButtonText}>{t('pharmacist.donation.approve')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionButton, styles.contactButton]}>
             <Icon name={ICONS.phone} size={16} color="#007bff" />
-            <Text style={[styles.actionButtonText, { color: '#007bff' }]}>{language === 'ar' ? 'اتصال' : 'Contact'}</Text>
+            <Text style={[styles.actionButtonText, { color: '#007bff' }]}>{t('action.call')}</Text>
           </TouchableOpacity>
                 </View>
       )}
@@ -95,7 +102,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
       {donation.status === 'assigned' && donation.assignedTo && (
         <View style={styles.assignedInfo}>
           <Text style={styles.assignedText}>
-            {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'} {donation.assignedTo}
+            {t('pharmacist.donation.assignedTo')}: {donation.assignedTo}
           </Text>
                     </View>
       )}
@@ -113,7 +120,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
               onPress={() => setSelectedTab('pending')}
                   >
               <Text style={[styles.tabText, selectedTab === 'pending' && styles.activeTabText]}>
-                {language === 'ar' ? 'في الانتظار' : 'Pending'} ({pendingDonations.length})
+                {t('pharmacist.donation.pending')} ({pendingDonations.length})
               </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -121,7 +128,7 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
               onPress={() => setSelectedTab('assigned')}
                   >
               <Text style={[styles.tabText, selectedTab === 'assigned' && styles.activeTabText]}>
-                {language === 'ar' ? 'تم التوزيع' : 'Assigned'} ({assignedDonations.length})
+                {t('pharmacist.donation.assigned')} ({assignedDonations.length})
               </Text>
                   </TouchableOpacity>
                 </View>
