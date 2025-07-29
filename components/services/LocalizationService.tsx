@@ -62,7 +62,7 @@ const translations = {
     'action.switchLanguage': 'Switch to English',
 
     // Authentication
-    'auth.welcome': 'مرحباً بك في صيدلية السودان',
+    'auth.welcome': 'مرحباً بك في علاجي',
     'auth.subtitle': 'خدمات صيدلانية متكاملة في راحة بيتك',
     'auth.patient': 'مريض',
     'auth.pharmacist': 'صيدلي',
@@ -288,7 +288,7 @@ const translations = {
     // Pharmacy Names
     'pharmacy.central': 'الصيدلية المركزية',
     'pharmacy.nile': 'صيدلية النيل الأزرق',
-    'pharmacy.sudan': 'صيدلية السودان',
+    'pharmacy.sudan': 'علاجي',
     'pharmacy.health': 'صيدلية الصحة والعافية',
     'pharmacy.care': 'صيدلية الرعاية الطبية',
     'pharmacy.family': 'صيدلية العائلة',
@@ -419,7 +419,7 @@ const translations = {
     'action.switchLanguage': 'التبديل إلى العربية',
 
     // Authentication
-    'auth.welcome': 'Welcome to Sudan Pharmacy',
+    'auth.welcome': 'Welcome to Elajy',
     'auth.subtitle': 'Complete pharmaceutical services at your comfort',
     'auth.patient': 'Patient',
     'auth.pharmacist': 'Pharmacist',
@@ -718,7 +718,7 @@ export const sudanesePharmaceuticalData = {
       name: 'باراسيتامول 500 مجم',
       nameEn: 'Paracetamol 500mg',
       genericName: 'Acetaminophen',
-      brand: 'صيدلية السودان',
+              brand: 'علاجي',
       brandEn: 'Sudan Pharma',
       manufacturer: 'مصنع الأدوية السوداني',
       manufacturerEn: 'Sudanese Pharmaceutical Factory',

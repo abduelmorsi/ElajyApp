@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type CommandDialogProps = {
   visible: boolean;
@@ -20,7 +21,7 @@ function CommandDialog({ visible, onClose, title = "Command Palette", descriptio
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
           <View style={styles.inputWrapper}>
-            <Text style={styles.searchIcon}>🔍</Text>
+            <Icon name="search" size={20} color="#888" />
             <TextInput
               style={styles.input}
               placeholder={placeholder}
@@ -54,7 +55,7 @@ function CommandDialog({ visible, onClose, title = "Command Palette", descriptio
 // Individual building blocks for custom command UIs
 const CommandInput = ({ value, onChangeText, placeholder, style }: { value: string; onChangeText: (t: string) => void; placeholder?: string; style?: any }) => (
   <View style={styles.inputWrapper}>
-    <Text style={styles.searchIcon}>🔍</Text>
+    <Icon name="search" size={20} color="#888" />
     <TextInput
       style={[styles.input, style]}
       placeholder={placeholder}

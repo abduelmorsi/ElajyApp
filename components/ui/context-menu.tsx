@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type ContextMenuProps = {
   visible: boolean;
@@ -42,7 +43,7 @@ const ContextMenuTrigger = ({ children, onLongPress, style }: { children: React.
 
 const ContextMenuItem = ({ label, onPress, checked, radio, destructive, shortcut }: { label: string; onPress: () => void; checked?: boolean; radio?: boolean; destructive?: boolean; shortcut?: string }): React.ReactElement => (
   <TouchableOpacity onPress={onPress} style={[styles.menuItem, destructive && styles.menuItemDestructive]}>
-    {checked ? <Text style={styles.menuIcon}>✔️</Text> : radio ? <Text style={styles.menuIcon}>◉</Text> : <Text style={styles.menuIcon} />}
+    {checked ? <Icon name="check" size={16} color="#22c55e" style={styles.menuIcon} /> : radio ? <Icon name="radio-button-checked" size={16} color="#007bff" style={styles.menuIcon} /> : <View style={styles.menuIcon} />}
     <Text style={[styles.menuItemLabel, destructive && styles.menuItemLabelDestructive]}>{label}</Text>
     {shortcut && <Text style={styles.menuShortcut}>{shortcut}</Text>}
   </TouchableOpacity>
@@ -50,14 +51,14 @@ const ContextMenuItem = ({ label, onPress, checked, radio, destructive, shortcut
 
 const ContextMenuCheckboxItem = ({ label, checked, onPress }: { label: string; checked: boolean; onPress: () => void }): React.ReactElement => (
   <TouchableOpacity onPress={onPress} style={styles.menuItem}>
-    <Text style={styles.menuIcon}>{checked ? "✔️" : ""}</Text>
+    {checked ? <Icon name="check" size={16} color="#22c55e" style={styles.menuIcon} /> : <View style={styles.menuIcon} />}
     <Text style={styles.menuItemLabel}>{label}</Text>
   </TouchableOpacity>
 );
 
 const ContextMenuRadioItem = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }): React.ReactElement => (
   <TouchableOpacity onPress={onPress} style={styles.menuItem}>
-    <Text style={styles.menuIcon}>{selected ? "◉" : "○"}</Text>
+    {selected ? <Icon name="radio-button-checked" size={16} color="#007bff" style={styles.menuIcon} /> : <Icon name="radio-button-unchecked" size={16} color="#ccc" style={styles.menuIcon} />}
     <Text style={styles.menuItemLabel}>{label}</Text>
   </TouchableOpacity>
 );

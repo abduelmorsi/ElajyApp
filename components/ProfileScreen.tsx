@@ -104,7 +104,7 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
 
       {/* App Info */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>{language === 'ar' ? 'صيدلية السودان' : 'Sudan Pharmacy'}</Text>
+        <Text style={styles.footerText}>{language === 'ar' ? 'علاجي' : 'Elajy'}</Text>
         <Text style={styles.footerText}>{language === 'ar' ? 'إصدار 1.0.0' : 'Version 1.0.0'}</Text>
       </View>
     </ScrollView>

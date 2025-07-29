@@ -288,7 +288,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
 
       {/* App Info */}
       <View style={styles.appInfoSection}>
-        <Text style={styles.appInfoText}>{language === 'ar' ? 'نظام إدارة الصيدليات - السودان' : 'Pharmacy Management System - Sudan'}</Text>
+        <Text style={styles.appInfoText}>{language === 'ar' ? 'علاجي' : 'Elajy'}</Text>
         <Text style={styles.appInfoText}>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</Text>
       </View>
 
@@ -602,6 +602,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
     overflow: 'hidden',
+    textAlign: 'center',
   },
   separator: {
     height: 1,

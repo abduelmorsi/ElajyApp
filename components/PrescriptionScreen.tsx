@@ -13,6 +13,7 @@ import {
   Modal,
   StyleSheet
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
@@ -373,7 +374,7 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setShowOcrModal(false)} style={styles.modalCloseButton}>
-              <Text style={styles.modalCloseText}>✕</Text>
+              <Icon name="close" size={24} color="#666" />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>
               {language === 'ar' ? 'معالجة الوصفة' : 'Process Prescription'}
