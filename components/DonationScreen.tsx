@@ -34,11 +34,6 @@ export default function DonationScreen({ navigateTo, goBack, userType, userData 
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>{language === 'ar' ? 'التبرعات' : 'Donations'}</Text>
-          <Text style={styles.headerSubtitle}>
-            {userType === 'patient'
-              ? (language === 'ar' ? 'ساعد المرضى المحتاجين' : 'Help patients in need')
-              : (language === 'ar' ? 'إدارة التبرعات والتوزيع' : 'Manage donations and distribution')}
-          </Text>
         </View>
         <View style={{ width: 24 }} />
       </View>

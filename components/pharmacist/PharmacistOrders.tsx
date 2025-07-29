@@ -323,8 +323,14 @@ const orders = [
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       {/* Fixed Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
-        <Text style={styles.headerTitle}>{language === 'ar' ? 'إدارة الطلبات' : 'Order Management'}</Text>
+        <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')} style={styles.backButton}>
+          <Icon name="arrow-back" size={24} color="#222" />
+        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>{language === 'ar' ? 'إدارة الطلبات' : 'Order Management'}</Text>
         </View>
+        <View style={{ width: 40 }} />
+      </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
         <View style={styles.body}>
@@ -391,6 +397,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+  },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -418,6 +428,8 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     backgroundColor: '#2563eb',
+    borderRadius: 8,
+    marginHorizontal: 2,
   },
   tabText: {
     fontSize: 14,
