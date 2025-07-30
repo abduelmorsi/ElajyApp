@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
@@ -211,35 +211,26 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       {/* Fixed Header */}
-      <View style={{ 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        backgroundColor: '#fff', 
-        borderBottomWidth: 1, 
-        borderColor: '#eee', 
-        paddingHorizontal: 8, 
-        paddingVertical: 16,
-        paddingBottom: 8,
-        paddingTop: insets.top,
-        zIndex: 1000,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      }}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <View style={styles.headerLeft}>
           {goBack && (
             <TouchableOpacity onPress={() => {
               console.log('Back button pressed in ConsultScreen');
               goBack();
-            }} style={{ padding: 8, marginRight: 8 }}>
-              <Icon name="arrow-back" size={24} color="#222" />
+            }} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
             </TouchableOpacity>
           )}
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#222' }}>
-            {language === 'ar' ? 'الاستشارات الطبية' : 'Medical Consultations'}
+        </View>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
+            {language === 'ar' ? 'الاستشارات' : 'Consultations'}
           </Text>
         </View>
+        <View style={styles.headerRight}>
+          {/* Empty space to balance the layout */}
+        </View>
+      </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: 0 }}>
 
@@ -349,3 +340,41 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  header: { 
+    backgroundColor: '#fff', 
+    borderBottomWidth: 1, 
+    borderColor: '#eee', 
+    paddingHorizontal: 24, 
+    paddingVertical: 16,
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerLeft: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  headerCenter: {
+    flex: 2,
+    alignItems: 'center',
+  },
+  headerRight: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  headerTitle: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: '#222',
+    textAlign: 'center',
+    numberOfLines: 1,
+    ellipsizeMode: 'tail'
+  },
+});
