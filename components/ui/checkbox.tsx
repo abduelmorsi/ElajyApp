@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type CheckboxProps = {
   checked?: boolean;
@@ -31,7 +32,7 @@ function Checkbox({ checked: checkedProp, onChange, disabled, style }: CheckboxP
       accessibilityRole="checkbox"
       accessibilityState={{ checked, disabled }}
     >
-      {checked ? <Text style={styles.checkmark}>✓</Text> : null}
+      {checked ? <Icon name="check" size={16} color="#fff" /> : null}
     </TouchableOpacity>
   );
 }

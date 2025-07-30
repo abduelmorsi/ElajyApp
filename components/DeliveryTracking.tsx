@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DeliveryOrder, useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
@@ -12,6 +13,7 @@ interface DeliveryTrackingProps {
 export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTrackingProps) {
   const { t, language } = useLocalization();
   const { isRTL, getMargin } = useRTL();
+  const insets = useSafeAreaInsets();
   const { getOrderById, updateOrderStatus } = useDelivery();
   const [order, setOrder] = useState<DeliveryOrder | null>(null);
   const [estimatedArrival, setEstimatedArrival] = useState<Date | null>(null);
@@ -50,10 +52,12 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
 
   if (!order) {
     return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       <View style={[styles.centered, { flex: 1 }]}> 
         <Text style={styles.emptyIcon}>📦</Text>
         <Text style={styles.emptyText}>{language === 'ar' ? 'لم يتم العثور على الطلب' : 'Order not found'}</Text>
       </View>
+      </SafeAreaView>
     );
   }
 
@@ -157,17 +161,18 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
   ];
 
   return (
-    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
       {/* Header */}
-      <View style={styles.headerRow}>
-        <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigateTo('order-history')}>
-          <Text style={styles.headerBackIcon}>←</Text>
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <TouchableOpacity onPress={() => navigateTo('order-history')} style={styles.backButton}>
+            <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <View>
-          <Text style={styles.headerTitle}>{language === 'ar' ? 'تتبع الطلب' : 'Track Order'}</Text>
-          <Text style={styles.headerSubtitle}>{order.trackingId}</Text>
+          <Text style={styles.headerTitle}>
+            {language === 'ar' ? 'تتبع التوصيل' : 'Delivery Tracking'}
+          </Text>
         </View>
-      </View>
+
       {/* Status Overview */}
       <View style={styles.card}>
         <View style={styles.statusRow}>
@@ -263,7 +268,8 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
           </TouchableOpacity>
         </View>
       )}
-    </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -276,7 +282,6 @@ const styles = StyleSheet.create({
   headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
   headerBackBtn: { marginRight: 12, padding: 6 },
   headerBackIcon: { fontSize: 22, color: '#888' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
   headerSubtitle: { fontSize: 13, color: '#666' },
   card: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', padding: 18, marginBottom: 18 },
   statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
@@ -324,4 +329,29 @@ const styles = StyleSheet.create({
   contactBtn: { backgroundColor: '#f3f3f3', borderRadius: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingVertical: 14 },
   contactBtnIcon: { fontSize: 18, marginRight: 6 },
   contactBtnText: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  backButton: {
+    marginRight: 12,
+    padding: 6,
+  },
+  backIcon: {
+    fontSize: 22,
+    color: '#888',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#222',
+    flex: 1,
+    textAlign: 'center',
+  },
 });

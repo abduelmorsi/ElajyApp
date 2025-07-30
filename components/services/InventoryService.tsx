@@ -213,10 +213,10 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
 
           setStockMovements(prev => [movement, ...prev.slice(0, 49)]); // Keep last 50 movements
 
-          // Check for low stock alerts
-          if (newStock <= randomItem.minStock) {
-            Alert.alert('Low Stock Alert', `${randomItem.name} at ${pharmacyLocations.find(p => p.id === randomItem.pharmacyId)?.name} is running low (${newStock} remaining)`);
-          }
+          // Check for low stock alerts (disabled)
+          // if (newStock <= randomItem.minStock) {
+          //   Alert.alert('Low Stock Alert', `${randomItem.name} at ${pharmacyLocations.find(p => p.id === randomItem.pharmacyId)?.name} is running low (${newStock} remaining)`);
+          // }
         }
 
         return newInventory;

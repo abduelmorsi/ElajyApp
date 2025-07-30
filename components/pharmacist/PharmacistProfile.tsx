@@ -1,10 +1,7 @@
-// ...existing code...
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// ...existing code...
-// ...existing code...
-// ...existing code...
 import React, { useState } from 'react';
-import { Switch } from 'react-native';
+import { Switch, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Modal, TextInput, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { sudanesePharmaceuticalData, useLocalization, useRTL } from '../services/LocalizationService';
 
 type PharmacistProfileProps = {
@@ -19,8 +16,14 @@ type PharmacistProfileProps = {
 export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageToggle, currentLanguage, userData, updateUserProfile }: PharmacistProfileProps) {
   const { t, language } = useLocalization();
   const { isRTL, getMargin } = useRTL();
+  const insets = useSafeAreaInsets();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [pharmacyModalVisible, setPharmacyModalVisible] = useState(false);
+  const [editField, setEditField] = useState('');
+  const [editValue, setEditValue] = useState('');
+  const [selectedPharmacy, setSelectedPharmacy] = useState('');
 
   // Pharmacist user data
   const pharmacistData = {
@@ -43,21 +46,64 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
     rating: 4.9
   };
 
+  // Available pharmacies for selection
+  const availablePharmacies = [
+    { id: '1', name: 'صيدلية النيل الأزرق', nameEn: 'Blue Nile Pharmacy', location: 'أم درمان', locationEn: 'Omdurman' },
+    { id: '2', name: 'صيدلية الخرطوم', nameEn: 'Khartoum Pharmacy', location: 'الخرطوم', locationEn: 'Khartoum' },
+    { id: '3', name: 'صيدلية الشفاء', nameEn: 'Al Shifa Pharmacy', location: 'أم درمان', locationEn: 'Omdurman' },
+    { id: '4', name: 'صيدلية السلام', nameEn: 'Al Salam Pharmacy', location: 'الخرطوم', locationEn: 'Khartoum' },
+    { id: '5', name: 'صيدلية النور', nameEn: 'Al Nour Pharmacy', location: 'أم درمان', locationEn: 'Omdurman' },
+  ];
+
+  const handleEditField = (field: string, currentValue: string) => {
+    setEditField(field);
+    setEditValue(currentValue);
+    setEditModalVisible(true);
+  };
+
+  const saveEditChanges = () => {
+    if (!editValue.trim()) {
+      Alert.alert(
+        language === 'ar' ? 'خطأ' : 'Error',
+        language === 'ar' ? 'يرجى إدخال قيمة صحيحة' : 'Please enter a valid value'
+      );
+      return;
+    }
+
+    // Here you would typically update the user profile
+    // For now, we'll just show a success message
+    setEditModalVisible(false);
+    setEditValue('');
+    Alert.alert(
+      language === 'ar' ? 'تم التحديث' : 'Updated',
+      language === 'ar' ? 'تم تحديث المعلومات بنجاح' : 'Information updated successfully'
+    );
+  };
+
+  const handlePharmacySelection = (pharmacy: any) => {
+    setSelectedPharmacy(pharmacy.id);
+    setPharmacyModalVisible(false);
+    Alert.alert(
+      language === 'ar' ? 'تم التحديث' : 'Updated',
+      language === 'ar' ? `تم تعيين الصيدلية: ${pharmacy.name}` : `Pharmacy assigned: ${pharmacy.nameEn}`
+    );
+  };
+
   // No longer need pharmacistStats or menuItems with icon references
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Profile Header */}
-      {/* ...convert the rest of the profile screen to React Native below... */}
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: insets.top }}>
+        {/* Profile Header */}
         <View style={styles.headerRow}>
           <View style={styles.avatarContainer}>
             <Image
               source={{ uri: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&auto=format' }}
               style={styles.avatarImg}
             />
-            <View style={styles.avatarBadge}>
-              <Text style={styles.avatarBadgeText}>📷</Text>
-            </View>
+            <TouchableOpacity style={styles.avatarBadge}>
+              <Icon name="camera-alt" size={16} color="#fff" />
+            </TouchableOpacity>
           </View>
           <View style={styles.headerInfo}>
             <Text style={styles.headerName}>
@@ -66,28 +112,29 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
             <Text style={styles.headerSpecialization}>
               {language === 'ar' ? pharmacistData.specialization : pharmacistData.specializationEn}
             </Text>
-            <View style={styles.headerPharmacyRow}>
-              <Text style={styles.headerPharmacyIcon}>📍</Text>
+            <TouchableOpacity style={styles.headerPharmacyRow} onPress={() => setPharmacyModalVisible(true)}>
+              <Icon name="location-on" size={16} color="#6c757d" />
               <Text style={styles.headerPharmacyName}>{language === 'ar' ? pharmacistData.pharmacyName : pharmacistData.pharmacyNameEn}</Text>
-            </View>
+              <Icon name="edit" size={14} color="#6c757d" style={{ marginLeft: 4 }} />
+            </TouchableOpacity>
             <View style={styles.headerBadge}>
-              <Text style={styles.headerBadgeText}>⚕️ {language === 'ar' ? 'صيدلي مرخص' : 'Licensed Pharmacist'}</Text>
+              <Icon name="verified" size={14} color="#388e3c" />
+              <Text style={styles.headerBadgeText}>{language === 'ar' ? 'صيدلي مرخص' : 'Licensed Pharmacist'}</Text>
             </View>
           </View>
         </View>
 
         {/* Professional Stats */}
         <View style={styles.statsGrid}>
-          {/* Use emoji for icons */}
           {[
-            { icon: '📦', label: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders', value: pharmacistData.totalOrders, color: '#1976d2' },
-            { icon: '👥', label: language === 'ar' ? 'العملاء' : 'Customers', value: pharmacistData.totalCustomers, color: '#388e3c' },
-            { icon: '⭐', label: language === 'ar' ? 'التقييم' : 'Rating', value: pharmacistData.rating, color: '#fbc02d' },
-            { icon: '📊', label: language === 'ar' ? 'الخبرة' : 'Experience', value: language === 'ar' ? pharmacistData.experience : pharmacistData.experienceEn, color: '#0288d1' },
+            { icon: 'inventory', label: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders', value: pharmacistData.totalOrders, color: '#1976d2' },
+            { icon: 'people', label: language === 'ar' ? 'العملاء' : 'Customers', value: pharmacistData.totalCustomers, color: '#388e3c' },
+            { icon: 'star', label: language === 'ar' ? 'التقييم' : 'Rating', value: pharmacistData.rating, color: '#fbc02d' },
+            { icon: 'trending-up', label: language === 'ar' ? 'الخبرة' : 'Experience', value: language === 'ar' ? pharmacistData.experience : pharmacistData.experienceEn, color: '#0288d1' },
           ].map((stat, idx) => (
             <View key={idx} style={styles.statCard}>
               <View style={[styles.statIconBox, { backgroundColor: stat.color + '22' }]}> 
-                <Text style={[styles.statIcon, { color: stat.color }]}>{stat.icon}</Text>
+                <Icon name={stat.icon} size={20} color={stat.color} />
               </View>
               <View>
                 <Text style={styles.statLabel}>{stat.label}</Text>
@@ -100,10 +147,10 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
 
       {/* Professional Information */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🧑‍⚕️ {language === 'ar' ? 'المعلومات المهنية' : 'Professional Information'}</Text>
+        <Text style={styles.sectionTitleText}>{language === 'ar' ? 'المعلومات المهنية' : 'Professional Information'}</Text>
         <View style={styles.card}>
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>📄</Text>
+            <Icon name="description" size={18} color="#6c757d" style={styles.infoIcon} />
             <View style={styles.infoTextBox}>
               <Text style={styles.infoLabel}>{language === 'ar' ? 'رقم الترخيص' : 'License Number'}</Text>
               <Text style={styles.infoValue}>{pharmacistData.licenseNumber}</Text>
@@ -112,32 +159,36 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>📞</Text>
+            <Icon name="phone" size={18} color="#6c757d" style={styles.infoIcon} />
             <View style={styles.infoTextBox}>
               <Text style={styles.infoLabel}>{language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</Text>
               <Text style={styles.infoValue}>{pharmacistData.phone}</Text>
             </View>
-            <TouchableOpacity style={styles.editBtn}><Text style={styles.editBtnText}>✏️</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.editBtn} onPress={() => handleEditField('phone', pharmacistData.phone)}>
+              <Icon name="edit" size={16} color="#6c757d" />
+            </TouchableOpacity>
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>✉️</Text>
+            <Icon name="email" size={18} color="#6c757d" style={styles.infoIcon} />
             <View style={styles.infoTextBox}>
               <Text style={styles.infoLabel}>{language === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</Text>
               <Text style={styles.infoValue}>{pharmacistData.email}</Text>
             </View>
-            <TouchableOpacity style={styles.editBtn}><Text style={styles.editBtnText}>✏️</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.editBtn} onPress={() => handleEditField('email', pharmacistData.email)}>
+              <Icon name="edit" size={16} color="#6c757d" />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
 
       {/* App Settings */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>⚙️ {language === 'ar' ? 'إعدادات التطبيق' : 'App Settings'}</Text>
+        <Text style={styles.sectionTitleText}>{language === 'ar' ? 'إعدادات التطبيق' : 'App Settings'}</Text>
         <View style={styles.card}>
           {/* Language */}
           <View style={styles.settingRow}>
-            <Text style={styles.settingIcon}>🌐</Text>
+            <Icon name="language" size={18} color="#6c757d" style={styles.settingIcon} />
             <View style={styles.settingTextBox}>
               <Text style={styles.settingLabel}>{language === 'ar' ? 'اللغة' : 'Language'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'العربية' : 'English'}</Text>
@@ -149,7 +200,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           <View style={styles.separator} />
           {/* Notifications */}
           <View style={styles.settingRow}>
-            <Text style={styles.settingIcon}>🔔</Text>
+            <Icon name="notifications" size={18} color="#6c757d" style={styles.settingIcon} />
             <View style={styles.settingTextBox}>
               <Text style={styles.settingLabel}>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'تنبيهات الطلبات والوصفات' : 'Order and prescription alerts'}</Text>
@@ -159,7 +210,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
           <View style={styles.separator} />
           {/* Dark Mode */}
           <View style={styles.settingRow}>
-            <Text style={styles.settingIcon}>🌙</Text>
+            <Icon name="dark-mode" size={18} color="#6c757d" style={styles.settingIcon} />
             <View style={styles.settingTextBox}>
               <Text style={styles.settingLabel}>{language === 'ar' ? 'الوضع الليلي' : 'Dark Mode'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'تغيير مظهر التطبيق' : 'Change app appearance'}</Text>
@@ -171,48 +222,48 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
 
       {/* Management Tools */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🛠️ {language === 'ar' ? 'أدوات الإدارة' : 'Management Tools'}</Text>
+        <Text style={styles.sectionTitleText}>{language === 'ar' ? 'أدوات الإدارة' : 'Management Tools'}</Text>
         {[
           {
             title: language === 'ar' ? 'التقارير والإحصائيات' : 'Reports & Analytics',
             description: language === 'ar' ? 'عرض أداء الصيدلية والإحصائيات' : 'View pharmacy performance and statistics',
             action: () => navigateTo('pharmacist-analytics'),
-            icon: '📊',
+            icon: 'analytics',
           },
           {
             title: language === 'ar' ? 'إدارة المخزون' : 'Inventory Management',
             description: language === 'ar' ? 'مراقبة والتحكم في المخزون' : 'Monitor and control inventory',
             action: () => navigateTo('pharmacist-inventory'),
-            icon: '📦',
+            icon: 'inventory',
           },
           {
             title: language === 'ar' ? 'الوصفات الطبية' : 'Prescriptions',
             description: language === 'ar' ? 'مراجعة والموافقة على الوصفات' : 'Review and approve prescriptions',
             action: () => navigateTo('pharmacist-prescriptions'),
-            icon: '📄',
+            icon: 'description',
           },
           {
             title: language === 'ar' ? 'الإشعارات' : 'Notifications',
             description: language === 'ar' ? 'إدارة التنبيهات والإشعارات' : 'Manage alerts and notifications',
             action: () => setNotifications(!notifications),
-            icon: '🔔',
+            icon: 'notifications',
           },
           {
             title: language === 'ar' ? 'الخصوصية والأمان' : 'Privacy & Security',
             description: language === 'ar' ? 'إعدادات الحساب والخصوصية' : 'Account and privacy settings',
             action: () => navigateTo('privacy'),
-            icon: '🛡️',
+            icon: 'security',
           },
           {
             title: language === 'ar' ? 'المساعدة والدعم' : 'Help & Support',
             description: language === 'ar' ? 'اتصل بفريق الدعم أو تصفح الأسئلة الشائعة' : 'Contact support or browse FAQ',
             action: () => navigateTo('help'),
-            icon: '❓',
+            icon: 'help',
           },
         ].map((item, idx) => (
           <TouchableOpacity key={idx} style={styles.menuCard} onPress={item.action}>
             <View style={styles.menuRow}>
-              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <Icon name={item.icon} size={20} color="#6c757d" style={styles.menuIcon} />
               <View style={styles.menuTextBox}>
                 <Text style={styles.menuTitle}>{item.title}</Text>
                 <Text style={styles.menuDesc}>{item.description}</Text>
@@ -225,7 +276,8 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
       {/* Sign Out Button */}
       <View style={styles.signOutSection}>
         <TouchableOpacity style={styles.signOutBtn} onPress={onSignOut}>
-          <Text style={styles.signOutBtnText}>🚪 {t('action.signOut')}</Text>
+          <Icon name="logout" size={18} color="#fff" style={{ marginRight: 8 }} />
+          <Text style={styles.signOutBtnText}>{t('action.signOut')}</Text>
         </TouchableOpacity>
         <Text style={styles.signOutNote}>
           {language === 'ar'
@@ -236,16 +288,124 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
 
       {/* App Info */}
       <View style={styles.appInfoSection}>
-        <Text style={styles.appInfoText}>{language === 'ar' ? 'نظام إدارة الصيدليات - السودان' : 'Pharmacy Management System - Sudan'}</Text>
+        <Text style={styles.appInfoText}>{language === 'ar' ? 'علاجي' : 'Elajy'}</Text>
         <Text style={styles.appInfoText}>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</Text>
       </View>
+
+      {/* Edit Field Modal */}
+      <Modal
+        visible={editModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {language === 'ar' ? 'تعديل المعلومات' : 'Edit Information'}
+              </Text>
+              <TouchableOpacity onPress={() => setEditModalVisible(false)}>
+                <Icon name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>
+                  {editField === 'phone' 
+                    ? (language === 'ar' ? 'رقم الهاتف' : 'Phone Number')
+                    : (language === 'ar' ? 'البريد الإلكتروني' : 'Email Address')
+                  }
+                </Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={editValue}
+                  onChangeText={setEditValue}
+                  placeholder={
+                    editField === 'phone' 
+                      ? (language === 'ar' ? 'أدخل رقم الهاتف' : 'Enter phone number')
+                      : (language === 'ar' ? 'أدخل البريد الإلكتروني' : 'Enter email address')
+                  }
+                  keyboardType={editField === 'phone' ? 'phone-pad' : 'email-address'}
+                />
+              </View>
+            </View>
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setEditModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>{language === 'ar' ? 'إلغاء' : 'Cancel'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalButton, styles.saveButton]} onPress={saveEditChanges}>
+                <Text style={styles.saveButtonText}>{language === 'ar' ? 'حفظ' : 'Save'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Pharmacy Selection Modal */}
+      <Modal
+        visible={pharmacyModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setPharmacyModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {language === 'ar' ? 'اختر الصيدلية' : 'Select Pharmacy'}
+              </Text>
+              <TouchableOpacity onPress={() => setPharmacyModalVisible(false)}>
+                <Icon name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              {availablePharmacies.map((pharmacy) => (
+                <TouchableOpacity
+                  key={pharmacy.id}
+                  style={[
+                    styles.pharmacyOption,
+                    selectedPharmacy === pharmacy.id && styles.selectedPharmacyOption
+                  ]}
+                  onPress={() => handlePharmacySelection(pharmacy)}
+                >
+                  <View style={styles.pharmacyOptionContent}>
+                    <Icon name="local-pharmacy" size={24} color="#1976d2" />
+                    <View style={styles.pharmacyOptionText}>
+                      <Text style={styles.pharmacyOptionName}>
+                        {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
+                      </Text>
+                      <Text style={styles.pharmacyOptionLocation}>
+                        {language === 'ar' ? pharmacy.location : pharmacy.locationEn}
+                      </Text>
+                    </View>
+                    {selectedPharmacy === pharmacy.id && (
+                      <Icon name="check-circle" size={20} color="#1976d2" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setPharmacyModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>{language === 'ar' ? 'إلغاء' : 'Cancel'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f9fafb',
   },
   headerBg: {
     padding: 24,
@@ -258,7 +418,9 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 20,
+    marginBottom: 16,
   },
   avatarContainer: {
     position: 'relative',
@@ -324,28 +486,31 @@ const styles = StyleSheet.create({
   headerBadge: {
     backgroundColor: '#e0f7e9',
     borderRadius: 8,
-    paddingVertical: 2,
+    paddingVertical: 4,
     paddingHorizontal: 8,
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   headerBadgeText: {
     color: '#388e3c',
     fontSize: 13,
     fontWeight: 'bold',
+    marginLeft: 4,
   },
   // --- new styles for converted sections ---
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 8,
-    marginBottom: 8,
+    paddingHorizontal: 18,
+    marginBottom: 16,
   },
   statCard: {
     width: '48%',
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 14,
+    padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -378,20 +543,24 @@ const styles = StyleSheet.create({
   },
   section: {
     marginHorizontal: 18,
-    marginTop: 18,
-    marginBottom: 8,
+    marginBottom: 16,
   },
   sectionTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitleText: {
     fontSize: 17,
     fontWeight: 'bold',
-    marginBottom: 10,
     color: '#1976d2',
+    marginBottom: 12,
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 14,
-    marginBottom: 8,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
@@ -400,12 +569,16 @@ const styles = StyleSheet.create({
   },
   infoRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    marginBottom: 12,
+    paddingVertical: 4,
   },
   infoIcon: {
     fontSize: 18,
-    marginRight: 10,
+    marginRight: 24,
+    width: 24,
+    textAlign: 'center',
+    marginTop: 2,
   },
   infoTextBox: {
     flex: 1,
@@ -413,11 +586,12 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 13,
     color: '#6c757d',
+    marginBottom: 2,
   },
   infoValue: {
     fontSize: 14,
     color: '#222',
-    marginTop: 2,
+    fontWeight: '500',
   },
   activeBadge: {
     backgroundColor: '#e0f7e9',
@@ -428,28 +602,37 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
     overflow: 'hidden',
+    textAlign: 'center',
   },
   separator: {
     height: 1,
     backgroundColor: '#e0e0e0',
-    marginVertical: 6,
+    marginVertical: 8,
   },
   editBtn: {
-    padding: 4,
+    padding: 6,
     borderRadius: 6,
     backgroundColor: '#f0f0f0',
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   editBtnText: {
     fontSize: 14,
   },
   settingRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    marginBottom: 12,
+    paddingVertical: 4,
   },
   settingIcon: {
     fontSize: 18,
-    marginRight: 10,
+    marginRight: 24,
+    width: 24,
+    textAlign: 'center',
+    marginTop: 2,
   },
   settingTextBox: {
     flex: 1,
@@ -457,11 +640,12 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: 13,
     color: '#6c757d',
+    marginBottom: 2,
   },
   settingValue: {
     fontSize: 14,
     color: '#222',
-    marginTop: 2,
+    fontWeight: '500',
   },
   langBtn: {
     backgroundColor: '#e3f2fd',
@@ -477,8 +661,8 @@ const styles = StyleSheet.create({
   menuCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
@@ -487,11 +671,15 @@ const styles = StyleSheet.create({
   },
   menuRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingVertical: 4,
   },
   menuIcon: {
     fontSize: 20,
-    marginRight: 12,
+    marginRight: 24,
+    width: 24,
+    textAlign: 'center',
+    marginTop: 2,
   },
   menuTextBox: {
     flex: 1,
@@ -499,17 +687,17 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#1976d2',
+    color: '#222',
+    marginBottom: 2,
   },
   menuDesc: {
     fontSize: 13,
     color: '#6c757d',
-    marginTop: 2,
   },
   signOutSection: {
-    marginTop: 24,
+    marginTop: 16,
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 16,
   },
   signOutBtn: {
     backgroundColor: '#e53935',
@@ -517,7 +705,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     width: '80%',
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -538,12 +728,125 @@ const styles = StyleSheet.create({
   },
   appInfoSection: {
     alignItems: 'center',
-    marginBottom: 18,
+    marginBottom: 20,
     marginTop: 8,
   },
   appInfoText: {
     color: '#6c757d',
     fontSize: 12,
     marginBottom: 2,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    width: '90%',
+    maxHeight: '80%',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  modalBody: {
+    padding: 16,
+    maxHeight: 400,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  cancelButton: {
+    backgroundColor: '#f3f4f6',
+  },
+  saveButton: {
+    backgroundColor: '#007bff',
+  },
+  cancelButtonText: {
+    color: '#374151',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  // Pharmacy Selection Styles
+  pharmacyOption: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  selectedPharmacyOption: {
+    borderColor: '#1976d2',
+    backgroundColor: '#f0f8ff',
+  },
+  pharmacyOptionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pharmacyOptionText: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  pharmacyOptionName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#222',
+    marginBottom: 4,
+  },
+  pharmacyOptionLocation: {
+    fontSize: 14,
+    color: '#666',
   },
 });

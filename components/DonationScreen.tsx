@@ -1,67 +1,99 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import PatientDonationFlow from './donation/PatientDonationFlow';
 import PharmacistDonationManager from './donation/PharmacistDonationManager';
 import { useLocalization } from './services/LocalizationService';
 
 interface DonationScreenProps {
   navigateTo: (screen: string, data?: any) => void;
+  goBack?: () => void;
   userType: 'patient' | 'pharmacist';
   userData: any;
 }
 
-export default function DonationScreen({ navigateTo, userType, userData }: DonationScreenProps) {
-  const { language } = useLocalization();
+export default function DonationScreen({ navigateTo, goBack, userType, userData }: DonationScreenProps) {
+  const { t, language } = useLocalization();
+  const insets = useSafeAreaInsets();
+
+  const handleBackPress = () => {
+    if (goBack) {
+      goBack();
+    } else {
+      navigateTo(userType === 'patient' ? 'home' : 'pharmacist-dashboard');
+    }
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerLeftRow}>
-          <View style={styles.headerIconBox}>
-            <Text style={styles.headerIcon}>💚</Text>
-          </View>
-          <View>
-            <Text style={styles.headerTitle}>{language === 'ar' ? 'التبرعات' : 'Donations'}</Text>
-            <Text style={styles.headerSubtitle}>
-              {userType === 'patient'
-                ? (language === 'ar' ? 'ساعد المرضى المحتاجين' : 'Help patients in need')
-                : (language === 'ar' ? 'إدارة التبرعات والتوزيع' : 'Manage donations and distribution')}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.closeBtn}
-          onPress={() => navigateTo(userType === 'patient' ? 'home' : 'pharmacist-dashboard')}
-        >
-          <Text style={styles.closeBtnText}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      {/* Fixed Header */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+          <Icon name="arrow-back" size={24} color="#222" />
         </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>{t('pharmacist.donation.title')}</Text>
+        </View>
+        <View style={{ width: 24 }} />
       </View>
-      <View style={styles.bodyContent}>
-        {userType === 'patient' ? (
-          <PatientDonationFlow navigateTo={navigateTo} />
-        ) : (
-          <PharmacistDonationManager
-            navigateTo={navigateTo}
-            userData={userData}
-          />
-        )}
-      </View>
-    </ScrollView>
+
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
+        <View style={styles.bodyContent}>
+          {userType === 'patient' ? (
+            <PatientDonationFlow navigateTo={navigateTo} />
+          ) : (
+            <PharmacistDonationManager
+              navigateTo={navigateTo}
+              userData={userData}
+            />
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  content: { padding: 0 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
-  headerLeftRow: { flexDirection: 'row', alignItems: 'center' },
-  headerIconBox: { width: 40, height: 40, backgroundColor: '#d1fae5', borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  headerIcon: { fontSize: 20, color: '#22c55e' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
-  headerSubtitle: { fontSize: 13, color: '#666' },
-  closeBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#f3f3f3' },
-  closeBtnText: { color: '#888', fontWeight: 'bold', fontSize: 14 },
-  bodyContent: { padding: 24 },
+  header: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'center',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  bodyContent: {
+    padding: 16,
+  },
 });

@@ -1,44 +1,45 @@
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useLocalization, useRTL } from '../services/LocalizationService';
 
 const prescriptions = [
   {
-    id: "RX-001",
-    patient: "John Doe",
-    doctor: "Dr. Smith",
-    date: "2024-01-15",
+    id: 'RX-001',
+    patient: 'Ahmed Mohamed',
+    doctor: 'Dr. Fatima Ali',
+    date: '2024-01-15',
+    uploadTime: '2024-01-15T10:30:00',
+    status: 'pending',
     medications: [
-      { name: "Amoxicillin 250mg", dosage: "1 tablet 3x daily", duration: "7 days" },
-      { name: "Paracetamol 500mg", dosage: "1-2 tablets as needed", duration: "As needed" }
+      { name: 'Paracetamol 500mg', dosage: '1 tablet 3 times daily', duration: '5 days' },
+      { name: 'Amoxicillin 250mg', dosage: '1 capsule 2 times daily', duration: '7 days' }
     ],
-    status: "pending",
-    uploadTime: "2024-01-15T10:30:00",
-    notes: "Patient allergic to penicillin - verify amoxicillin allergy status"
+    notes: 'Patient has allergy to penicillin'
   },
   {
-    id: "RX-002",
-    patient: "Sarah Smith", 
-    doctor: "Dr. Johnson",
-    date: "2024-01-14",
+    id: 'RX-002',
+    patient: 'Fatima Hassan',
+    doctor: 'Dr. Mohamed Ahmed',
+    date: '2024-01-14',
+    uploadTime: '2024-01-14T16:45:00',
+    status: 'verified',
     medications: [
-      { name: "Vitamin D3 1000IU", dosage: "1 tablet daily", duration: "3 months" }
-    ],
-    status: "verified",
-    uploadTime: "2024-01-14T16:20:00",
-    verifiedBy: "Dr. Sarah Wilson",
-    verifiedTime: "2024-01-14T16:45:00"
+      { name: 'Vitamin C 1000mg', dosage: '1 tablet daily', duration: '30 days' }
+    ]
   },
   {
-    id: "RX-003",
-    patient: "Mike Johnson",
-    doctor: "Dr. Brown", 
-    date: "2024-01-13",
+    id: 'RX-003',
+    patient: 'Mohamed Ali',
+    doctor: 'Dr. Sara Ibrahim',
+    date: '2024-01-13',
+    uploadTime: '2024-01-13T09:15:00',
+    status: 'rejected',
     medications: [
-      { name: "Ibuprofen 400mg", dosage: "1 tablet 2x daily", duration: "5 days" }
+      { name: 'Insulin Regular', dosage: '10 units before meals', duration: 'Ongoing' }
     ],
-    status: "rejected",
-    uploadTime: "2024-01-13T14:15:00",
-    rejectionReason: "Prescription expired - dated more than 6 months ago"
+    notes: 'Prescription unclear, needs clarification from doctor'
   }
 ];
 
@@ -47,6 +48,9 @@ type PharmacistPrescriptionsProps = {
 };
 
 export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescriptionsProps) {
+  const { t, language } = useLocalization();
+  const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [tab, setTab] = useState<'pending' | 'verified' | 'rejected'>('pending');
 
@@ -61,10 +65,10 @@ export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescr
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending': return '⏳';
-      case 'verified': return '✅';
-      case 'rejected': return '❌';
-      default: return '📄';
+      case 'pending': return 'schedule';
+      case 'verified': return 'check-circle';
+      case 'rejected': return 'cancel';
+      default: return 'description';
     }
   };
 
@@ -85,13 +89,18 @@ export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescr
       <View style={styles.cardHeader}>
         <View>
           <View style={styles.cardHeaderRow}>
-            <Text style={styles.statusIcon}>{getStatusIcon(prescription.status)}</Text>
+            <Icon name={getStatusIcon(prescription.status)} size={18} color={getStatusColor(prescription.status).color} />
             <Text style={styles.orderId}>Prescription #{prescription.id}</Text>
           </View>
           <Text style={styles.customer}>{prescription.patient}</Text>
           <Text style={styles.doctor}>Dr. {prescription.doctor}</Text>
         </View>
-        <Text style={[styles.badge, getStatusColor(prescription.status)]}>{prescription.status}</Text>
+        <View style={[styles.badge, getStatusColor(prescription.status)]}>
+          <Icon name={getStatusIcon(prescription.status)} size={14} color={getStatusColor(prescription.status).color} />
+          <Text style={[styles.badgeText, { color: getStatusColor(prescription.status).color }]}>
+            {prescription.status.charAt(0).toUpperCase() + prescription.status.slice(1)}
+          </Text>
+        </View>
       </View>
       <View style={styles.cardBody}>
         <Text style={styles.itemsCount}>Medications:</Text>
@@ -109,16 +118,18 @@ export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescr
       {showActions && prescription.status === 'pending' && (
         <View style={styles.actionRow}>
           <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => verifyPrescription(prescription.id)}>
-            <Text style={styles.buttonText}>Verify</Text>
+            <Icon name="check" size={16} color="#fff" />
+            <Text style={styles.buttonText}> Verify</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => rejectPrescription(prescription.id, 'Review required')}>
-            <Text style={styles.buttonText}>Reject</Text>
+            <Icon name="close" size={16} color="#fff" />
+            <Text style={styles.buttonText}> Reject</Text>
           </TouchableOpacity>
         </View>
       )}
       {prescription.notes && (
         <View style={styles.notesBox}>
-          <Text style={styles.notesIcon}>⚠️</Text>
+          <Icon name="warning" size={16} color="#f59e0b" />
           <Text style={styles.notesText}>{prescription.notes}</Text>
         </View>
       )}
@@ -127,104 +138,91 @@ export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescr
 
   if (selectedPrescription) {
     return (
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => setSelectedPrescription(null)}>
-            <Text style={styles.headerIcon}>{'←'}</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        {/* Fixed Header */}
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <TouchableOpacity onPress={() => setSelectedPrescription(null)} style={styles.backButton}>
+            <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Prescription Details</Text>
+          <Text style={styles.headerTitle}>{language === 'ar' ? 'تفاصيل الوصفة' : 'Prescription Details'}</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Prescription Info */}
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <View>
-                <Text style={styles.orderId}>Prescription #{selectedPrescription.id}</Text>
-                <Text style={styles.uploadedText}>{new Date(selectedPrescription.uploadTime).toLocaleString()}</Text>
+
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
+          <View style={styles.body}>
+            {/* Prescription Info */}
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <View>
+                  <Text style={styles.orderId}>Prescription #{selectedPrescription.id}</Text>
+                  <Text style={styles.uploadedText}>{new Date(selectedPrescription.uploadTime).toLocaleString()}</Text>
+                </View>
+                <View style={[styles.badge, getStatusColor(selectedPrescription.status)]}>
+                  <Icon name={getStatusIcon(selectedPrescription.status)} size={14} color={getStatusColor(selectedPrescription.status).color} />
+                  <Text style={[styles.badgeText, { color: getStatusColor(selectedPrescription.status).color }]}>
+                    {selectedPrescription.status.charAt(0).toUpperCase() + selectedPrescription.status.slice(1)}
+                  </Text>
+                </View>
               </View>
-              <Text style={[styles.badge, getStatusColor(selectedPrescription.status)]}>{selectedPrescription.status}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Patient:</Text>
-              <Text style={styles.infoValue}>{selectedPrescription.patient}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Doctor:</Text>
-              <Text style={styles.infoValue}>Dr. {selectedPrescription.doctor}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Date Issued:</Text>
-              <Text style={styles.infoValue}>{new Date(selectedPrescription.date).toLocaleDateString()}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
-              <Text style={styles.infoValue}>{selectedPrescription.status}</Text>
-            </View>
-          </View>
-          {/* Prescription Image */}
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Prescription Image</Text>
-            <View style={styles.imageBox}>
-              <Text style={styles.imageIcon}>📄</Text>
-              <Text style={styles.imageLabel}>Prescription Document</Text>
-              <TouchableOpacity style={[styles.button, styles.outlineButton]}>
-                <Text style={styles.buttonText}>👁️ View Full Size</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          {/* Medications */}
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Prescribed Medications</Text>
-            {selectedPrescription.medications.map((med, index) => (
-              <View key={index} style={styles.medBox}>
-                <Text style={styles.medName}>{med.name}</Text>
-                <Text style={styles.medDetail}>Dosage: {med.dosage}</Text>
-                <Text style={styles.medDetail}>Duration: {med.duration}</Text>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Patient:</Text>
+                <Text style={styles.infoValue}>{selectedPrescription.patient}</Text>
               </View>
-            ))}
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Doctor:</Text>
+                <Text style={styles.infoValue}>Dr. {selectedPrescription.doctor}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Date Issued:</Text>
+                <Text style={styles.infoValue}>{new Date(selectedPrescription.date).toLocaleDateString()}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Status:</Text>
+                <Text style={styles.infoValue}>{selectedPrescription.status}</Text>
+              </View>
+            </View>
+            {/* Prescription Image */}
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>{language === 'ar' ? 'صورة الوصفة' : 'Prescription Image'}</Text>
+              <View style={styles.imageBox}>
+                <Icon name="description" size={48} color="#6b7280" />
+                <Text style={styles.imageLabel}>Prescription Document</Text>
+                <TouchableOpacity style={[styles.button, styles.outlineButton]}>
+                  <Icon name="visibility" size={16} color="#007bff" />
+                  <Text style={[styles.buttonText, { color: '#007bff' }]}> View Full Size</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            {/* Medications */}
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>{language === 'ar' ? 'الأدوية' : 'Medications'}</Text>
+              {selectedPrescription.medications.map((med, index) => (
+                <View key={index} style={styles.medicationItem}>
+                  <Text style={styles.medicationName}>{med.name}</Text>
+                  <Text style={styles.medicationDosage}>{med.dosage}</Text>
+                  <Text style={styles.medicationDuration}>Duration: {med.duration}</Text>
+                </View>
+              ))}
+            </View>
+            {/* Actions */}
+            {selectedPrescription.status === 'pending' && (
+              <View style={styles.actionColumn}>
+                <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => verifyPrescription(selectedPrescription.id)}>
+                  <Icon name="check" size={16} color="#fff" />
+                  <Text style={styles.buttonText}> Verify Prescription</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => rejectPrescription(selectedPrescription.id, 'Review required')}>
+                  <Icon name="close" size={16} color="#fff" />
+                  <Text style={styles.buttonText}> Reject Prescription</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
-          {/* Notes */}
-          {selectedPrescription.notes && (
-            <View style={[styles.card, styles.notesCard]}>
-              <Text style={styles.notesTitle}>Important Notes</Text>
-              <Text style={styles.notesText}>{selectedPrescription.notes}</Text>
-            </View>
-          )}
-          {/* Verification Info */}
-          {selectedPrescription.status === 'verified' && (
-            <View style={[styles.card, styles.verifiedCard]}>
-              <Text style={styles.verifiedTitle}>Verification Details</Text>
-              <Text style={styles.verifiedText}>
-                Verified by {selectedPrescription.verifiedBy} on {new Date(selectedPrescription.verifiedTime).toLocaleString()}
-              </Text>
-            </View>
-          )}
-          {/* Rejection Info */}
-          {selectedPrescription.status === 'rejected' && (
-            <View style={[styles.card, styles.rejectedCard]}>
-              <Text style={styles.rejectedTitle}>Rejection Reason</Text>
-              <Text style={styles.rejectedText}>{selectedPrescription.rejectionReason}</Text>
-            </View>
-          )}
-          {/* Actions */}
-          {selectedPrescription.status === 'pending' && (
-            <View style={styles.actionColumn}>
-              <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => verifyPrescription(selectedPrescription.id)}>
-                <Text style={styles.buttonText}>Verify Prescription</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => rejectPrescription(selectedPrescription.id, 'Review required')}>
-                <Text style={styles.buttonText}>Reject Prescription</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 
-  // Tab navigation and content for React Native
   const renderTabContent = () => {
     let data = [];
     let emptyText = '';
@@ -232,63 +230,79 @@ export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescr
     switch (tab) {
       case 'pending':
         data = pendingPrescriptions;
-        emptyText = 'No Pending Prescriptions\nNew prescriptions requiring verification will appear here';
-        emptyIcon = '📄';
+        emptyText = language === 'ar' ? 'لا توجد وصفات في الانتظار' : 'No pending prescriptions';
+        emptyIcon = 'schedule';
         break;
       case 'verified':
         data = verifiedPrescriptions;
-        emptyText = '';
-        emptyIcon = '';
+        emptyText = language === 'ar' ? 'لا توجد وصفات موثقة' : 'No verified prescriptions';
+        emptyIcon = 'check-circle';
         break;
       case 'rejected':
         data = rejectedPrescriptions;
-        emptyText = '';
-        emptyIcon = '';
+        emptyText = language === 'ar' ? 'لا توجد وصفات مرفوضة' : 'No rejected prescriptions';
+        emptyIcon = 'cancel';
         break;
     }
-    if (data.length === 0 && tab === 'pending') {
+
+    if (data.length === 0) {
       return (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>{emptyIcon}</Text>
-          <Text style={styles.emptyTitle}>{emptyText.split('\n')[0]}</Text>
-          <Text style={styles.emptyDesc}>{emptyText.split('\n')[1]}</Text>
+          <Icon name={emptyIcon} size={64} color="#bbb" />
+          <Text style={styles.emptyText}>{emptyText}</Text>
         </View>
       );
     }
-    return (
-      <View>
-        {data.map((prescription) => (
-          <PrescriptionCard key={prescription.id} prescription={prescription} showActions={tab === 'pending'} />
-        ))}
-      </View>
-    );
+
+    return data.map((prescription) => (
+      <PrescriptionCard key={prescription.id} prescription={prescription} />
+    ));
   };
+
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')}>
-          <Text style={styles.headerIcon}>{'←'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Prescription Verification</Text>
-        <View style={{ width: 24 }} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      {/* Fixed Header */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <Text style={styles.headerTitle}>{language === 'ar' ? 'إدارة الوصفات الطبية' : 'Prescription Management'}</Text>
       </View>
-      {/* Tabs */}
-      <View style={styles.tabsRow}>
-        <TouchableOpacity style={[styles.tab, tab === 'pending' && styles.tabActive]} onPress={() => setTab('pending')}>
-          <Text style={styles.tabText}>Pending ({pendingPrescriptions.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'verified' && styles.tabActive]} onPress={() => setTab('verified')}>
-          <Text style={styles.tabText}>Verified ({verifiedPrescriptions.length})</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'rejected' && styles.tabActive]} onPress={() => setTab('rejected')}>
-          <Text style={styles.tabText}>Rejected ({rejectedPrescriptions.length})</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {renderTabContent()}
+
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
+        <View style={styles.body}>
+          {/* Tabs */}
+          <View style={styles.tabsContainer}>
+            <TouchableOpacity
+              style={[styles.tab, tab === 'pending' && styles.activeTab]}
+              onPress={() => setTab('pending')}
+            >
+              <Text style={[styles.tabText, tab === 'pending' && styles.activeTabText]}>
+                {language === 'ar' ? 'في الانتظار' : 'Pending'} ({pendingPrescriptions.length})
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, tab === 'verified' && styles.activeTab]}
+              onPress={() => setTab('verified')}
+            >
+              <Text style={[styles.tabText, tab === 'verified' && styles.activeTabText]}>
+                {language === 'ar' ? 'موثق' : 'Verified'} ({verifiedPrescriptions.length})
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, tab === 'rejected' && styles.activeTab]}
+              onPress={() => setTab('rejected')}
+            >
+              <Text style={[styles.tabText, tab === 'rejected' && styles.activeTabText]}>
+                {language === 'ar' ? 'مرفوض' : 'Rejected'} ({rejectedPrescriptions.length})
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Prescriptions List */}
+          <View style={styles.prescriptionsList}>
+            {renderTabContent()}
+          </View>
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -309,7 +323,16 @@ const styles = StyleSheet.create({
   orderId: { fontSize: 16, fontWeight: 'bold', color: '#2563eb' },
   customer: { fontSize: 14, color: '#334155' },
   doctor: { fontSize: 13, color: '#64748b' },
-  badge: { fontSize: 12, fontWeight: 'bold', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, overflow: 'hidden', textTransform: 'capitalize' },
+  badge: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: '#F3F4F6', 
+    borderRadius: 8, 
+    paddingHorizontal: 8, 
+    paddingVertical: 2, 
+    overflow: 'hidden' 
+  },
+  badgeText: { fontSize: 12, fontWeight: 'bold', marginLeft: 4 },
   cardBody: { marginTop: 4 },
   itemsCount: { fontSize: 12, color: '#64748b', marginBottom: 2 },
   itemText: { fontSize: 14, color: '#334155' },
@@ -349,4 +372,15 @@ const styles = StyleSheet.create({
   emptyIcon: { fontSize: 48, marginBottom: 8, color: '#64748b' },
   emptyTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 2, color: '#2563eb' },
   emptyDesc: { fontSize: 13, color: '#64748b' },
+  backButton: { padding: 8 },
+  body: { flex: 1, paddingTop: 0 },
+  tabsContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 10, marginBottom: 10 },
+  activeTab: { backgroundColor: '#2563eb', borderRadius: 8 },
+  activeTabText: { color: '#fff' },
+  emptyText: { fontSize: 16, fontWeight: 'bold', marginBottom: 2, color: '#2563eb' },
+  prescriptionsList: { paddingBottom: 32 },
+  medicationItem: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 10, marginBottom: 8 },
+  medicationName: { fontSize: 14, fontWeight: 'bold', color: '#2563eb' },
+  medicationDosage: { fontSize: 12, color: '#64748b' },
+  medicationDuration: { fontSize: 12, color: '#64748b' },
 });

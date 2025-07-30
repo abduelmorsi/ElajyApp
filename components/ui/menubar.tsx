@@ -16,7 +16,7 @@ function Menubar({ style, children }) {
 
 
 function MenubarMenu({ children }) {
-  return <>{children}</>;
+  return <View>{children}</View>;
 }
 
 
@@ -26,7 +26,7 @@ function MenubarGroup({ children }) {
 
 
 function MenubarPortal({ children }) {
-  return <>{children}</>;
+  return <View>{children}</View>;
 }
 
 
