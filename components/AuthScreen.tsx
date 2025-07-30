@@ -350,7 +350,7 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
           <View style={[styles.header, { paddingTop: insets.top }]}>
             <View style={styles.logoContainer}>
               <Image 
-                source={require('../assets/images/icon.png')} 
+                source={require('../logo.png')} 
                 style={styles.logo}
                 resizeMode="contain"
               />

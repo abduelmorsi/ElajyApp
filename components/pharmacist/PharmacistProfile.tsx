@@ -288,6 +288,11 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
 
       {/* App Info */}
       <View style={styles.appInfoSection}>
+        <Image 
+          source={require('../../logo.png')} 
+          style={styles.appLogo}
+          resizeMode="contain"
+        />
         <Text style={styles.appInfoText}>{language === 'ar' ? 'علاجي' : 'Elajy'}</Text>
         <Text style={styles.appInfoText}>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</Text>
       </View>
@@ -730,6 +735,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 8,
+  },
+  appLogo: {
+    width: 48,
+    height: 48,
+    marginBottom: 8,
   },
   appInfoText: {
     color: '#6c757d',
