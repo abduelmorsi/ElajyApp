@@ -29,6 +29,8 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
   );
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showAllMedicines, setShowAllMedicines] = useState(navigationData?.showAllMedicines || false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('all');
   const [region, setRegion] = useState({
     latitude: 15.5007, // Khartoum coordinates
     longitude: 32.5599,
@@ -48,6 +50,13 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
       inStock: true,
       image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150',
       rating: 4.5,
+      category: 'pain-relief',
+      description: 'مسكن للألم وخافض للحرارة',
+      descriptionEn: 'Pain reliever and fever reducer',
+      dosage: '1-2 حبة كل 4-6 ساعات',
+      dosageEn: '1-2 tablets every 4-6 hours',
+      sideEffects: 'قد يسبب اضطراب في المعدة',
+      sideEffectsEn: 'May cause stomach upset',
     },
     {
       id: 2,
@@ -59,6 +68,13 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
       inStock: true,
       image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
       rating: 4.8,
+      category: 'diabetes',
+      description: 'علاج السكري',
+      descriptionEn: 'Diabetes treatment',
+      dosage: 'حسب وصفة الطبيب',
+      dosageEn: 'As prescribed by doctor',
+      sideEffects: 'قد يسبب انخفاض السكر',
+      sideEffectsEn: 'May cause low blood sugar',
     },
     {
       id: 3,
@@ -70,6 +86,13 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
       inStock: false,
       image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
       rating: 4.7,
+      category: 'antibiotics',
+      description: 'مضاد حيوي للالتهابات البكتيرية',
+      descriptionEn: 'Antibiotic for bacterial infections',
+      dosage: 'حسب وصفة الطبيب',
+      dosageEn: 'As prescribed by doctor',
+      sideEffects: 'قد يسبب اضطراب في المعدة',
+      sideEffectsEn: 'May cause stomach upset',
     },
     {
       id: 4,
@@ -81,6 +104,13 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
       inStock: true,
       image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
       rating: 4.3,
+      category: 'pain-relief',
+      description: 'مسكن للألم ومضاد للالتهاب',
+      descriptionEn: 'Pain reliever and anti-inflammatory',
+      dosage: '1 حبة كل 6-8 ساعات',
+      dosageEn: '1 tablet every 6-8 hours',
+      sideEffects: 'قد يسبب اضطراب في المعدة',
+      sideEffectsEn: 'May cause stomach upset',
     },
     {
       id: 5,
@@ -92,7 +122,86 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
       inStock: true,
       image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
       rating: 4.6,
+      category: 'vitamins',
+      description: 'مكمل غذائي للعظام',
+      descriptionEn: 'Nutritional supplement for bones',
+      dosage: '1 حبة يومياً',
+      dosageEn: '1 tablet daily',
+      sideEffects: 'آمن عند الاستخدام الموصى',
+      sideEffectsEn: 'Safe when used as recommended',
+    },
+    {
+      id: 6,
+      name: 'أوميغا 3',
+      nameEn: 'Omega 3',
+      brand: 'صحة القلب',
+      brandEn: 'Heart Health',
+      price: 55,
+      inStock: true,
+      image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
+      rating: 4.4,
+      category: 'vitamins',
+      description: 'مكمل غذائي لصحة القلب',
+      descriptionEn: 'Nutritional supplement for heart health',
+      dosage: '1-2 كبسولة يومياً',
+      dosageEn: '1-2 capsules daily',
+      sideEffects: 'آمن عند الاستخدام الموصى',
+      sideEffectsEn: 'Safe when used as recommended',
+    },
+    {
+      id: 7,
+      name: 'بروبيوتيك',
+      nameEn: 'Probiotic',
+      brand: 'صحة الأمعاء',
+      brandEn: 'Gut Health',
+      price: 40,
+      inStock: true,
+      image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
+      rating: 4.2,
+      category: 'supplements',
+      description: 'بكتيريا مفيدة للأمعاء',
+      descriptionEn: 'Beneficial bacteria for gut health',
+      dosage: '1 كبسولة يومياً',
+      dosageEn: '1 capsule daily',
+      sideEffects: 'آمن عند الاستخدام الموصى',
+      sideEffectsEn: 'Safe when used as recommended',
+    },
+    {
+      id: 8,
+      name: 'كالسيوم 500 مجم',
+      nameEn: 'Calcium 500mg',
+      brand: 'عظام قوية',
+      brandEn: 'Strong Bones',
+      price: 30,
+      inStock: true,
+      image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=150',
+      rating: 4.1,
+      category: 'vitamins',
+      description: 'مكمل غذائي للعظام',
+      descriptionEn: 'Nutritional supplement for bones',
+      dosage: '1-2 حبة يومياً',
+      dosageEn: '1-2 tablets daily',
+      sideEffects: 'آمن عند الاستخدام الموصى',
+      sideEffectsEn: 'Safe when used as recommended',
     }
+  ];
+
+  const categories = [
+    { id: 'all', name: 'الكل', nameEn: 'All', icon: 'apps' },
+    { id: 'pain-relief', name: 'مسكنات الألم', nameEn: 'Pain Relief', icon: 'healing' },
+    { id: 'diabetes', name: 'السكري', nameEn: 'Diabetes', icon: 'monitor-heart' },
+    { id: 'antibiotics', name: 'المضادات الحيوية', nameEn: 'Antibiotics', icon: 'medical-services' },
+    { id: 'vitamins', name: 'الفيتامينات', nameEn: 'Vitamins', icon: 'eco' },
+    { id: 'supplements', name: 'المكملات الغذائية', nameEn: 'Supplements', icon: 'restaurant' },
+  ];
+
+  const filters = [
+    { id: 'all', name: 'الكل', nameEn: 'All' },
+    { id: 'in-stock', name: 'متوفر', nameEn: 'In Stock' },
+    { id: 'out-of-stock', name: 'غير متوفر', nameEn: 'Out of Stock' },
+    { id: 'price-low', name: 'السعر: منخفض إلى عالي', nameEn: 'Price: Low to High' },
+    { id: 'price-high', name: 'السعر: عالي إلى منخفض', nameEn: 'Price: High to Low' },
+    { id: 'rating', name: 'التقييم', nameEn: 'Rating' },
   ];
 
   const pharmacies = [
@@ -156,17 +265,59 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
   ];
 
   const filteredMedicines = medicines.filter((medicine) => {
-    // If showAllMedicines is true, show all medicines regardless of search query
-    if (showAllMedicines && !searchQuery) return true;
-    
-    // If no search query, don't show any medicines (unless showAllMedicines is true)
-    if (!searchQuery) return false;
+    // Filter by category
+    if (selectedCategory !== 'all' && medicine.category !== selectedCategory) {
+      return false;
+    }
     
     // Filter by search query
-    return (language === 'ar' ? medicine.name : medicine.nameEn)
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      const nameMatch = (language === 'ar' ? medicine.name : medicine.nameEn)
+        .toLowerCase()
+        .includes(searchLower);
+      const brandMatch = (language === 'ar' ? medicine.brand : medicine.brandEn)
+        .toLowerCase()
+        .includes(searchLower);
+      const descriptionMatch = (language === 'ar' ? medicine.description : medicine.descriptionEn)
+        .toLowerCase()
+        .includes(searchLower);
+      
+      if (!nameMatch && !brandMatch && !descriptionMatch) {
+        return false;
+      }
+    }
+    
+    // Filter by stock status
+    if (selectedFilter === 'in-stock' && !medicine.inStock) {
+      return false;
+    }
+    if (selectedFilter === 'out-of-stock' && medicine.inStock) {
+      return false;
+    }
+    
+    return true;
+  }).sort((a, b) => {
+    // Sort by filter
+    switch (selectedFilter) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'rating':
+        return b.rating - a.rating;
+      default:
+        return 0;
+    }
   });
+
+  const searchSuggestions = medicines
+    .filter(medicine => 
+      (language === 'ar' ? medicine.name : medicine.nameEn)
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    )
+    .slice(0, 5);
 
   const handleAddToCart = (medicine) => {
     if (!medicine.inStock) {
@@ -247,8 +398,11 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
         </View>
       </View>
 
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
-
+      <ScrollView 
+        style={styles.container} 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.body}>
       <View style={styles.searchContainer}>
         <Icon name="search" size={20} color="#6b7280" style={styles.searchIcon} />
@@ -260,6 +414,92 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setShowSuggestions(false)}
         />
+      </View>
+
+      {/* Search Suggestions */}
+      {showSuggestions && searchQuery && searchSuggestions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+          {searchSuggestions.map((medicine) => (
+            <TouchableOpacity
+              key={medicine.id}
+              style={styles.suggestionItem}
+              onPress={() => {
+                setSearchQuery(language === 'ar' ? medicine.name : medicine.nameEn);
+                setShowSuggestions(false);
+              }}
+            >
+              <Icon name="search" size={16} color="#666" />
+              <Text style={styles.suggestionText}>
+                {language === 'ar' ? medicine.name : medicine.nameEn}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Categories */}
+      <View style={styles.categoriesContainer}>
+        <Text style={styles.sectionTitle}>
+          {language === 'ar' ? 'الفئات' : 'Categories'}
+        </Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesScroll}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category.id}
+              style={[
+                styles.categoryButton,
+                selectedCategory === category.id && styles.categoryButtonActive
+              ]}
+              onPress={() => setSelectedCategory(category.id)}
+            >
+              <Icon 
+                name={category.icon} 
+                size={20} 
+                color={selectedCategory === category.id ? '#fff' : '#666'} 
+              />
+              <Text style={[
+                styles.categoryText,
+                selectedCategory === category.id && styles.categoryTextActive
+              ]}>
+                {language === 'ar' ? category.name : category.nameEn}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Filters */}
+      <View style={styles.filtersContainer}>
+        <Text style={styles.sectionTitle}>
+          {language === 'ar' ? 'الفلترة' : 'Filters'}
+        </Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersScroll}
+        >
+          {filters.map((filter) => (
+            <TouchableOpacity
+              key={filter.id}
+              style={[
+                styles.filterButton,
+                selectedFilter === filter.id && styles.filterButtonActive
+              ]}
+              onPress={() => setSelectedFilter(filter.id)}
+            >
+              <Text style={[
+                styles.filterText,
+                selectedFilter === filter.id && styles.filterTextActive
+              ]}>
+                {language === 'ar' ? filter.name : filter.nameEn}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
 
       {/* View Mode Toggle */}
@@ -394,72 +634,103 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
           </View>
         </View>
       ) : viewMode === 'list' ? (
-      <FlatList
-        data={filteredMedicines}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigateTo('product-detail', item)}
-          >
-            <Image source={{ uri: item.image }} style={styles.cardImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>
-                {language === 'ar' ? item.name : item.nameEn}
-              </Text>
-              <Text style={styles.cardBrand}>
-                {language === 'ar' ? item.brand : item.brandEn}
-              </Text>
-              <Text style={styles.cardPrice}>
-                {item.price} {language === 'ar' ? 'ج.س' : 'SDG'}
-              </Text>
-              <Text style={item.inStock ? styles.inStock : styles.outOfStock}>
-                {item.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
-              </Text>
-              {item.inStock && (
-                <TouchableOpacity
-                  onPress={() => handleAddToCart(item)}
-                  style={styles.addButton}
-                >
-                  <Text style={styles.addButtonText}>
-                    {language === 'ar' ? 'أضف' : 'Add'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-      />
-      ) : viewMode === 'grid' ? (
-        <FlatList
-          data={filteredMedicines}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.gridRow}
-          renderItem={({ item }) => (
+        <View style={styles.listContainer}>
+          {filteredMedicines.map((item) => (
             <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() => navigateTo('product-detail', item)}
+            >
+              <Image source={{ uri: item.image }} style={styles.cardImage} />
+              <View style={styles.cardContent}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>
+                    {language === 'ar' ? item.name : item.nameEn}
+                  </Text>
+                  <View style={styles.ratingContainer}>
+                    <Icon name="star" size={14} color="#fbbf24" />
+                    <Text style={styles.ratingText}>{item.rating}</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardBrand}>
+                  {language === 'ar' ? item.brand : item.brandEn}
+                </Text>
+                <Text style={styles.cardDescription}>
+                  {language === 'ar' ? item.description : item.descriptionEn}
+                </Text>
+                <View style={styles.cardFooter}>
+                  <Text style={styles.cardPrice}>
+                    {item.price} {language === 'ar' ? 'ج.س' : 'SDG'}
+                  </Text>
+                  <Text style={item.inStock ? styles.inStock : styles.outOfStock}>
+                    {item.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
+                  </Text>
+                </View>
+                {item.inStock && (
+                  <TouchableOpacity
+                    onPress={() => handleAddToCart(item)}
+                    style={styles.addButton}
+                  >
+                    <Icon name="add-shopping-cart" size={16} color="#fff" />
+                    <Text style={styles.addButtonText}>
+                      {language === 'ar' ? 'أضف للسلة' : 'Add to Cart'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+          {filteredMedicines.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Icon name="search-off" size={64} color="#ccc" />
+              <Text style={styles.emptyTitle}>
+                {language === 'ar' ? 'لا توجد نتائج' : 'No Results Found'}
+              </Text>
+              <Text style={styles.emptySubtitle}>
+                {language === 'ar' ? 'جرب البحث بكلمات مختلفة أو تغيير الفلترة' : 'Try searching with different words or change filters'}
+              </Text>
+            </View>
+          )}
+        </View>
+      ) : viewMode === 'grid' ? (
+        <View style={styles.gridContainer}>
+          {filteredMedicines.map((item) => (
+            <TouchableOpacity
+              key={item.id}
               style={styles.gridCard}
               onPress={() => navigateTo('product-detail', item)}
             >
               <Image source={{ uri: item.image }} style={styles.gridCardImage} />
               <View style={styles.gridCardContent}>
-                <Text style={styles.gridCardTitle}>
-                  {language === 'ar' ? item.name : item.nameEn}
-                </Text>
+                <View style={styles.gridCardHeader}>
+                  <Text style={styles.gridCardTitle}>
+                    {language === 'ar' ? item.name : item.nameEn}
+                  </Text>
+                  <View style={styles.gridRatingContainer}>
+                    <Icon name="star" size={12} color="#fbbf24" />
+                    <Text style={styles.gridRatingText}>{item.rating}</Text>
+                  </View>
+                </View>
                 <Text style={styles.gridCardBrand}>
                   {language === 'ar' ? item.brand : item.brandEn}
                 </Text>
-                <Text style={styles.gridCardPrice}>
-                  {item.price} {language === 'ar' ? 'ج.س' : 'SDG'}
+                <Text style={styles.gridCardDescription}>
+                  {language === 'ar' ? item.description : item.descriptionEn}
                 </Text>
-                <Text style={item.inStock ? styles.inStock : styles.outOfStock}>
-                  {item.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
-                </Text>
+                <View style={styles.gridCardFooter}>
+                  <Text style={styles.gridCardPrice}>
+                    {item.price} {language === 'ar' ? 'ج.س' : 'SDG'}
+                  </Text>
+                  <Text style={item.inStock ? styles.inStock : styles.outOfStock}>
+                    {item.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
+                  </Text>
+                </View>
                 {item.inStock && (
                   <TouchableOpacity
                     onPress={() => handleAddToCart(item)}
                     style={styles.gridAddButton}
                   >
+                    <Icon name="add-shopping-cart" size={14} color="#fff" />
                     <Text style={styles.gridAddButtonText}>
                       {language === 'ar' ? 'أضف' : 'Add'}
                     </Text>
@@ -467,14 +738,24 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
                 )}
               </View>
             </TouchableOpacity>
+          ))}
+          {filteredMedicines.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Icon name="search-off" size={64} color="#ccc" />
+              <Text style={styles.emptyTitle}>
+                {language === 'ar' ? 'لا توجد نتائج' : 'No Results Found'}
+              </Text>
+              <Text style={styles.emptySubtitle}>
+                {language === 'ar' ? 'جرب البحث بكلمات مختلفة أو تغيير الفلترة' : 'Try searching with different words or change filters'}
+              </Text>
+            </View>
           )}
-        />
+        </View>
       ) : (
-        <FlatList
-          data={pharmacies}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
+        <View style={styles.pharmacyContainer}>
+          {pharmacies.map((item) => (
             <TouchableOpacity
+              key={item.id}
               style={styles.pharmacyCard}
               onPress={() => navigateTo('pharmacy-detail', item)}
             >
@@ -502,17 +783,110 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
                 </Text>
               </View>
             </TouchableOpacity>
-          )}
-        />
+          ))}
+        </View>
       )}
         </View>
-    </ScrollView>
+      </ScrollView>
       </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9fafb' },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  suggestionsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  suggestionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  suggestionText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#374151',
+  },
+  categoriesContainer: {
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  categoriesScroll: {
+    paddingHorizontal: 4,
+  },
+  categoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  categoryButtonActive: {
+    backgroundColor: '#007bff',
+    borderColor: '#007bff',
+  },
+  categoryText: {
+    marginLeft: 6,
+    fontSize: 12,
+    color: '#666',
+  },
+  categoryTextActive: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  filtersContainer: {
+    marginBottom: 16,
+  },
+  filtersScroll: {
+    paddingHorizontal: 4,
+  },
+  filterButton: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  filterButtonActive: {
+    backgroundColor: '#007bff',
+    borderColor: '#007bff',
+  },
+  filterText: {
+    fontSize: 12,
+    color: '#666',
+  },
+  filterTextActive: {
+    color: '#fff',
+    fontWeight: '600',
+  },
   header: {
     backgroundColor: '#fff',
     borderBottomWidth: 1,
@@ -619,22 +993,93 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  cardImage: { width: 60, height: 60, borderRadius: 8 },
+  cardImage: { width: 80, height: 80, borderRadius: 8 },
   cardContent: { flex: 1, marginLeft: 12 },
-  cardTitle: { fontWeight: 'bold' },
-  cardBrand: { fontSize: 12, color: '#777' },
-  cardPrice: { marginTop: 4, color: '#1e90ff' },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  cardTitle: { 
+    fontWeight: 'bold', 
+    fontSize: 16,
+    flex: 1,
+    marginRight: 8,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    marginLeft: 2,
+    fontSize: 12,
+    color: '#666',
+  },
+  cardBrand: { 
+    fontSize: 12, 
+    color: '#777',
+    marginBottom: 4,
+  },
+  cardDescription: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 8,
+    lineHeight: 16,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cardPrice: { 
+    color: '#1e90ff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   inStock: { color: 'green', marginTop: 2 },
   outOfStock: { color: 'red', marginTop: 2 },
   addButton: {
-    marginTop: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#1e90ff',
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    alignSelf: 'flex-start'
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  addButtonText: { color: '#fff', fontSize: 12 },
+  addButtonText: { 
+    color: '#fff', 
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    paddingHorizontal: 32,
+    lineHeight: 20,
+  },
   gridRow: {
     justifyContent: 'space-between',
     marginBottom: 12,
@@ -661,23 +1106,52 @@ const styles = StyleSheet.create({
   gridCardContent: { 
     flex: 1,
   },
+  gridCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 2,
+  },
   gridCardTitle: { 
     fontSize: 12,
     fontWeight: 'bold',
-    marginBottom: 2,
+    flex: 1,
+    marginRight: 4,
+  },
+  gridRatingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gridRatingText: {
+    marginLeft: 2,
+    fontSize: 10,
+    color: '#666',
   },
   gridCardBrand: { 
     fontSize: 10, 
     color: '#777',
+    marginBottom: 2,
+  },
+  gridCardDescription: {
+    fontSize: 9,
+    color: '#666',
+    marginBottom: 4,
+    lineHeight: 12,
+  },
+  gridCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
   },
   gridCardPrice: { 
     fontSize: 11,
     color: '#1e90ff',
     fontWeight: '600',
-    marginBottom: 4,
   },
   gridAddButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#1e90ff',
     paddingVertical: 4,
     paddingHorizontal: 8,
@@ -689,6 +1163,7 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontSize: 10,
     fontWeight: '600',
+    marginLeft: 2,
   },
   mapContainer: {
     height: Dimensions.get('window').height - 200,
@@ -890,5 +1365,16 @@ const styles = StyleSheet.create({
   mapPharmacyCardContact: {
     fontSize: 10,
     color: '#888',
+  },
+  listContainer: {
+    flex: 1,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  pharmacyContainer: {
+    flex: 1,
   },
 });

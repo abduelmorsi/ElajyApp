@@ -275,7 +275,7 @@ function AppContent() {
         case 'prescription':
           return <PrescriptionScreen navigateTo={navigateTo} goBack={goBack} />;
         case 'cart':
-          return <CartScreen cartItems={cartItems} setCartItems={setCartItems} navigateTo={navigateTo} />;
+          return <CartScreen cartItems={cartItems} setCartItems={setCartItems} navigateTo={navigateTo} goBack={goBack} />;
         case 'consult':
           return <ConsultScreen navigateTo={navigateTo} goBack={goBack} />;
         case 'donations':

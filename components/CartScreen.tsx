@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
-export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
+export default function CartScreen({ cartItems, setCartItems, navigateTo, goBack }) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
   const insets = useSafeAreaInsets();
@@ -63,20 +63,35 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
     setCurrentStep('confirmation');
   };
 
+  // Render back button if goBack is provided
+  const renderBackButton = () => goBack ? (
+    <TouchableOpacity onPress={goBack} style={{ marginRight: 12 }}>
+      <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+    </TouchableOpacity>
+  ) : null;
+
   // Cart Step
   if (currentStep === 'cart') {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
         {/* Fixed Header */}
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-          <Text style={styles.headerTitle}>
-            {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
-          </Text>
-          {cartItems.length > 0 && (
-            <Text style={styles.headerSubtitle}>
-              {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
+          <View style={styles.headerLeft}>
+            {renderBackButton()}
+          </View>
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerTitle}>
+              {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
             </Text>
-          )}
+            {cartItems.length > 0 && (
+              <Text style={styles.headerSubtitle}>
+                {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
+              </Text>
+            )}
+          </View>
+          <View style={styles.headerRight}>
+            {/* Empty space to balance the layout */}
+          </View>
         </View>
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
             {cartItems.length === 0 ? (
@@ -162,21 +177,24 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   // Delivery Step
   if (currentStep === 'delivery') {
     return (
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        {/* Fixed Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity onPress={() => setCurrentStep('cart')} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>
               {language === 'ar' ? 'اختيار التوصيل' : 'Delivery Options'}
             </Text>
-            <TouchableOpacity onPress={() => setCurrentStep('cart')}>
-              <Text style={styles.backButton}>
-                {language === 'ar' ? 'رجوع' : 'Back'}
-              </Text>
-            </TouchableOpacity>
+          </View>
+          <View style={styles.headerRight}>
+            {/* Empty space to balance the layout */}
           </View>
         </View>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           {/* Delivery Address */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
@@ -354,28 +372,31 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
             </Text>
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 
   // Payment Step
   if (currentStep === 'payment') {
     return (
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        {/* Fixed Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity onPress={() => setCurrentStep('delivery')} style={{ marginRight: 12 }}>
+              <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>
               {language === 'ar' ? 'طريقة الدفع' : 'Payment Method'}
             </Text>
-            <TouchableOpacity onPress={() => setCurrentStep('delivery')}>
-              <Text style={styles.backButton}>
-                {language === 'ar' ? 'رجوع' : 'Back'}
-              </Text>
-            </TouchableOpacity>
+          </View>
+          <View style={styles.headerRight}>
+            {/* Empty space to balance the layout */}
           </View>
         </View>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           {/* Payment Methods */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
@@ -469,7 +490,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
             </Text>
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -538,9 +559,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
-  headerSubtitle: { fontSize: 13, color: '#666' },
+  headerLeft: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  headerCenter: {
+    flex: 2,
+    alignItems: 'center',
+  },
+  headerRight: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222', textAlign: 'center' },
+  headerSubtitle: { fontSize: 13, color: '#666', textAlign: 'center' },
   content: { padding: 24 },
   emptyCard: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', alignItems: 'center', padding: 32, marginBottom: 16 },
   emptyIcon: { marginBottom: 12 },
