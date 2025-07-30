@@ -1,28 +1,37 @@
-"use client";
 
 import * as React from "react";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { StyleSheet, View } from "react-native";
 
-import { cn } from "./utils";
+type SeparatorProps = {
+  orientation?: "horizontal" | "vertical";
+  style?: any;
+};
 
-function Separator({
-  className,
-  orientation = "horizontal",
-  decorative = true,
-  ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
+function Separator({ orientation = "horizontal", style = [] }: SeparatorProps) {
   return (
-    <SeparatorPrimitive.Root
-      data-slot="separator-root"
-      decorative={decorative}
-      orientation={orientation}
-      className={cn(
-        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
-        className,
-      )}
-      {...props}
+    <View
+      style={[
+        orientation === "horizontal" ? styles.horizontal : styles.vertical,
+        style,
+      ]}
+      accessibilityRole="none"
     />
   );
 }
+
+const styles = StyleSheet.create({
+  horizontal: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#e5e7eb',
+    marginVertical: 8,
+  },
+  vertical: {
+    width: 1,
+    height: '100%',
+    backgroundColor: '#e5e7eb',
+    marginHorizontal: 8,
+  },
+});
 
 export { Separator };

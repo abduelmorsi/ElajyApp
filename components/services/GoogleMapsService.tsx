@@ -79,9 +79,11 @@ class GoogleMapsServiceClass {
   }
 
   async getCurrentLocation(): Promise<MapLocation> {
-    // Mock user location - Khartoum coordinates
-    return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
+    // Use React Native Geolocation API if available, otherwise fallback to Khartoum
+    return new Promise((resolve) => {
+      // @ts-ignore
+      if (typeof navigator !== 'undefined' && navigator.geolocation && navigator.geolocation.getCurrentPosition) {
+        // This will work if using a polyfill or expo-location
         navigator.geolocation.getCurrentPosition(
           (position) => {
             resolve({
@@ -91,7 +93,6 @@ class GoogleMapsServiceClass {
             });
           },
           () => {
-            // Fallback to Khartoum coordinates
             resolve({
               lat: 15.5007,
               lng: 32.5599,

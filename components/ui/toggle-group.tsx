@@ -1,73 +1,105 @@
-"use client";
-
 import * as React from "react";
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import { type VariantProps } from "class-variance-authority";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { cn } from "./utils";
-import { toggleVariants } from "./toggle";
 
-const ToggleGroupContext = React.createContext<
-  VariantProps<typeof toggleVariants>
->({
+type ToggleGroupContextType = {
+  size: string;
+  variant: string;
+  value?: any;
+  setValue?: (val: any) => void;
+};
+
+const ToggleGroupContext = React.createContext<ToggleGroupContextType>({
   size: "default",
   variant: "default",
 });
 
-function ToggleGroup({
-  className,
-  variant,
-  size,
-  children,
-  ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
-  VariantProps<typeof toggleVariants>) {
-  return (
-    <ToggleGroupPrimitive.Root
-      data-slot="toggle-group"
-      data-variant={variant}
-      data-size={size}
-      className={cn(
-        "group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs",
-        className,
-      )}
-      {...props}
-    >
-      <ToggleGroupContext.Provider value={{ variant, size }}>
-        {children}
-      </ToggleGroupContext.Provider>
-    </ToggleGroupPrimitive.Root>
-  );
+
+interface ToggleGroupProps {
+  value?: any;
+  defaultValue?: any;
+  onValueChange?: (val: any) => void;
+  variant?: string;
+  size?: string;
+  style?: any;
+  children: React.ReactNode;
 }
 
-function ToggleGroupItem({
-  className,
-  children,
-  variant,
-  size,
-  ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Item> &
-  VariantProps<typeof toggleVariants>) {
-  const context = React.useContext(ToggleGroupContext);
-
+const ToggleGroup: React.FC<ToggleGroupProps> = ({ value: controlledValue, defaultValue, onValueChange, variant = "default", size = "default", style, children }) => {
+  const [value, setValue] = React.useState(controlledValue ?? defaultValue ?? null);
+  const isControlled = controlledValue !== undefined;
+  const currentValue = isControlled ? controlledValue : value;
+  const setGroupValue = (val: any) => {
+    if (!isControlled) setValue(val);
+    if (onValueChange) onValueChange(val);
+  };
   return (
-    <ToggleGroupPrimitive.Item
-      data-slot="toggle-group-item"
-      data-variant={context.variant || variant}
-      data-size={context.size || size}
-      className={cn(
-        toggleVariants({
-          variant: context.variant || variant,
-          size: context.size || size,
-        }),
-        "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </ToggleGroupPrimitive.Item>
+    <ToggleGroupContext.Provider value={{ variant, size, value: currentValue, setValue: setGroupValue }}>
+      <View style={[styles.group, style]}>{children}</View>
+    </ToggleGroupContext.Provider>
   );
+};
+
+
+interface ToggleGroupItemProps {
+  value: any;
+  children: React.ReactNode;
+  style?: any;
+  disabled?: boolean;
 }
+
+const ToggleGroupItem: React.FC<ToggleGroupItemProps> = ({ value, children, style, disabled }) => {
+  const ctx = React.useContext(ToggleGroupContext);
+  const isActive = ctx?.value === value;
+  return (
+    <TouchableOpacity
+      style={[
+        styles.item,
+        isActive && styles.itemActive,
+        disabled && styles.itemDisabled,
+        style,
+      ]}
+      onPress={() => !disabled && ctx?.setValue && ctx.setValue(value)}
+      disabled={disabled}
+    >
+      <Text style={[styles.itemText, isActive && styles.itemTextActive]}>{children}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  group: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+    padding: 2,
+    width: 'auto',
+  },
+  item: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+    marginHorizontal: 2,
+  },
+  itemActive: {
+    backgroundColor: '#2563eb',
+  },
+  itemDisabled: {
+    opacity: 0.5,
+  },
+  itemText: {
+    color: '#374151',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  itemTextActive: {
+    color: '#fff',
+  },
+});
 
 export { ToggleGroup, ToggleGroupItem };

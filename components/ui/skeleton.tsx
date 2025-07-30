@@ -1,13 +1,43 @@
-import { cn } from "./utils";
+import React, { useEffect, useRef } from "react";
+import { Animated, StyleSheet } from "react-native";
 
-function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
+function Skeleton({ style, ...props }) {
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.4,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, [opacity]);
+
   return (
-    <div
-      data-slot="skeleton"
-      className={cn("bg-accent animate-pulse rounded-md", className)}
+    <Animated.View
+      style={[styles.skeleton, { opacity }, style]}
       {...props}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  skeleton: {
+    backgroundColor: '#e5e7eb',
+    borderRadius: 6,
+    minHeight: 16,
+    minWidth: 16,
+  },
+});
 
 export { Skeleton };

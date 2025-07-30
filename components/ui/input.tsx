@@ -1,24 +1,54 @@
+
 import * as React from "react";
+import { StyleSheet, TextInput } from "react-native";
 
-import { cn } from "./utils";
+type InputProps = React.ComponentProps<typeof TextInput> & {
+  type?: string;
+};
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+const Input = React.forwardRef<TextInput, InputProps>(
+  ({ style, type, ...props }, ref) => {
+    // Map HTML input types to React Native keyboardType
+    let keyboardType: InputProps["keyboardType"] = "default";
+    if (type === "email") keyboardType = "email-address";
+    else if (type === "number" || type === "tel") keyboardType = "numeric";
+    else if (type === "phone") keyboardType = "phone-pad";
+    else if (type === "url") keyboardType = "url";
+    else if (type === "decimal") keyboardType = "decimal-pad";
+
     return (
-      <input
-        type={type}
-        data-slot="input"
-        className={cn(
-          "flex h-11 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 shadow-md hover:shadow-lg focus-visible:shadow-lg",
-          className,
-        )}
+      <TextInput
         ref={ref}
+        style={[styles.input, style]}
+        keyboardType={keyboardType}
+        secureTextEntry={type === "password"}
+        autoCapitalize={type === "email" ? "none" : undefined}
         {...props}
       />
     );
-  },
+  }
 );
 
 Input.displayName = "Input";
+
+const styles = StyleSheet.create({
+  input: {
+    height: 44,
+    width: '100%',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#222',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+});
 
 export { Input };

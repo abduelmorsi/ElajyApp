@@ -1,177 +1,219 @@
-"use client";
+import React, { useState } from "react";
+import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-import * as React from "react";
-import { Command as CommandPrimitive } from "cmdk";
-import { SearchIcon } from "lucide-react";
-
-import { cn } from "./utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./dialog";
-
-function Command({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive>) {
-  return (
-    <CommandPrimitive
-      data-slot="command"
-      className={cn(
-        "bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-function CommandDialog({
-  title = "Command Palette",
-  description = "Search for a command to run...",
-  children,
-  ...props
-}: React.ComponentProps<typeof Dialog> & {
+type CommandDialogProps = {
+  visible: boolean;
+  onClose: () => void;
   title?: string;
   description?: string;
-}) {
+  items: { label: string; shortcut?: string; onPress: () => void; group?: string; }[];
+  placeholder?: string;
+};
+
+function CommandDialog({ visible, onClose, title = "Command Palette", description = "Search for a command to run...", items, placeholder = "Type a command..." }: CommandDialogProps) {
+  const [query, setQuery] = useState("");
+  const filtered = items.filter(item => item.label.toLowerCase().includes(query.toLowerCase()));
   return (
-    <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
-      <DialogContent className="overflow-hidden p-0">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground **:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {children}
-        </Command>
-      </DialogContent>
-    </Dialog>
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
+      <View style={styles.overlay}>
+        <View style={styles.dialog}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={styles.input}
+              placeholder={placeholder}
+              value={query}
+              onChangeText={setQuery}
+              autoFocus
+              placeholderTextColor="#888"
+            />
+          </View>
+          <FlatList
+            data={filtered}
+            keyExtractor={item => item.label}
+            style={styles.list}
+            ListEmptyComponent={<Text style={styles.empty}>No commands found.</Text>}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.item} onPress={() => { item.onPress(); onClose(); }}>
+                <Text style={styles.itemLabel}>{item.label}</Text>
+                {item.shortcut && <Text style={styles.shortcut}>{item.shortcut}</Text>}
+              </TouchableOpacity>
+            )}
+          />
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
-function CommandInput({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
-  return (
-    <div
-      data-slot="command-input-wrapper"
-      className="flex h-9 items-center gap-2 border-b px-3"
-    >
-      <SearchIcon className="size-4 shrink-0 opacity-50" />
-      <CommandPrimitive.Input
-        data-slot="command-input"
-        className={cn(
-          "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
-          className,
-        )}
-        {...props}
-      />
-    </div>
-  );
-}
-
-function CommandList({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.List>) {
-  return (
-    <CommandPrimitive.List
-      data-slot="command-list"
-      className={cn(
-        "max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto",
-        className,
-      )}
-      {...props}
+// Individual building blocks for custom command UIs
+const CommandInput = ({ value, onChangeText, placeholder, style }: { value: string; onChangeText: (t: string) => void; placeholder?: string; style?: any }) => (
+  <View style={styles.inputWrapper}>
+    <Text style={styles.searchIcon}>🔍</Text>
+    <TextInput
+      style={[styles.input, style]}
+      placeholder={placeholder}
+      value={value}
+      onChangeText={onChangeText}
+      placeholderTextColor="#888"
     />
-  );
-}
+  </View>
+);
 
-function CommandEmpty({
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-  return (
-    <CommandPrimitive.Empty
-      data-slot="command-empty"
-      className="py-6 text-center text-sm"
-      {...props}
-    />
-  );
-}
+const CommandList = ({ items, onItemPress }: { items: { label: string; shortcut?: string; onPress: () => void; }[]; onItemPress: (item: any) => void; }) => (
+  <FlatList
+    data={items}
+    keyExtractor={item => item.label}
+    style={styles.list}
+    ListEmptyComponent={<Text style={styles.empty}>No commands found.</Text>}
+    renderItem={({ item }) => (
+      <TouchableOpacity style={styles.item} onPress={() => onItemPress(item)}>
+        <Text style={styles.itemLabel}>{item.label}</Text>
+        {item.shortcut && <Text style={styles.shortcut}>{item.shortcut}</Text>}
+      </TouchableOpacity>
+    )}
+  />
+);
 
-function CommandGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Group>) {
-  return (
-    <CommandPrimitive.Group
-      data-slot="command-group"
-      className={cn(
-        "text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
+const CommandEmpty = () => <Text style={styles.empty}>No commands found.</Text>;
 
-function CommandSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return (
-    <CommandPrimitive.Separator
-      data-slot="command-separator"
-      className={cn("bg-border -mx-1 h-px", className)}
-      {...props}
-    />
-  );
-}
+const CommandGroup = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <View style={styles.group}>
+    <Text style={styles.groupLabel}>{label}</Text>
+    {children}
+  </View>
+);
 
-function CommandItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
-  return (
-    <CommandPrimitive.Item
-      data-slot="command-item"
-      className={cn(
-        "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
+const CommandItem = ({ label, shortcut, onPress }: { label: string; shortcut?: string; onPress: () => void }) => (
+  <TouchableOpacity style={styles.item} onPress={onPress}>
+    <Text style={styles.itemLabel}>{label}</Text>
+    {shortcut && <Text style={styles.shortcut}>{shortcut}</Text>}
+  </TouchableOpacity>
+);
 
-function CommandShortcut({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      data-slot="command-shortcut"
-      className={cn(
-        "text-muted-foreground ml-auto text-xs tracking-widest",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
+const CommandShortcut = ({ children, style }: { children: React.ReactNode; style?: any }) => (
+  <Text style={[styles.shortcut, style]}>{children}</Text>
+);
+
+const CommandSeparator = () => <View style={styles.separator} />;
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dialog: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'stretch',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#222',
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    marginBottom: 10,
+    paddingHorizontal: 4,
+    height: 40,
+  },
+  searchIcon: {
+    fontSize: 18,
+    marginRight: 6,
+    color: '#888',
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: '#222',
+    paddingVertical: 0,
+    backgroundColor: 'transparent',
+  },
+  list: {
+    maxHeight: 240,
+    marginBottom: 10,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+    borderRadius: 6,
+    marginBottom: 2,
+    backgroundColor: '#f7f7f7',
+  },
+  itemLabel: {
+    fontSize: 15,
+    color: '#222',
+    flex: 1,
+  },
+  shortcut: {
+    color: '#888',
+    fontSize: 12,
+    marginLeft: 8,
+    letterSpacing: 1,
+  },
+  empty: {
+    textAlign: 'center',
+    color: '#888',
+    fontSize: 14,
+    marginVertical: 16,
+  },
+  group: {
+    marginVertical: 8,
+  },
+  groupLabel: {
+    fontSize: 13,
+    color: '#666',
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#eee',
+    marginVertical: 6,
+  },
+  closeButton: {
+    alignSelf: 'center',
+    marginTop: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 18,
+    backgroundColor: '#eee',
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: '#333',
+    fontSize: 15,
+  },
+});
 
 export {
-  Command,
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
+  CommandDialog, CommandEmpty,
+  CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut
 };
+

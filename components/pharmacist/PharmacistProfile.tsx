@@ -1,14 +1,22 @@
+// ...existing code...
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// ...existing code...
+// ...existing code...
+// ...existing code...
 import React, { useState } from 'react';
-import { User, Phone, Mail, MapPin, Calendar, Settings, Bell, Shield, HelpCircle, Star, Edit, Camera, Languages, LogOut, ChevronRight, Clock, Package, Award, BarChart3, Users, FileText } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Separator } from '../ui/separator';
-import { Switch } from '../ui/switch';
-import { useLocalization, sudanesePharmaceuticalData, useRTL } from '../services/LocalizationService';
+import { Switch } from 'react-native';
+import { sudanesePharmaceuticalData, useLocalization, useRTL } from '../services/LocalizationService';
 
-export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageToggle, currentLanguage }) {
+type PharmacistProfileProps = {
+  navigateTo: (screen: string, data?: any) => void;
+  onSignOut: () => void;
+  onLanguageToggle: () => void;
+  currentLanguage: string;
+  userData: any;
+  updateUserProfile: (updates: any) => void;
+};
+
+export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageToggle, currentLanguage, userData, updateUserProfile }: PharmacistProfileProps) {
   const { t, language } = useLocalization();
   const { isRTL, getMargin } = useRTL();
   const [notifications, setNotifications] = useState(true);
@@ -35,324 +43,507 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
     rating: 4.9
   };
 
-  const pharmacistStats = [
-    {
-      icon: Package,
-      label: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders',
-      value: pharmacistData.totalOrders,
-      color: 'text-primary'
-    },
-    {
-      icon: Users,
-      label: language === 'ar' ? 'العملاء' : 'Customers',
-      value: pharmacistData.totalCustomers,
-      color: 'text-success'
-    },
-    {
-      icon: Star,
-      label: language === 'ar' ? 'التقييم' : 'Rating',
-      value: pharmacistData.rating,
-      color: 'text-warning'
-    },
-    {
-      icon: BarChart3,
-      label: language === 'ar' ? 'الخبرة' : 'Experience',
-      value: language === 'ar' ? pharmacistData.experience : pharmacistData.experienceEn,
-      color: 'text-info'
-    }
-  ];
-
-  const menuItems = [
-    {
-      icon: BarChart3,
-      title: language === 'ar' ? 'التقارير والإحصائيات' : 'Reports & Analytics',
-      description: language === 'ar' ? 'عرض أداء الصيدلية والإحصائيات' : 'View pharmacy performance and statistics',
-      action: () => navigateTo('pharmacist-analytics')
-    },
-    {
-      icon: Package,
-      title: language === 'ar' ? 'إدارة المخزون' : 'Inventory Management',
-      description: language === 'ar' ? 'مراقبة والتحكم في المخزون' : 'Monitor and control inventory',
-      action: () => navigateTo('pharmacist-inventory')
-    },
-    {
-      icon: FileText,
-      title: language === 'ar' ? 'الوصفات الطبية' : 'Prescriptions',
-      description: language === 'ar' ? 'مراجعة والموافقة على الوصفات' : 'Review and approve prescriptions',
-      action: () => navigateTo('pharmacist-prescriptions')
-    },
-    {
-      icon: Bell,
-      title: language === 'ar' ? 'الإشعارات' : 'Notifications',
-      description: language === 'ar' ? 'إدارة التنبيهات والإشعارات' : 'Manage alerts and notifications',
-      action: () => setNotifications(!notifications)
-    },
-    {
-      icon: Shield,
-      title: language === 'ar' ? 'الخصوصية والأمان' : 'Privacy & Security',
-      description: language === 'ar' ? 'إعدادات الحساب والخصوصية' : 'Account and privacy settings',
-      action: () => navigateTo('privacy')
-    },
-    {
-      icon: HelpCircle,
-      title: language === 'ar' ? 'المساعدة والدعم' : 'Help & Support',
-      description: language === 'ar' ? 'اتصل بفريق الدعم أو تصفح الأسئلة الشائعة' : 'Contact support or browse FAQ',
-      action: () => navigateTo('help')
-    }
-  ];
+  // No longer need pharmacistStats or menuItems with icon references
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <ScrollView style={styles.container}>
       {/* Profile Header */}
-      <div className="bg-gradient-to-br from-primary/10 via-accent/20 to-primary/5 p-6 pb-8">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="relative">
-            <Avatar className="w-20 h-20 border-4 border-primary/20 shadow-lg">
-              <AvatarImage src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&auto=format" />
-              <AvatarFallback className="text-xl font-semibold bg-primary text-primary-foreground">
-                {language === 'ar' ? 'فأ' : 'FA'}
-              </AvatarFallback>
-            </Avatar>
-            <Button 
-              size="sm" 
-              className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full p-0 bg-primary hover:bg-primary/90 shadow-lg"
-            >
-              <Camera size={14} />
-            </Button>
-          </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-primary mb-1">
+      {/* ...convert the rest of the profile screen to React Native below... */}
+        <View style={styles.headerRow}>
+          <View style={styles.avatarContainer}>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&auto=format' }}
+              style={styles.avatarImg}
+            />
+            <View style={styles.avatarBadge}>
+              <Text style={styles.avatarBadgeText}>📷</Text>
+            </View>
+          </View>
+          <View style={styles.headerInfo}>
+            <Text style={styles.headerName}>
               {language === 'ar' ? pharmacistData.name : pharmacistData.nameEn}
-            </h2>
-            <p className="text-sm text-muted-foreground mb-1">
+            </Text>
+            <Text style={styles.headerSpecialization}>
               {language === 'ar' ? pharmacistData.specialization : pharmacistData.specializationEn}
-            </p>
-            <div className="flex items-center text-sm text-muted-foreground mb-2">
-              <MapPin size={14} className={getMargin('0', '1')} />
-              <span>{language === 'ar' ? pharmacistData.pharmacyName : pharmacistData.pharmacyNameEn}</span>
-            </div>
-            <Badge variant="outline" className="bg-success/10 text-success border-success/30">
-              ⚕️ {language === 'ar' ? 'صيدلي مرخص' : 'Licensed Pharmacist'}
-            </Badge>
-          </div>
-        </div>
+            </Text>
+            <View style={styles.headerPharmacyRow}>
+              <Text style={styles.headerPharmacyIcon}>📍</Text>
+              <Text style={styles.headerPharmacyName}>{language === 'ar' ? pharmacistData.pharmacyName : pharmacistData.pharmacyNameEn}</Text>
+            </View>
+            <View style={styles.headerBadge}>
+              <Text style={styles.headerBadgeText}>⚕️ {language === 'ar' ? 'صيدلي مرخص' : 'Licensed Pharmacist'}</Text>
+            </View>
+          </View>
+        </View>
 
         {/* Professional Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          {pharmacistStats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={index} className="p-4 bg-background/60 backdrop-blur-sm border-primary/10">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg bg-primary/10 ${stat.color}`}>
-                    <Icon size={18} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="font-semibold arabic-numbers">{stat.value}</p>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
+        <View style={styles.statsGrid}>
+          {/* Use emoji for icons */}
+          {[
+            { icon: '📦', label: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders', value: pharmacistData.totalOrders, color: '#1976d2' },
+            { icon: '👥', label: language === 'ar' ? 'العملاء' : 'Customers', value: pharmacistData.totalCustomers, color: '#388e3c' },
+            { icon: '⭐', label: language === 'ar' ? 'التقييم' : 'Rating', value: pharmacistData.rating, color: '#fbc02d' },
+            { icon: '📊', label: language === 'ar' ? 'الخبرة' : 'Experience', value: language === 'ar' ? pharmacistData.experience : pharmacistData.experienceEn, color: '#0288d1' },
+          ].map((stat, idx) => (
+            <View key={idx} style={styles.statCard}>
+              <View style={[styles.statIconBox, { backgroundColor: stat.color + '22' }]}> 
+                <Text style={[styles.statIcon, { color: stat.color }]}>{stat.icon}</Text>
+              </View>
+              <View>
+                <Text style={styles.statLabel}>{stat.label}</Text>
+                <Text style={styles.statValue}>{stat.value}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      {/* End of headerBg section */}
 
-      <div className="p-6 space-y-6">
-        {/* Professional Information */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <User size={20} className="text-primary" />
-            {language === 'ar' ? 'المعلومات المهنية' : 'Professional Information'}
-          </h3>
+      {/* Professional Information */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>🧑‍⚕️ {language === 'ar' ? 'المعلومات المهنية' : 'Professional Information'}</Text>
+        <View style={styles.card}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoIcon}>📄</Text>
+            <View style={styles.infoTextBox}>
+              <Text style={styles.infoLabel}>{language === 'ar' ? 'رقم الترخيص' : 'License Number'}</Text>
+              <Text style={styles.infoValue}>{pharmacistData.licenseNumber}</Text>
+            </View>
+            <Text style={styles.activeBadge}>{language === 'ar' ? 'نشط' : 'Active'}</Text>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoIcon}>📞</Text>
+            <View style={styles.infoTextBox}>
+              <Text style={styles.infoLabel}>{language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</Text>
+              <Text style={styles.infoValue}>{pharmacistData.phone}</Text>
+            </View>
+            <TouchableOpacity style={styles.editBtn}><Text style={styles.editBtnText}>✏️</Text></TouchableOpacity>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoIcon}>✉️</Text>
+            <View style={styles.infoTextBox}>
+              <Text style={styles.infoLabel}>{language === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</Text>
+              <Text style={styles.infoValue}>{pharmacistData.email}</Text>
+            </View>
+            <TouchableOpacity style={styles.editBtn}><Text style={styles.editBtnText}>✏️</Text></TouchableOpacity>
+          </View>
+        </View>
+      </View>
 
-          <Card className="p-4 border-primary/10">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <FileText size={16} className="text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">{language === 'ar' ? 'رقم الترخيص' : 'License Number'}</p>
-                    <p className="text-sm text-muted-foreground arabic-numbers">{pharmacistData.licenseNumber}</p>
-                  </div>
-                </div>
-                <Badge variant="outline" className="text-success border-success/30">
-                  {language === 'ar' ? 'نشط' : 'Active'}
-                </Badge>
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Phone size={16} className="text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">{language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</p>
-                    <p className="text-sm text-muted-foreground arabic-numbers">{pharmacistData.phone}</p>
-                  </div>
-                </div>
-                <Button variant="ghost" size="sm">
-                  <Edit size={14} />
-                </Button>
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Mail size={16} className="text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">{language === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</p>
-                    <p className="text-sm text-muted-foreground">{pharmacistData.email}</p>
-                  </div>
-                </div>
-                <Button variant="ghost" size="sm">
-                  <Edit size={14} />
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
+      {/* App Settings */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>⚙️ {language === 'ar' ? 'إعدادات التطبيق' : 'App Settings'}</Text>
+        <View style={styles.card}>
+          {/* Language */}
+          <View style={styles.settingRow}>
+            <Text style={styles.settingIcon}>🌐</Text>
+            <View style={styles.settingTextBox}>
+              <Text style={styles.settingLabel}>{language === 'ar' ? 'اللغة' : 'Language'}</Text>
+              <Text style={styles.settingValue}>{language === 'ar' ? 'العربية' : 'English'}</Text>
+            </View>
+            <TouchableOpacity style={styles.langBtn} onPress={onLanguageToggle}>
+              <Text style={styles.langBtnText}>{language === 'ar' ? 'EN' : 'عربي'}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.separator} />
+          {/* Notifications */}
+          <View style={styles.settingRow}>
+            <Text style={styles.settingIcon}>🔔</Text>
+            <View style={styles.settingTextBox}>
+              <Text style={styles.settingLabel}>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</Text>
+              <Text style={styles.settingValue}>{language === 'ar' ? 'تنبيهات الطلبات والوصفات' : 'Order and prescription alerts'}</Text>
+            </View>
+            <Switch value={notifications} onValueChange={setNotifications} />
+          </View>
+          <View style={styles.separator} />
+          {/* Dark Mode */}
+          <View style={styles.settingRow}>
+            <Text style={styles.settingIcon}>🌙</Text>
+            <View style={styles.settingTextBox}>
+              <Text style={styles.settingLabel}>{language === 'ar' ? 'الوضع الليلي' : 'Dark Mode'}</Text>
+              <Text style={styles.settingValue}>{language === 'ar' ? 'تغيير مظهر التطبيق' : 'Change app appearance'}</Text>
+            </View>
+            <Switch value={darkMode} onValueChange={setDarkMode} />
+          </View>
+        </View>
+      </View>
 
-        {/* App Settings */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Settings size={20} className="text-primary" />
-            {language === 'ar' ? 'إعدادات التطبيق' : 'App Settings'}
-          </h3>
+      {/* Management Tools */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>🛠️ {language === 'ar' ? 'أدوات الإدارة' : 'Management Tools'}</Text>
+        {[
+          {
+            title: language === 'ar' ? 'التقارير والإحصائيات' : 'Reports & Analytics',
+            description: language === 'ar' ? 'عرض أداء الصيدلية والإحصائيات' : 'View pharmacy performance and statistics',
+            action: () => navigateTo('pharmacist-analytics'),
+            icon: '📊',
+          },
+          {
+            title: language === 'ar' ? 'إدارة المخزون' : 'Inventory Management',
+            description: language === 'ar' ? 'مراقبة والتحكم في المخزون' : 'Monitor and control inventory',
+            action: () => navigateTo('pharmacist-inventory'),
+            icon: '📦',
+          },
+          {
+            title: language === 'ar' ? 'الوصفات الطبية' : 'Prescriptions',
+            description: language === 'ar' ? 'مراجعة والموافقة على الوصفات' : 'Review and approve prescriptions',
+            action: () => navigateTo('pharmacist-prescriptions'),
+            icon: '📄',
+          },
+          {
+            title: language === 'ar' ? 'الإشعارات' : 'Notifications',
+            description: language === 'ar' ? 'إدارة التنبيهات والإشعارات' : 'Manage alerts and notifications',
+            action: () => setNotifications(!notifications),
+            icon: '🔔',
+          },
+          {
+            title: language === 'ar' ? 'الخصوصية والأمان' : 'Privacy & Security',
+            description: language === 'ar' ? 'إعدادات الحساب والخصوصية' : 'Account and privacy settings',
+            action: () => navigateTo('privacy'),
+            icon: '🛡️',
+          },
+          {
+            title: language === 'ar' ? 'المساعدة والدعم' : 'Help & Support',
+            description: language === 'ar' ? 'اتصل بفريق الدعم أو تصفح الأسئلة الشائعة' : 'Contact support or browse FAQ',
+            action: () => navigateTo('help'),
+            icon: '❓',
+          },
+        ].map((item, idx) => (
+          <TouchableOpacity key={idx} style={styles.menuCard} onPress={item.action}>
+            <View style={styles.menuRow}>
+              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <View style={styles.menuTextBox}>
+                <Text style={styles.menuTitle}>{item.title}</Text>
+                <Text style={styles.menuDesc}>{item.description}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-          <Card className="divide-y border-primary/10">
-            {/* Language Settings */}
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Languages size={18} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{language === 'ar' ? 'اللغة' : 'Language'}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {language === 'ar' ? 'العربية' : 'English'}
-                    </p>
-                  </div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={onLanguageToggle}
-                  className="hover:bg-primary/5 hover:border-primary/30"
-                >
-                  <Languages size={14} className={getMargin('0', '1')} />
-                  {language === 'ar' ? 'EN' : 'عربي'}
-                </Button>
-              </div>
-            </div>
+      {/* Sign Out Button */}
+      <View style={styles.signOutSection}>
+        <TouchableOpacity style={styles.signOutBtn} onPress={onSignOut}>
+          <Text style={styles.signOutBtnText}>🚪 {t('action.signOut')}</Text>
+        </TouchableOpacity>
+        <Text style={styles.signOutNote}>
+          {language === 'ar'
+            ? 'ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى حساب الصيدلي'
+            : 'You will need to sign in again to access your pharmacist account'}
+        </Text>
+      </View>
 
-            {/* Notifications Settings */}
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Bell size={18} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{language === 'ar' ? 'الإشعارات' : 'Notifications'}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {language === 'ar' ? 'تنبيهات الطلبات والوصفات' : 'Order and prescription alerts'}
-                    </p>
-                  </div>
-                </div>
-                <Switch 
-                  checked={notifications} 
-                  onCheckedChange={setNotifications}
-                />
-              </div>
-            </div>
-
-            {/* Dark Mode Settings */}
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Settings size={18} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{language === 'ar' ? 'الوضع الليلي' : 'Dark Mode'}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {language === 'ar' ? 'تغيير مظهر التطبيق' : 'Change app appearance'}
-                    </p>
-                  </div>
-                </div>
-                <Switch 
-                  checked={darkMode} 
-                  onCheckedChange={setDarkMode}
-                />
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Management Tools */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Settings size={20} className="text-primary" />
-            {language === 'ar' ? 'أدوات الإدارة' : 'Management Tools'}
-          </h3>
-
-          <div className="space-y-2">
-            {menuItems.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <Card 
-                  key={index} 
-                  className="p-4 cursor-pointer hover:shadow-lg transition-all duration-200 border-primary/10 hover:border-primary/20 hover:bg-primary/5"
-                  onClick={item.action}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 rounded-lg bg-primary/10">
-                        <Icon size={18} className="text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{item.title}</p>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                    </div>
-                    <ChevronRight size={16} className="text-muted-foreground" />
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Centered Sign Out Button */}
-        <div className="pt-6 pb-8">
-          <div className="flex justify-center">
-            <Button 
-              variant="destructive" 
-              size="lg"
-              onClick={onSignOut}
-              className="w-full max-w-xs bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70 shadow-lg rounded-xl"
-            >
-              <LogOut size={18} className={getMargin('0', '2')} />
-              <span className="font-semibold">{t('action.signOut')}</span>
-            </Button>
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-3">
-            {language === 'ar' ? 
-              'ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى حساب الصيدلي' : 
-              'You will need to sign in again to access your pharmacist account'
-            }
-          </p>
-        </div>
-
-        {/* App Info */}
-        <div className="text-center text-xs text-muted-foreground pb-4">
-          <p>{language === 'ar' ? 'نظام إدارة الصيدليات - السودان' : 'Pharmacy Management System - Sudan'}</p>
-          <p>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</p>
-        </div>
-      </div>
-    </div>
+      {/* App Info */}
+      <View style={styles.appInfoSection}>
+        <Text style={styles.appInfoText}>{language === 'ar' ? 'نظام إدارة الصيدليات - السودان' : 'Pharmacy Management System - Sudan'}</Text>
+        <Text style={styles.appInfoText}>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</Text>
+      </View>
+    </ScrollView>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  headerBg: {
+    padding: 24,
+    paddingBottom: 32,
+    backgroundColor: '#e6f0fa',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    marginBottom: 8,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 16,
+  },
+  avatarImg: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: '#b3d4fc',
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#1976d2',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  avatarBadgeText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  headerInfo: {
+    flex: 1,
+  },
+  headerName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1976d2',
+    marginBottom: 4,
+  },
+  headerSpecialization: {
+    fontSize: 14,
+    color: '#6c757d',
+    marginBottom: 4,
+  },
+  headerPharmacyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  headerPharmacyIcon: {
+    fontSize: 14,
+    marginRight: 4,
+    color: '#6c757d',
+  },
+  headerPharmacyName: {
+    fontSize: 14,
+    color: '#6c757d',
+  },
+  headerBadge: {
+    backgroundColor: '#e0f7e9',
+    borderRadius: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    alignSelf: 'flex-start',
+  },
+  headerBadgeText: {
+    color: '#388e3c',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  // --- new styles for converted sections ---
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  statCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.07,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  statIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  statIcon: {
+    fontSize: 20,
+  },
+  statLabel: {
+    fontSize: 13,
+    color: '#6c757d',
+    marginBottom: 2,
+  },
+  statValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  section: {
+    marginHorizontal: 18,
+    marginTop: 18,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#1976d2',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoIcon: {
+    fontSize: 18,
+    marginRight: 10,
+  },
+  infoTextBox: {
+    flex: 1,
+  },
+  infoLabel: {
+    fontSize: 13,
+    color: '#6c757d',
+  },
+  infoValue: {
+    fontSize: 14,
+    color: '#222',
+    marginTop: 2,
+  },
+  activeBadge: {
+    backgroundColor: '#e0f7e9',
+    color: '#388e3c',
+    fontWeight: 'bold',
+    fontSize: 12,
+    borderRadius: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    overflow: 'hidden',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#e0e0e0',
+    marginVertical: 6,
+  },
+  editBtn: {
+    padding: 4,
+    borderRadius: 6,
+    backgroundColor: '#f0f0f0',
+  },
+  editBtnText: {
+    fontSize: 14,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  settingIcon: {
+    fontSize: 18,
+    marginRight: 10,
+  },
+  settingTextBox: {
+    flex: 1,
+  },
+  settingLabel: {
+    fontSize: 13,
+    color: '#6c757d',
+  },
+  settingValue: {
+    fontSize: 14,
+    color: '#222',
+    marginTop: 2,
+  },
+  langBtn: {
+    backgroundColor: '#e3f2fd',
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  langBtnText: {
+    color: '#1976d2',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  menuCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  menuRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  menuTextBox: {
+    flex: 1,
+  },
+  menuTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#1976d2',
+  },
+  menuDesc: {
+    fontSize: 13,
+    color: '#6c757d',
+    marginTop: 2,
+  },
+  signOutSection: {
+    marginTop: 24,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  signOutBtn: {
+    backgroundColor: '#e53935',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    width: '80%',
+    alignItems: 'center',
+    marginBottom: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  signOutBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  signOutNote: {
+    color: '#6c757d',
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  appInfoSection: {
+    alignItems: 'center',
+    marginBottom: 18,
+    marginTop: 8,
+  },
+  appInfoText: {
+    color: '#6c757d',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+});

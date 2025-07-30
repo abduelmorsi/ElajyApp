@@ -1,149 +1,170 @@
-"use client";
 
 import * as React from "react";
-import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { XIcon } from "lucide-react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { cn } from "./utils";
+// Emoji for close icon
+const XIcon = (): React.ReactElement => <Text style={styles.closeIcon}>✖️</Text>;
 
-function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
-}
+const SheetContext = React.createContext({ open: false, setOpen: (_: boolean) => {} });
 
-function SheetTrigger({
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
-}
-
-function SheetClose({
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Close>) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
-}
-
-function SheetPortal({
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Portal>) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
-}
-
-const SheetOverlay = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Overlay>,
-  React.ComponentProps<typeof SheetPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <SheetPrimitive.Overlay
-    data-slot="sheet-overlay"
-    className={cn(
-      "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
-      className,
-    )}
-    {...props}
-    ref={ref}
-  />
-));
-
-SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
-
-const SheetContent = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Content>,
-  React.ComponentProps<typeof SheetPrimitive.Content> & {
-    side?: "top" | "right" | "bottom" | "left";
-  }
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      data-slot="sheet-content"
-      className={cn(
-        "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
-        side === "right" &&
-          "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
-        side === "left" &&
-          "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
-        side === "top" &&
-          "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
-        side === "bottom" &&
-          "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
-        className,
-      )}
-      {...props}
-    >
+function Sheet({ children }: { children: React.ReactNode }): React.ReactElement {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <SheetContext.Provider value={{ open, setOpen }}>
       {children}
-      <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-        <XIcon className="size-4" />
-        <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
-    </SheetPrimitive.Content>
-  </SheetPortal>
-));
+    </SheetContext.Provider>
+  );
+}
 
-SheetContent.displayName = SheetPrimitive.Content.displayName;
+function SheetTrigger({ children, style }: { children: React.ReactNode; style?: any }): React.ReactElement {
+  const { setOpen } = React.useContext(SheetContext);
+  return (
+    <TouchableOpacity style={style} onPress={() => setOpen(true)}>
+      {children}
+    </TouchableOpacity>
+  );
+}
 
-const SheetHeader = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-slot="sheet-header"
-    className={cn("flex flex-col gap-1.5 p-4", className)}
-    {...props}
-  />
-));
+function SheetClose({ children, style }: { children?: React.ReactNode; style?: any }): React.ReactElement {
+  const { setOpen } = React.useContext(SheetContext);
+  return (
+    <TouchableOpacity style={style} onPress={() => setOpen(false)}>
+      {children || <XIcon />}
+    </TouchableOpacity>
+  );
+}
 
-SheetHeader.displayName = "SheetHeader";
+function SheetContent({ children, side = "right", style }: { children: React.ReactNode; side?: "right" | "left" | "top" | "bottom"; style?: any }): React.ReactElement {
+  const { open, setOpen } = React.useContext(SheetContext);
+  // Merge base content style with side-specific style
+  let contentStyle = styles.content;
+  if (side === "right") contentStyle = { ...styles.content, ...styles.contentRight };
+  else if (side === "left") contentStyle = { ...styles.content, ...styles.contentLeft };
+  else if (side === "top") contentStyle = { ...styles.content, ...styles.contentTop };
+  else if (side === "bottom") contentStyle = { ...styles.content, ...styles.contentBottom };
 
-const SheetFooter = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-slot="sheet-footer"
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-    {...props}
-  />
-));
+  return (
+    <Modal
+      visible={open}
+      transparent
+      animationType="slide"
+      onRequestClose={() => setOpen(false)}
+    >
+      <TouchableOpacity style={styles.overlay} onPress={() => setOpen(false)} />
+      <View style={[contentStyle, style]}>
+        <View style={styles.closeWrap}>
+          <SheetClose />
+        </View>
+        {children}
+      </View>
+    </Modal>
+  );
+}
 
-SheetFooter.displayName = "SheetFooter";
+function SheetHeader({ children, style }: { children: React.ReactNode; style?: any }): React.ReactElement {
+  return <View style={[styles.header, style]}>{children}</View>;
+}
 
-const SheetTitle = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Title>,
-  React.ComponentProps<typeof SheetPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <SheetPrimitive.Title
-    ref={ref}
-    data-slot="sheet-title"
-    className={cn("text-foreground font-semibold", className)}
-    {...props}
-  />
-));
+function SheetFooter({ children, style }: { children: React.ReactNode; style?: any }): React.ReactElement {
+  return <View style={[styles.footer, style]}>{children}</View>;
+}
 
-SheetTitle.displayName = SheetPrimitive.Title.displayName;
+function SheetTitle({ children, style }: { children: React.ReactNode; style?: any }): React.ReactElement {
+  return <Text style={[styles.title, style]}>{children}</Text>;
+}
 
-const SheetDescription = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Description>,
-  React.ComponentProps<typeof SheetPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <SheetPrimitive.Description
-    ref={ref}
-    data-slot="sheet-description"
-    className={cn("text-muted-foreground text-sm", className)}
-    {...props}
-  />
-));
+function SheetDescription({ children, style }: { children: React.ReactNode; style?: any }): React.ReactElement {
+  return <Text style={[styles.description, style]}>{children}</Text>;
+}
 
-SheetDescription.displayName = SheetPrimitive.Description.displayName;
+const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 50,
+  },
+  content: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    zIndex: 100,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+    padding: 20,
+    minWidth: 280,
+    minHeight: 120,
+  },
+  contentRight: {
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: '75%',
+    position: 'absolute',
+  },
+  contentLeft: {
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: '75%',
+    position: 'absolute',
+  },
+  contentTop: {
+    left: 0,
+    top: 0,
+    right: 0,
+    height: 220,
+    position: 'absolute',
+  },
+  contentBottom: {
+    left: 0,
+    bottom: 0,
+    right: 0,
+    height: 220,
+    position: 'absolute',
+  },
+  closeWrap: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 10,
+  },
+  closeIcon: {
+    fontSize: 22,
+    color: '#888',
+  },
+  header: {
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    marginBottom: 8,
+  },
+  footer: {
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderColor: '#eee',
+    marginTop: 8,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222',
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 8,
+  },
+});
 
 export {
-  Sheet,
-  SheetTrigger,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
-  SheetDescription,
+  Sheet, SheetClose,
+  SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger
 };
+

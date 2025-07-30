@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { ArrowLeft, MessageCircle, Phone, Video, Clock, User, Send } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Input } from '../ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+const ICONS = {
+  arrowLeft: '←',
+  message: '💬',
+  phone: '📞',
+  video: '🎥',
+  clock: '⏰',
+  user: '👤',
+  send: '📤',
+};
 
 const consultations = [
   {
@@ -71,7 +75,12 @@ const chatMessages = [
   }
 ];
 
-export default function PharmacistConsultations({ navigateTo }) {
+
+type PharmacistConsultationsProps = {
+  navigateTo: (screen: string, data?: any) => void;
+};
+
+export default function PharmacistConsultations({ navigateTo }: PharmacistConsultationsProps) {
   const [selectedConsultation, setSelectedConsultation] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState(chatMessages);
@@ -91,10 +100,10 @@ export default function PharmacistConsultations({ navigateTo }) {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'waiting': return 'bg-yellow-100 text-yellow-800';
-      case 'completed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active': return { backgroundColor: '#dcfce7', color: '#166534' };
+      case 'waiting': return { backgroundColor: '#fef9c3', color: '#b45309' };
+      case 'completed': return { backgroundColor: '#f3f4f6', color: '#374151' };
+      default: return { backgroundColor: '#f3f4f6', color: '#374151' };
     }
   };
 
@@ -103,188 +112,223 @@ export default function PharmacistConsultations({ navigateTo }) {
   const completedConsultations = consultations.filter(c => c.status === 'completed');
 
   const ConsultationCard = ({ consultation }) => (
-    <Card 
-      className="p-4 cursor-pointer hover:shadow-md transition-shadow"
-      onClick={() => setSelectedConsultation(consultation)}
-    >
-      <div className="flex items-start space-x-3">
-        <div className="relative">
-          <Avatar className="w-12 h-12">
-            <AvatarImage src={consultation.avatar} alt={consultation.patient} />
-            <AvatarFallback>{consultation.patient.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-          </Avatar>
-          <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-            consultation.status === 'active' ? 'bg-green-500' : 
-            consultation.status === 'waiting' ? 'bg-yellow-500' : 'bg-gray-400'
-          }`}></div>
-        </div>
-        
-        <div className="flex-1">
-          <div className="flex items-start justify-between mb-1">
-            <div>
-              <h4 className="text-sm">{consultation.patient}</h4>
-              <p className="text-xs text-muted-foreground">{consultation.topic}</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Badge className={getStatusColor(consultation.status)}>
-                {consultation.status}
-              </Badge>
+    <TouchableOpacity style={styles.card} onPress={() => setSelectedConsultation(consultation)}>
+      <View style={styles.cardRow}>
+        <View style={styles.avatarBox}>
+          <Image source={{ uri: consultation.avatar }} style={styles.avatarImg} />
+          <View style={[styles.statusDot, 
+            consultation.status === 'active' ? { backgroundColor: '#22c55e' } :
+            consultation.status === 'waiting' ? { backgroundColor: '#fde047' } :
+            { backgroundColor: '#a3a3a3' }
+          ]} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <View style={styles.cardHeaderRow}>
+            <View>
+              <Text style={styles.cardPatient}>{consultation.patient}</Text>
+              <Text style={styles.cardTopic}>{consultation.topic}</Text>
+            </View>
+            <View style={styles.badgeRow}>
+              <View style={[styles.badge, getStatusColor(consultation.status)]}>
+                <Text style={styles.badgeText}>{consultation.status}</Text>
+              </View>
               {consultation.unreadCount > 0 && (
-                <Badge className="bg-primary text-primary-foreground">
-                  {consultation.unreadCount}
-                </Badge>
+                <View style={[styles.badge, { backgroundColor: '#007bff' }]}> 
+                  <Text style={[styles.badgeText, { color: '#fff' }]}>{consultation.unreadCount}</Text>
+                </View>
               )}
-            </div>
-          </div>
-          
-          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
-            {consultation.lastMessage}
-          </p>
-          
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              {consultation.type === 'video' ? (
-                <Video size={12} />
-              ) : (
-                <MessageCircle size={12} />
-              )}
-              <span>{consultation.type}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Clock size={12} />
-              <span>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Card>
+            </View>
+          </View>
+          <Text style={styles.cardLastMsg}>{consultation.lastMessage}</Text>
+          <View style={styles.cardFooterRow}>
+            <View style={styles.cardFooterLeft}>
+              <Text style={styles.cardFooterIcon}>{consultation.type === 'video' ? ICONS.video : ICONS.message}</Text>
+              <Text style={styles.cardFooterType}>{consultation.type}</Text>
+            </View>
+            <View style={styles.cardFooterRight}>
+              <Text style={styles.cardFooterIcon}>{ICONS.clock}</Text>
+              <Text style={styles.cardFooterTime}>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 
   if (selectedConsultation) {
     return (
-      <div className="h-full flex flex-col bg-background">
+      <View style={styles.chatContainer}>
         {/* Chat Header */}
-        <div className="p-4 border-b bg-card">
-          <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm" onClick={() => setSelectedConsultation(null)}>
-              <ArrowLeft size={16} />
-            </Button>
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={selectedConsultation.avatar} alt={selectedConsultation.patient} />
-              <AvatarFallback>{selectedConsultation.patient.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <h4 className="text-sm">{selectedConsultation.patient}</h4>
-              <p className="text-xs text-muted-foreground">{selectedConsultation.topic}</p>
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm">
-                <Phone size={14} />
-              </Button>
-              <Button variant="outline" size="sm">
-                <Video size={14} />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <View style={styles.chatHeader}>
+          <TouchableOpacity style={styles.headerBackBtn} onPress={() => setSelectedConsultation(null)}>
+            <Text style={styles.headerBackIcon}>{ICONS.arrowLeft}</Text>
+          </TouchableOpacity>
+          <Image source={{ uri: selectedConsultation.avatar }} style={styles.headerAvatar} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.headerPatient}>{selectedConsultation.patient}</Text>
+            <Text style={styles.headerTopic}>{selectedConsultation.topic}</Text>
+          </View>
+          <View style={styles.headerActionRow}>
+            <TouchableOpacity style={styles.headerActionBtn}><Text style={styles.headerActionIcon}>{ICONS.phone}</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.headerActionBtn}><Text style={styles.headerActionIcon}>{ICONS.video}</Text></TouchableOpacity>
+          </View>
+        </View>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <ScrollView style={styles.messagesScroll} contentContainerStyle={styles.messagesContent}>
           {messages.map((message) => (
-            <div
+            <View
               key={message.id}
-              className={`flex ${message.sender === 'pharmacist' ? 'justify-end' : 'justify-start'}`}
+              style={[styles.messageRow, message.sender === 'pharmacist' ? styles.messageRowRight : styles.messageRowLeft]}
             >
-              <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                message.sender === 'pharmacist' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted'
-              }`}>
-                <p className="text-sm">{message.message}</p>
-                <p className={`text-xs mt-1 ${
-                  message.sender === 'pharmacist' 
-                    ? 'text-primary-foreground/70' 
-                    : 'text-muted-foreground'
-                }`}>
-                  {message.timestamp}
-                </p>
-              </div>
-            </div>
+              <View style={[styles.messageBubble, message.sender === 'pharmacist' ? styles.messageBubblePharmacist : styles.messageBubblePatient]}>
+                <Text style={styles.messageText}>{message.message}</Text>
+                <Text style={[styles.messageTime, message.sender === 'pharmacist' ? styles.messageTimePharmacist : styles.messageTimePatient]}>{message.timestamp}</Text>
+              </View>
+            </View>
           ))}
-        </div>
+        </ScrollView>
 
         {/* Message Input */}
-        <div className="p-4 border-t bg-card">
-          <div className="flex space-x-2">
-            <Input
-              placeholder="Type your response..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            />
-            <Button onClick={handleSendMessage}>
-              <Send size={16} />
-            </Button>
-          </div>
-        </div>
-      </div>
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            placeholder="Type your response..."
+            value={newMessage}
+            onChangeText={setNewMessage}
+            onSubmitEditing={handleSendMessage}
+            returnKeyType="send"
+          />
+          <TouchableOpacity style={styles.sendBtn} onPress={handleSendMessage}>
+            <Text style={styles.sendBtnIcon}>{ICONS.send}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 
+  // Tab state
+  const [tab, setTab] = useState('active');
+
   return (
-    <div className="h-full flex flex-col bg-background">
+    <View style={styles.container}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <Button variant="ghost" size="sm" onClick={() => navigateTo('pharmacist-dashboard')}>
-          <ArrowLeft size={16} />
-        </Button>
-        <h3>Consultations</h3>
-        <div></div>
-      </div>
+      <View style={styles.headerRow}>
+        <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigateTo('pharmacist-dashboard')}>
+          <Text style={styles.headerBackIcon}>{ICONS.arrowLeft}</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Consultations</Text>
+        <View style={{ width: 24 }} />
+      </View>
 
-      <Tabs defaultValue="active" className="flex-1 flex flex-col">
-        <div className="p-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="active">Active ({activeConsultations.length})</TabsTrigger>
-            <TabsTrigger value="waiting">Waiting ({waitingConsultations.length})</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
-          </TabsList>
-        </div>
+      {/* Tabs */}
+      <View style={styles.tabsRow}>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'active' && styles.tabBtnActive]} onPress={() => setTab('active')}>
+          <Text style={[styles.tabBtnText, tab === 'active' && styles.tabBtnTextActive]}>Active ({activeConsultations.length})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'waiting' && styles.tabBtnActive]} onPress={() => setTab('waiting')}>
+          <Text style={[styles.tabBtnText, tab === 'waiting' && styles.tabBtnTextActive]}>Waiting ({waitingConsultations.length})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'completed' && styles.tabBtnActive]} onPress={() => setTab('completed')}>
+          <Text style={[styles.tabBtnText, tab === 'completed' && styles.tabBtnTextActive]}>Completed</Text>
+        </TouchableOpacity>
+      </View>
 
-        <TabsContent value="active" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {activeConsultations.length === 0 ? (
-            <div className="text-center py-8">
-              <MessageCircle size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h4 className="mb-2">No Active Consultations</h4>
-              <p className="text-muted-foreground">Active patient consultations will appear here</p>
-            </div>
+      {/* Tab Content */}
+      <ScrollView style={styles.tabContent} contentContainerStyle={styles.tabContentContainer}>
+        {tab === 'active' && (
+          activeConsultations.length === 0 ? (
+            <View style={styles.emptyBox}>
+              <Text style={styles.emptyIcon}>{ICONS.message}</Text>
+              <Text style={styles.emptyTitle}>No Active Consultations</Text>
+              <Text style={styles.emptyDesc}>Active patient consultations will appear here</Text>
+            </View>
           ) : (
             activeConsultations.map((consultation) => (
               <ConsultationCard key={consultation.id} consultation={consultation} />
             ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="waiting" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {waitingConsultations.length === 0 ? (
-            <div className="text-center py-8">
-              <Clock size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h4 className="mb-2">No Waiting Consultations</h4>
-              <p className="text-muted-foreground">Patients waiting for consultation will appear here</p>
-            </div>
+          )
+        )}
+        {tab === 'waiting' && (
+          waitingConsultations.length === 0 ? (
+            <View style={styles.emptyBox}>
+              <Text style={styles.emptyIcon}>{ICONS.clock}</Text>
+              <Text style={styles.emptyTitle}>No Waiting Consultations</Text>
+              <Text style={styles.emptyDesc}>Patients waiting for consultation will appear here</Text>
+            </View>
           ) : (
             waitingConsultations.map((consultation) => (
               <ConsultationCard key={consultation.id} consultation={consultation} />
             ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="completed" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {completedConsultations.map((consultation) => (
+          )
+        )}
+        {tab === 'completed' && (
+          completedConsultations.map((consultation) => (
             <ConsultationCard key={consultation.id} consultation={consultation} />
-          ))}
-        </TabsContent>
-      </Tabs>
-    </div>
+          ))
+        )}
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#fff' },
+  headerBackBtn: { padding: 6, marginRight: 8 },
+  headerBackIcon: { fontSize: 22, color: '#888' },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#2d7d6b' },
+  tabsRow: { flexDirection: 'row', backgroundColor: '#e5e7eb', borderRadius: 8, margin: 16, marginBottom: 0 },
+  tabBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 8 },
+  tabBtnActive: { backgroundColor: '#2d7d6b' },
+  tabBtnText: { color: '#222', fontSize: 15 },
+  tabBtnTextActive: { color: '#fff', fontWeight: 'bold' },
+  tabContent: { flex: 1, paddingHorizontal: 16, marginTop: 12 },
+  tabContentContainer: { paddingBottom: 32 },
+  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 14, elevation: 1 },
+  cardRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  avatarBox: { marginRight: 12, position: 'relative' },
+  avatarImg: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#eee' },
+  statusDot: { position: 'absolute', bottom: 0, right: 0, width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: '#fff' },
+  cardHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 4 },
+  cardPatient: { fontSize: 15, fontWeight: 'bold', color: '#222' },
+  cardTopic: { fontSize: 12, color: '#555' },
+  badgeRow: { flexDirection: 'row', alignItems: 'center' },
+  badge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 4, minWidth: 32, alignItems: 'center', justifyContent: 'center' },
+  badgeText: { fontSize: 12, fontWeight: 'bold' },
+  cardLastMsg: { fontSize: 12, color: '#888', marginBottom: 4 },
+  cardFooterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  cardFooterLeft: { flexDirection: 'row', alignItems: 'center' },
+  cardFooterRight: { flexDirection: 'row', alignItems: 'center' },
+  cardFooterIcon: { fontSize: 13, marginRight: 4 },
+  cardFooterType: { fontSize: 12, color: '#555' },
+  cardFooterTime: { fontSize: 12, color: '#555' },
+  emptyBox: { alignItems: 'center', justifyContent: 'center', marginTop: 48 },
+  emptyIcon: { fontSize: 48, color: '#bbb', marginBottom: 12 },
+  emptyTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 4 },
+  emptyDesc: { color: '#888', fontSize: 13 },
+  chatContainer: { flex: 1, backgroundColor: '#f9fafb' },
+  chatHeader: { flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#fff' },
+  headerAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#eee', marginRight: 10 },
+  headerPatient: { fontSize: 15, fontWeight: 'bold', color: '#222' },
+  headerTopic: { fontSize: 12, color: '#555' },
+  headerActionRow: { flexDirection: 'row', alignItems: 'center' },
+  headerActionBtn: { marginLeft: 8, padding: 6, backgroundColor: '#e5e7eb', borderRadius: 8 },
+  headerActionIcon: { fontSize: 18 },
+  messagesScroll: { flex: 1, padding: 16 },
+  messagesContent: { paddingBottom: 32 },
+  messageRow: { flexDirection: 'row', marginBottom: 10 },
+  messageRowLeft: { justifyContent: 'flex-start' },
+  messageRowRight: { justifyContent: 'flex-end' },
+  messageBubble: { maxWidth: '80%', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12 },
+  messageBubblePharmacist: { backgroundColor: '#2d7d6b' },
+  messageBubblePatient: { backgroundColor: '#e5e7eb' },
+  messageText: { fontSize: 14, color: '#fff' },
+  messageTime: { fontSize: 11, marginTop: 2 },
+  messageTimePharmacist: { color: '#fff', opacity: 0.7 },
+  messageTimePatient: { color: '#555' },
+  inputRow: { flexDirection: 'row', alignItems: 'center', padding: 12, borderTopWidth: 1, borderTopColor: '#eee', backgroundColor: '#fff' },
+  input: { flex: 1, backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, marginRight: 8 },
+  sendBtn: { backgroundColor: '#2d7d6b', borderRadius: 8, padding: 10 },
+  sendBtnIcon: { color: '#fff', fontSize: 18 },
+});

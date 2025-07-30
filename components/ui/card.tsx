@@ -1,96 +1,123 @@
-import * as React from "react";
+import React from "react";
+import { StyleSheet, Text, TextProps, View, ViewProps } from "react-native";
 
-import { cn } from "./utils";
+type CardProps = ViewProps & { children?: React.ReactNode };
+type CardHeaderProps = ViewProps & { children?: React.ReactNode };
+type CardTitleProps = TextProps & { children?: React.ReactNode };
+type CardDescriptionProps = TextProps & { children?: React.ReactNode };
+type CardActionProps = ViewProps & { children?: React.ReactNode };
+type CardContentProps = ViewProps & { children?: React.ReactNode };
+type CardFooterProps = ViewProps & { children?: React.ReactNode };
 
-const Card = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
-  ({ className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        data-slot="card"
-        className={cn(
-          "bg-card text-card-foreground rounded-2xl border border-gray-100 shadow-md backdrop-blur-sm",
-          className,
-        )}
-        {...props}
-      />
-    );
-  }
-);
+const Card = React.forwardRef<View, CardProps>(({ style, children, ...props }, ref) => (
+  <View ref={ref} style={[styles.card, style]} {...props}>
+    {children}
+  </View>
+));
 Card.displayName = "Card";
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+function CardHeader({ style, children, ...props }: CardHeaderProps) {
   return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-3 px-6 pt-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-        className,
-      )}
-      {...props}
-    />
+    <View style={[styles.cardHeader, style]} {...props}>
+      {children}
+    </View>
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+function CardTitle({ style, children, ...props }: CardTitleProps) {
   return (
-    <h4
-      data-slot="card-title"
-      className={cn("text-lg font-semibold leading-tight text-gray-900", className)}
-      {...props}
-    />
+    <Text style={[styles.cardTitle, style]} {...props}>
+      {children}
+    </Text>
   );
 }
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+function CardDescription({ style, children, ...props }: CardDescriptionProps) {
   return (
-    <p
-      data-slot="card-description"
-      className={cn("text-sm text-muted-foreground leading-relaxed", className)}
-      {...props}
-    />
+    <Text style={[styles.cardDescription, style]} {...props}>
+      {children}
+    </Text>
   );
 }
 
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+function CardAction({ style, children, ...props }: CardActionProps) {
   return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className,
-      )}
-      {...props}
-    />
+    <View style={[styles.cardAction, style]} {...props}>
+      {children}
+    </View>
   );
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+function CardContent({ style, children, ...props }: CardContentProps) {
   return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6 [&:last-child]:pb-6", className)}
-      {...props}
-    />
+    <View style={[styles.cardContent, style]} {...props}>
+      {children}
+    </View>
   );
 }
 
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+function CardFooter({ style, children, ...props }: CardFooterProps) {
   return (
-    <div
-      data-slot="card-footer"
-      className={cn("flex items-center px-6 pb-6 [.border-t]:pt-6", className)}
-      {...props}
-    />
+    <View style={[styles.cardFooter, style]} {...props}>
+      {children}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#f0f0f0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    marginVertical: 8,
+    marginHorizontal: 0,
+    overflow: "hidden",
+  },
+  cardHeader: {
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 0,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#222",
+    marginBottom: 2,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 2,
+  },
+  cardAction: {
+    alignSelf: "flex-end",
+    marginLeft: "auto",
+  },
+  cardContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 8,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 0,
+    gap: 8,
+  },
+});
 
 export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardAction,
-  CardDescription,
-  CardContent,
+  Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle
 };

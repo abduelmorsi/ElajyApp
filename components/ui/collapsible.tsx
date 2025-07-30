@@ -1,33 +1,53 @@
-"use client";
+import React, { createContext, useContext, useState } from "react";
+import { TouchableOpacity, View, ViewProps } from "react-native";
 
-import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
+type CollapsibleContextType = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
 
-function Collapsible({
-  ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.Root>) {
-  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
-}
+const CollapsibleContext = createContext<CollapsibleContextType | undefined>(undefined);
 
-function CollapsibleTrigger({
-  ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>) {
+type CollapsibleProps = ViewProps & {
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+};
+
+function Collapsible({ defaultOpen = false, children, ...props }: CollapsibleProps) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <CollapsiblePrimitive.CollapsibleTrigger
-      data-slot="collapsible-trigger"
-      {...props}
-    />
+    <CollapsibleContext.Provider value={{ open, setOpen }}>
+      <View {...props}>{children}</View>
+    </CollapsibleContext.Provider>
   );
 }
 
-function CollapsibleContent({
-  ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>) {
+type CollapsibleTriggerProps = {
+  children: React.ReactNode;
+  style?: any;
+};
+
+function CollapsibleTrigger({ children, style }: CollapsibleTriggerProps) {
+  const ctx = useContext(CollapsibleContext);
+  if (!ctx) throw new Error("CollapsibleTrigger must be used within a Collapsible");
   return (
-    <CollapsiblePrimitive.CollapsibleContent
-      data-slot="collapsible-content"
-      {...props}
-    />
+    <TouchableOpacity onPress={() => ctx.setOpen(!ctx.open)} style={style}>
+      {children}
+    </TouchableOpacity>
   );
 }
 
-export { Collapsible, CollapsibleTrigger, CollapsibleContent };
+type CollapsibleContentProps = {
+  children: React.ReactNode;
+  style?: any;
+};
+
+function CollapsibleContent({ children, style }: CollapsibleContentProps) {
+  const ctx = useContext(CollapsibleContext);
+  if (!ctx) throw new Error("CollapsibleContent must be used within a Collapsible");
+  if (!ctx.open) return null;
+  return <View style={style}>{children}</View>;
+}
+
+export { Collapsible, CollapsibleContent, CollapsibleTrigger };
+

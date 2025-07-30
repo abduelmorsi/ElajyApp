@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, FileText, CheckCircle, X, AlertCircle, Eye, Clock } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const prescriptions = [
   {
@@ -47,33 +42,38 @@ const prescriptions = [
   }
 ];
 
-export default function PharmacistPrescriptions({ navigateTo }) {
+type PharmacistPrescriptionsProps = {
+  navigateTo: (screen: string, data?: any) => void;
+};
+
+export default function PharmacistPrescriptions({ navigateTo }: PharmacistPrescriptionsProps) {
   const [selectedPrescription, setSelectedPrescription] = useState(null);
+  const [tab, setTab] = useState<'pending' | 'verified' | 'rejected'>('pending');
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'verified': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return { backgroundColor: '#FEF3C7', color: '#92400E' };
+      case 'verified': return { backgroundColor: '#DCFCE7', color: '#166534' };
+      case 'rejected': return { backgroundColor: '#FECACA', color: '#991B1B' };
+      default: return { backgroundColor: '#F3F4F6', color: '#374151' };
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending': return <Clock size={16} className="text-yellow-600" />;
-      case 'verified': return <CheckCircle size={16} className="text-green-600" />;
-      case 'rejected': return <X size={16} className="text-red-600" />;
-      default: return <FileText size={16} className="text-gray-600" />;
+      case 'pending': return '⏳';
+      case 'verified': return '✅';
+      case 'rejected': return '❌';
+      default: return '📄';
     }
   };
 
   const verifyPrescription = (prescriptionId) => {
-    console.log(`Verifying prescription ${prescriptionId}`);
+    Alert.alert('Verify', `Verifying prescription ${prescriptionId}`);
   };
 
   const rejectPrescription = (prescriptionId, reason) => {
-    console.log(`Rejecting prescription ${prescriptionId}: ${reason}`);
+    Alert.alert('Reject', `Rejecting prescription ${prescriptionId}: ${reason}`);
   };
 
   const pendingPrescriptions = prescriptions.filter(rx => rx.status === 'pending');
@@ -81,247 +81,272 @@ export default function PharmacistPrescriptions({ navigateTo }) {
   const rejectedPrescriptions = prescriptions.filter(rx => rx.status === 'rejected');
 
   const PrescriptionCard = ({ prescription, showActions = true }) => (
-    <Card 
-      className="p-4 cursor-pointer hover:shadow-md transition-shadow" 
-      onClick={() => setSelectedPrescription(prescription)}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <div className="flex items-center space-x-2 mb-1">
-            {getStatusIcon(prescription.status)}
-            <h4 className="text-sm">Prescription #{prescription.id}</h4>
-          </div>
-          <p className="text-xs text-muted-foreground">{prescription.patient}</p>
-          <p className="text-xs text-muted-foreground">Dr. {prescription.doctor}</p>
-        </div>
-        <Badge className={getStatusColor(prescription.status)}>
-          {prescription.status}
-        </Badge>
-      </div>
-
-      <div className="space-y-2">
-        <div>
-          <p className="text-xs text-muted-foreground mb-1">Medications:</p>
-          {prescription.medications.slice(0, 2).map((med, index) => (
-            <p key={index} className="text-sm">{med.name}</p>
-          ))}
-          {prescription.medications.length > 2 && (
-            <p className="text-sm text-muted-foreground">+{prescription.medications.length - 2} more</p>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Date: {new Date(prescription.date).toLocaleDateString()}</span>
-          <span>Uploaded: {new Date(prescription.uploadTime).toLocaleString()}</span>
-        </div>
-      </div>
-
+    <TouchableOpacity style={styles.card} onPress={() => setSelectedPrescription(prescription)}>
+      <View style={styles.cardHeader}>
+        <View>
+          <View style={styles.cardHeaderRow}>
+            <Text style={styles.statusIcon}>{getStatusIcon(prescription.status)}</Text>
+            <Text style={styles.orderId}>Prescription #{prescription.id}</Text>
+          </View>
+          <Text style={styles.customer}>{prescription.patient}</Text>
+          <Text style={styles.doctor}>Dr. {prescription.doctor}</Text>
+        </View>
+        <Text style={[styles.badge, getStatusColor(prescription.status)]}>{prescription.status}</Text>
+      </View>
+      <View style={styles.cardBody}>
+        <Text style={styles.itemsCount}>Medications:</Text>
+        {prescription.medications.slice(0, 2).map((med, index) => (
+          <Text key={index} style={styles.itemText}>{med.name}</Text>
+        ))}
+        {prescription.medications.length > 2 && (
+          <Text style={styles.moreItems}>+{prescription.medications.length - 2} more</Text>
+        )}
+        <View style={styles.cardFooter}>
+          <Text style={styles.dateText}>Date: {new Date(prescription.date).toLocaleDateString()}</Text>
+          <Text style={styles.uploadedText}>Uploaded: {new Date(prescription.uploadTime).toLocaleString()}</Text>
+        </View>
+      </View>
       {showActions && prescription.status === 'pending' && (
-        <div className="flex space-x-2 mt-3">
-          <Button 
-            size="sm" 
-            className="flex-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              verifyPrescription(prescription.id);
-            }}
-          >
-            Verify
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              rejectPrescription(prescription.id, 'Review required');
-            }}
-          >
-            Reject
-          </Button>
-        </div>
+        <View style={styles.actionRow}>
+          <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => verifyPrescription(prescription.id)}>
+            <Text style={styles.buttonText}>Verify</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => rejectPrescription(prescription.id, 'Review required')}>
+            <Text style={styles.buttonText}>Reject</Text>
+          </TouchableOpacity>
+        </View>
       )}
-
       {prescription.notes && (
-        <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded">
-          <div className="flex items-start space-x-2">
-            <AlertCircle size={14} className="text-yellow-600 mt-0.5" />
-            <p className="text-xs text-yellow-700 dark:text-yellow-300">{prescription.notes}</p>
-          </div>
-        </div>
+        <View style={styles.notesBox}>
+          <Text style={styles.notesIcon}>⚠️</Text>
+          <Text style={styles.notesText}>{prescription.notes}</Text>
+        </View>
       )}
-    </Card>
+    </TouchableOpacity>
   );
 
   if (selectedPrescription) {
     return (
-      <div className="h-full flex flex-col bg-background">
+      <View style={styles.container}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <Button variant="ghost" size="sm" onClick={() => setSelectedPrescription(null)}>
-            <ArrowLeft size={16} />
-          </Button>
-          <h3>Prescription Details</h3>
-          <div></div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => setSelectedPrescription(null)}>
+            <Text style={styles.headerIcon}>{'←'}</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Prescription Details</Text>
+          <View style={{ width: 24 }} />
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Prescription Info */}
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h4>Prescription #{selectedPrescription.id}</h4>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(selectedPrescription.uploadTime).toLocaleString()}
-                </p>
-              </div>
-              <Badge className={getStatusColor(selectedPrescription.status)}>
-                {selectedPrescription.status}
-              </Badge>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Patient</p>
-                <p>{selectedPrescription.patient}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Doctor</p>
-                <p>Dr. {selectedPrescription.doctor}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Date Issued</p>
-                <p>{new Date(selectedPrescription.date).toLocaleDateString()}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Status</p>
-                <p className="capitalize">{selectedPrescription.status}</p>
-              </div>
-            </div>
-          </Card>
-
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View>
+                <Text style={styles.orderId}>Prescription #{selectedPrescription.id}</Text>
+                <Text style={styles.uploadedText}>{new Date(selectedPrescription.uploadTime).toLocaleString()}</Text>
+              </View>
+              <Text style={[styles.badge, getStatusColor(selectedPrescription.status)]}>{selectedPrescription.status}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Patient:</Text>
+              <Text style={styles.infoValue}>{selectedPrescription.patient}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Doctor:</Text>
+              <Text style={styles.infoValue}>Dr. {selectedPrescription.doctor}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Date Issued:</Text>
+              <Text style={styles.infoValue}>{new Date(selectedPrescription.date).toLocaleDateString()}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Status:</Text>
+              <Text style={styles.infoValue}>{selectedPrescription.status}</Text>
+            </View>
+          </View>
           {/* Prescription Image */}
-          <Card className="p-4">
-            <h4 className="mb-3">Prescription Image</h4>
-            <div className="bg-muted rounded-lg h-48 flex items-center justify-center">
-              <div className="text-center">
-                <FileText size={32} className="mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">Prescription Document</p>
-                <Button variant="outline" size="sm" className="mt-2">
-                  <Eye size={14} className="mr-1" />
-                  View Full Size
-                </Button>
-              </div>
-            </div>
-          </Card>
-
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Prescription Image</Text>
+            <View style={styles.imageBox}>
+              <Text style={styles.imageIcon}>📄</Text>
+              <Text style={styles.imageLabel}>Prescription Document</Text>
+              <TouchableOpacity style={[styles.button, styles.outlineButton]}>
+                <Text style={styles.buttonText}>👁️ View Full Size</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           {/* Medications */}
-          <Card className="p-4">
-            <h4 className="mb-3">Prescribed Medications</h4>
-            <div className="space-y-3">
-              {selectedPrescription.medications.map((med, index) => (
-                <div key={index} className="p-3 bg-muted/50 rounded">
-                  <h5 className="text-sm">{med.name}</h5>
-                  <p className="text-xs text-muted-foreground">Dosage: {med.dosage}</p>
-                  <p className="text-xs text-muted-foreground">Duration: {med.duration}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Prescribed Medications</Text>
+            {selectedPrescription.medications.map((med, index) => (
+              <View key={index} style={styles.medBox}>
+                <Text style={styles.medName}>{med.name}</Text>
+                <Text style={styles.medDetail}>Dosage: {med.dosage}</Text>
+                <Text style={styles.medDetail}>Duration: {med.duration}</Text>
+              </View>
+            ))}
+          </View>
           {/* Notes */}
           {selectedPrescription.notes && (
-            <Card className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200">
-              <h4 className="mb-2 text-yellow-800 dark:text-yellow-200">Important Notes</h4>
-              <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                {selectedPrescription.notes}
-              </p>
-            </Card>
+            <View style={[styles.card, styles.notesCard]}>
+              <Text style={styles.notesTitle}>Important Notes</Text>
+              <Text style={styles.notesText}>{selectedPrescription.notes}</Text>
+            </View>
           )}
-
           {/* Verification Info */}
           {selectedPrescription.status === 'verified' && (
-            <Card className="p-4 bg-green-50 dark:bg-green-900/20 border-green-200">
-              <h4 className="mb-2 text-green-800 dark:text-green-200">Verification Details</h4>
-              <p className="text-sm text-green-700 dark:text-green-300">
-                Verified by {selectedPrescription.verifiedBy} on{' '}
-                {new Date(selectedPrescription.verifiedTime).toLocaleString()}
-              </p>
-            </Card>
+            <View style={[styles.card, styles.verifiedCard]}>
+              <Text style={styles.verifiedTitle}>Verification Details</Text>
+              <Text style={styles.verifiedText}>
+                Verified by {selectedPrescription.verifiedBy} on {new Date(selectedPrescription.verifiedTime).toLocaleString()}
+              </Text>
+            </View>
           )}
-
           {/* Rejection Info */}
           {selectedPrescription.status === 'rejected' && (
-            <Card className="p-4 bg-red-50 dark:bg-red-900/20 border-red-200">
-              <h4 className="mb-2 text-red-800 dark:text-red-200">Rejection Reason</h4>
-              <p className="text-sm text-red-700 dark:text-red-300">
-                {selectedPrescription.rejectionReason}
-              </p>
-            </Card>
+            <View style={[styles.card, styles.rejectedCard]}>
+              <Text style={styles.rejectedTitle}>Rejection Reason</Text>
+              <Text style={styles.rejectedText}>{selectedPrescription.rejectionReason}</Text>
+            </View>
           )}
-
           {/* Actions */}
           {selectedPrescription.status === 'pending' && (
-            <div className="space-y-3">
-              <Button className="w-full" onClick={() => verifyPrescription(selectedPrescription.id)}>
-                Verify Prescription
-              </Button>
-              <Button variant="outline" className="w-full" onClick={() => rejectPrescription(selectedPrescription.id, 'Review required')}>
-                Reject Prescription
-              </Button>
-            </div>
+            <View style={styles.actionColumn}>
+              <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => verifyPrescription(selectedPrescription.id)}>
+                <Text style={styles.buttonText}>Verify Prescription</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.declineButton]} onPress={() => rejectPrescription(selectedPrescription.id, 'Review required')}>
+                <Text style={styles.buttonText}>Reject Prescription</Text>
+              </TouchableOpacity>
+            </View>
           )}
-        </div>
-      </div>
+        </ScrollView>
+      </View>
     );
   }
 
+  // Tab navigation and content for React Native
+  const renderTabContent = () => {
+    let data = [];
+    let emptyText = '';
+    let emptyIcon = '';
+    switch (tab) {
+      case 'pending':
+        data = pendingPrescriptions;
+        emptyText = 'No Pending Prescriptions\nNew prescriptions requiring verification will appear here';
+        emptyIcon = '📄';
+        break;
+      case 'verified':
+        data = verifiedPrescriptions;
+        emptyText = '';
+        emptyIcon = '';
+        break;
+      case 'rejected':
+        data = rejectedPrescriptions;
+        emptyText = '';
+        emptyIcon = '';
+        break;
+    }
+    if (data.length === 0 && tab === 'pending') {
+      return (
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyIcon}>{emptyIcon}</Text>
+          <Text style={styles.emptyTitle}>{emptyText.split('\n')[0]}</Text>
+          <Text style={styles.emptyDesc}>{emptyText.split('\n')[1]}</Text>
+        </View>
+      );
+    }
+    return (
+      <View>
+        {data.map((prescription) => (
+          <PrescriptionCard key={prescription.id} prescription={prescription} showActions={tab === 'pending'} />
+        ))}
+      </View>
+    );
+  };
   return (
-    <div className="h-full flex flex-col bg-background">
+    <View style={styles.container}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <Button variant="ghost" size="sm" onClick={() => navigateTo('pharmacist-dashboard')}>
-          <ArrowLeft size={16} />
-        </Button>
-        <h3>Prescription Verification</h3>
-        <div></div>
-      </div>
-
-      <Tabs defaultValue="pending" className="flex-1 flex flex-col">
-        <div className="p-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="pending">Pending ({pendingPrescriptions.length})</TabsTrigger>
-            <TabsTrigger value="verified">Verified ({verifiedPrescriptions.length})</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected ({rejectedPrescriptions.length})</TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="pending" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {pendingPrescriptions.length === 0 ? (
-            <div className="text-center py-8">
-              <FileText size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h4 className="mb-2">No Pending Prescriptions</h4>
-              <p className="text-muted-foreground">New prescriptions requiring verification will appear here</p>
-            </div>
-          ) : (
-            pendingPrescriptions.map((prescription) => (
-              <PrescriptionCard key={prescription.id} prescription={prescription} />
-            ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="verified" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {verifiedPrescriptions.map((prescription) => (
-            <PrescriptionCard key={prescription.id} prescription={prescription} showActions={false} />
-          ))}
-        </TabsContent>
-
-        <TabsContent value="rejected" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {rejectedPrescriptions.map((prescription) => (
-            <PrescriptionCard key={prescription.id} prescription={prescription} showActions={false} />
-          ))}
-        </TabsContent>
-      </Tabs>
-    </div>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigateTo('pharmacist-dashboard')}>
+          <Text style={styles.headerIcon}>{'←'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Prescription Verification</Text>
+        <View style={{ width: 24 }} />
+      </View>
+      {/* Tabs */}
+      <View style={styles.tabsRow}>
+        <TouchableOpacity style={[styles.tab, tab === 'pending' && styles.tabActive]} onPress={() => setTab('pending')}>
+          <Text style={styles.tabText}>Pending ({pendingPrescriptions.length})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, tab === 'verified' && styles.tabActive]} onPress={() => setTab('verified')}>
+          <Text style={styles.tabText}>Verified ({verifiedPrescriptions.length})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, tab === 'rejected' && styles.tabActive]} onPress={() => setTab('rejected')}>
+          <Text style={styles.tabText}>Rejected ({rejectedPrescriptions.length})</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {renderTabContent()}
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderColor: '#e5e7eb', backgroundColor: '#f9fafb' },
+  headerIcon: { fontSize: 22, color: '#2563eb', fontWeight: 'bold', width: 24 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#2563eb' },
+  scrollContent: { padding: 16, paddingBottom: 32 },
+  tabsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 0, marginBottom: 8 },
+  tab: { flex: 1, paddingVertical: 10, backgroundColor: '#f3f4f6', marginHorizontal: 2, borderRadius: 8, alignItems: 'center' },
+  tabActive: { backgroundColor: '#2563eb' },
+  tabText: { fontSize: 14, color: '#1e293b', fontWeight: 'bold' },
+  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
+  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  cardHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
+  statusIcon: { fontSize: 18, marginRight: 6 },
+  orderId: { fontSize: 16, fontWeight: 'bold', color: '#2563eb' },
+  customer: { fontSize: 14, color: '#334155' },
+  doctor: { fontSize: 13, color: '#64748b' },
+  badge: { fontSize: 12, fontWeight: 'bold', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, overflow: 'hidden', textTransform: 'capitalize' },
+  cardBody: { marginTop: 4 },
+  itemsCount: { fontSize: 12, color: '#64748b', marginBottom: 2 },
+  itemText: { fontSize: 14, color: '#334155' },
+  moreItems: { fontSize: 13, color: '#64748b' },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
+  dateText: { fontSize: 12, color: '#64748b' },
+  uploadedText: { fontSize: 12, color: '#64748b' },
+  actionRow: { flexDirection: 'row', marginTop: 12, gap: 8 },
+  actionColumn: { flexDirection: 'column', gap: 8, marginTop: 12 },
+  button: { paddingVertical: 12, borderRadius: 8, alignItems: 'center', marginBottom: 8, backgroundColor: '#2563eb' },
+  acceptButton: { backgroundColor: '#22c55e' },
+  declineButton: { backgroundColor: '#ef4444' },
+  outlineButton: { backgroundColor: '#f3f4f6' },
+  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+  notesBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF3C7', borderRadius: 8, padding: 8, marginTop: 8 },
+  notesIcon: { fontSize: 16, marginRight: 6 },
+  notesText: { fontSize: 13, color: '#92400E' },
+  notesCard: { backgroundColor: '#FEF3C7', borderColor: '#FDE68A', borderWidth: 1 },
+  notesTitle: { fontSize: 15, fontWeight: 'bold', color: '#92400E', marginBottom: 4 },
+  verifiedCard: { backgroundColor: '#DCFCE7', borderColor: '#BBF7D0', borderWidth: 1 },
+  verifiedTitle: { fontSize: 15, fontWeight: 'bold', color: '#166534', marginBottom: 4 },
+  verifiedText: { fontSize: 13, color: '#166534' },
+  rejectedCard: { backgroundColor: '#FECACA', borderColor: '#FCA5A5', borderWidth: 1 },
+  rejectedTitle: { fontSize: 15, fontWeight: 'bold', color: '#991B1B', marginBottom: 4 },
+  rejectedText: { fontSize: 13, color: '#991B1B' },
+  infoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  infoLabel: { fontSize: 13, color: '#64748b', width: 100 },
+  infoValue: { fontSize: 13, color: '#334155', flex: 1 },
+  sectionTitle: { fontSize: 15, fontWeight: 'bold', marginBottom: 8, color: '#2563eb' },
+  imageBox: { alignItems: 'center', justifyContent: 'center', height: 120, backgroundColor: '#f3f4f6', borderRadius: 8, marginBottom: 8 },
+  imageIcon: { fontSize: 32, marginBottom: 4, color: '#64748b' },
+  imageLabel: { fontSize: 13, color: '#64748b', marginBottom: 4 },
+  medBox: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 10, marginBottom: 8 },
+  medName: { fontSize: 14, fontWeight: 'bold', color: '#2563eb' },
+  medDetail: { fontSize: 12, color: '#64748b' },
+  emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40 },
+  emptyIcon: { fontSize: 48, marginBottom: 8, color: '#64748b' },
+  emptyTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 2, color: '#2563eb' },
+  emptyDesc: { fontSize: 13, color: '#64748b' },
+});

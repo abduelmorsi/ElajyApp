@@ -1,61 +1,105 @@
-"use client";
-
 import * as React from "react";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { Modal, StyleSheet, Text, View } from "react-native";
 
-import { cn } from "./utils";
+type TooltipContextType = {
+  show: (tooltipContent: React.ReactNode) => void;
+  hide: () => void;
+  visible: boolean;
+  content: React.ReactNode;
+};
 
-function TooltipProvider({
-  delayDuration = 0,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
+const TooltipContext = React.createContext<TooltipContextType>({
+  show: () => {},
+  hide: () => {},
+  visible: false,
+  content: null,
+});
+
+
+type TooltipProviderProps = { children: React.ReactNode };
+const TooltipProvider: React.FC<TooltipProviderProps> = ({ children }) => {
+  const [visible, setVisible] = React.useState(false);
+  const [content, setContent] = React.useState<React.ReactNode>(null);
+  const show = (tooltipContent: React.ReactNode) => {
+    setContent(tooltipContent);
+    setVisible(true);
+  };
+  const hide = () => {
+    setVisible(false);
+    setContent(null);
+  };
   return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      {...props}
-    />
-  );
-}
-
-function Tooltip({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-  return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  );
-}
-
-function TooltipTrigger({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
-}
-
-function TooltipContent({
-  className,
-  sideOffset = 0,
-  children,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
-  return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
-        sideOffset={sideOffset}
-        className={cn(
-          "bg-primary text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance",
-          className,
-        )}
-        {...props}
+    <TooltipContext.Provider value={{ show, hide, visible, content }}>
+      {children}
+      <Modal
+        transparent
+        visible={visible}
+        animationType="fade"
+        onRequestClose={hide}
       >
-        {children}
-        <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Portal>
+        <View style={styles.modalOverlay}>
+          <View style={styles.tooltipContent}>
+            <Text style={styles.tooltipText}>{content}</Text>
+          </View>
+        </View>
+      </Modal>
+    </TooltipContext.Provider>
   );
-}
+};
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+
+type TooltipProps = { children: React.ReactElement; content: React.ReactNode };
+const Tooltip: React.FC<TooltipProps> = ({ children, content }) => {
+  // Usage: <Tooltip content="Tooltip text"><TouchableOpacity>...</TouchableOpacity></Tooltip>
+  return (
+    <TooltipContext.Consumer>
+      {({ show, hide }) => {
+        // Only add handlers if child is a Touchable* (cast as React.ReactElement<any>)
+        if (React.isValidElement(children)) {
+          return React.cloneElement(children as React.ReactElement<any>, {
+            onLongPress: () => show(content),
+            onPressOut: hide,
+          });
+        }
+        return children;
+      }}
+    </TooltipContext.Consumer>
+  );
+};
+
+
+type TooltipTriggerProps = { children: React.ReactElement; [key: string]: any };
+const TooltipTrigger: React.FC<TooltipTriggerProps> = ({ children, ...props }) => {
+  // This is just a wrapper for the trigger element
+  return React.cloneElement(children, props);
+};
+
+
+const TooltipContent: React.FC = () => {
+  // Content is handled by the provider modal
+  return null;
+};
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.1)',
+  },
+  tooltipContent: {
+    backgroundColor: '#2563eb',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    maxWidth: 240,
+    alignItems: 'center',
+  },
+  tooltipText: {
+    color: '#fff',
+    fontSize: 13,
+  },
+});
+
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger };
+

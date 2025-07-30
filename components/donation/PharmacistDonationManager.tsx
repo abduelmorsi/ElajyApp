@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
-import { Heart, Users, Package, Eye, Check, X, FileText, Phone, ChevronRight } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Linking, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalization, useRTL } from '../services/LocalizationService';
-import { pendingDonations, eligiblePatients } from './donationData';
-import { getUrgencyColor, getStatusColor, getPriorityColor, formatDonationDate, getUrgencyText, getStatusText } from './donationHelpers';
+import { eligiblePatients, pendingDonations } from './donationData';
+import { formatDonationDate, getStatusText, getUrgencyColor, getUrgencyText } from './donationHelpers';
 import PatientCard from './PatientCard';
 
+
+// Emoji icon map for replacements
+const ICONS = {
+  heart: '❤️',
+  users: '👥',
+  package: '📦',
+  eye: '👁️',
+  check: '✅',
+  x: '❌',
+  file: '📄',
+  phone: '📞',
+  chevron: '›',
+};
+
+
 interface PharmacistDonationManagerProps {
-  navigateTo: (screen: string, data?: any) => void;
-  userData: any;
+  navigateTo: (screen: string, params?: any) => void;
+  userData?: any;
 }
 
 export default function PharmacistDonationManager({ navigateTo, userData }: PharmacistDonationManagerProps) {
@@ -20,306 +31,233 @@ export default function PharmacistDonationManager({ navigateTo, userData }: Phar
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showPatientDialog, setShowPatientDialog] = useState(false);
 
-  const handleAssignDonation = (donationId: number, patientId: number) => {
+  const handleAssignDonation = (donationId, patientId) => {
     setSelectedPatient(null);
     setShowPatientDialog(false);
     // Handle assignment logic here
   };
 
-  const handleViewPatientProfile = (patient: any) => {
+  const handleViewPatientProfile = (patient) => {
     setSelectedPatient(patient);
     setShowPatientDialog(true);
   };
 
-  const handleDonationAssignment = (donationId: number) => {
+  const handleDonationAssignment = (donationId) => {
     navigateTo('donations', { donationId });
   };
 
+  // Map urgency string to style object
+  const getUrgencyBadgeStyle = (urgency: string) => {
+    switch (getUrgencyColor(urgency)) {
+      case 'bg-red-100 text-red-700':
+        return { backgroundColor: '#fee2e2', color: '#b91c1c' };
+      case 'bg-yellow-100 text-yellow-700':
+        return { backgroundColor: '#fef9c3', color: '#b45309' };
+      case 'bg-green-100 text-green-700':
+        return { backgroundColor: '#dcfce7', color: '#166534' };
+      case 'bg-gray-100 text-gray-700':
+        return { backgroundColor: '#f3f4f6', color: '#374151' };
+      default:
+        return {};
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <ScrollView style={styles.container}>
       {/* Compact Header */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-lg p-4">
-        <div className={`flex items-start ${isRTL ? 'space-x-reverse' : ''} space-x-3`}>
-          <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Heart size={20} className="text-white" />
-          </div>
-          <div className="flex-1 space-y-3">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                {language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}
-              </h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                {language === 'ar' 
-                  ? 'قم بمراجعة الأدوية المتبرع بها وتوزيعها على المرضى المستحقين بناءً على حالتهم الطبية والمالية.'
-                  : 'Review donated medicines and distribute them to eligible patients based on their medical and financial conditions.'
-                }
-              </p>
-            </div>
-            
-            {/* Compact Statistics */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 p-2 bg-white rounded-lg border border-gray-100`}>
-                <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Package size={12} className="text-green-600" />
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm arabic-numbers">
-                    {pendingDonations.length}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {language === 'ar' ? 'تبرع في الانتظار' : 'Pending Donations'}
-                  </div>
-                </div>
-              </div>
-              
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 p-2 bg-white rounded-lg border border-gray-100`}>
-                <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Users size={12} className="text-blue-600" />
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm arabic-numbers">
-                    {eligiblePatients.length}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {language === 'ar' ? 'مريض مؤهل' : 'Eligible Patients'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <View style={styles.headerBox}>
+        <View style={[styles.headerRow, isRTL && { flexDirection: 'row-reverse' }]}> 
+          <View style={styles.headerIconBox}>
+            <Text style={styles.headerIcon}>{ICONS.heart}</Text>
+          </View>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>{language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}</Text>
+            <Text style={styles.headerDesc}>
+              {language === 'ar' 
+                ? 'قم بمراجعة الأدوية المتبرع بها وتوزيعها على المرضى المستحقين بناءً على حالتهم الطبية والمالية.'
+                : 'Review donated medicines and distribute them to eligible patients based on their medical and financial conditions.'}
+            </Text>
+            <View style={styles.statsRow}>
+              <View style={styles.statBox}>
+                <Text style={styles.statIcon}>{ICONS.package}</Text>
+                <View>
+                  <Text style={styles.statNumber}>{pendingDonations.length}</Text>
+                  <Text style={styles.statLabel}>{language === 'ar' ? 'تبرع في الانتظار' : 'Pending Donations'}</Text>
+                </View>
+              </View>
+              <View style={styles.statBox}>
+                <Text style={styles.statIcon}>{ICONS.users}</Text>
+                <View>
+                  <Text style={styles.statNumber}>{eligiblePatients.length}</Text>
+                  <Text style={styles.statLabel}>{language === 'ar' ? 'مريض مؤهل' : 'Eligible Patients'}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
 
-      {/* Fixed Pending Donations with properly structured patient cards */}
-      <div>
-        <h3 className="text-base font-semibold text-gray-900 mb-3">
-          {language === 'ar' ? 'التبرعات في الانتظار' : 'Pending Donations'}
-        </h3>
-        
-        <div className="space-y-4">
-          {pendingDonations.map((donation) => (
-            <Card key={donation.id} className="border border-gray-100 hover:shadow-md transition-all duration-200">
-              <CardContent className="p-4">
-                <div className="space-y-4">
-                  {/* Fixed header with consistent alignment */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 mb-2`}>
-                        <h4 className="text-base font-semibold text-gray-900">
-                          {language === 'ar' ? donation.medicine : donation.medicineEn}
-                        </h4>
-                        <Badge className={`text-xs px-2 py-1 ${getUrgencyColor(donation.urgency)}`}>
-                          {getUrgencyText(donation.urgency, language)}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Fixed donation details grid with consistent spacing and alignment */}
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500 font-medium">
-                          {language === 'ar' ? 'الكمية:' : 'Quantity:'}
-                        </span>
-                        <span className="font-semibold text-gray-900 arabic-numbers">{donation.quantity}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500 font-medium">
-                          {language === 'ar' ? 'المتبرع:' : 'Donor:'}
-                        </span>
-                        <span className="font-semibold text-gray-900 truncate max-w-[120px]">
-                          {language === 'ar' ? donation.donor : donation.donorEn}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500 font-medium">
-                          {language === 'ar' ? 'التاريخ:' : 'Date:'}
-                        </span>
-                        <span className="font-semibold text-gray-900">
-                          {formatDonationDate(donation.donatedAt)}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500 font-medium">
-                          {language === 'ar' ? 'المؤهلين:' : 'Eligible:'}
-                        </span>
-                        <span className="font-semibold text-gray-900 arabic-numbers">{donation.eligiblePatients}</span>
-                      </div>
-                    </div>
-                  </div>
+      {/* Pending Donations */}
+      <View style={styles.sectionBox}>
+        <Text style={styles.sectionTitle}>{language === 'ar' ? 'التبرعات في الانتظار' : 'Pending Donations'}</Text>
+        {pendingDonations.map((donation) => (
+          <View key={donation.id} style={styles.donationCard}>
+            <View style={styles.donationHeaderRow}>
+              <Text style={styles.donationTitle}>{language === 'ar' ? donation.medicine : donation.medicineEn}</Text>
+              <Text style={[styles.badge, getUrgencyBadgeStyle(donation.urgency)]}>{getUrgencyText(donation.urgency, language)}</Text>
+            </View>
+            <View style={styles.donationDetailsRow}>
+              <View style={styles.donationDetailCol}>
+                <Text style={styles.detailLabel}>{language === 'ar' ? 'الكمية:' : 'Quantity:'}</Text>
+                <Text style={styles.detailValue}>{donation.quantity}</Text>
+                <Text style={styles.detailLabel}>{language === 'ar' ? 'المتبرع:' : 'Donor:'}</Text>
+                <Text style={styles.detailValue}>{language === 'ar' ? donation.donor : donation.donorEn}</Text>
+              </View>
+              <View style={styles.donationDetailCol}>
+                <Text style={styles.detailLabel}>{language === 'ar' ? 'التاريخ:' : 'Date:'}</Text>
+                <Text style={styles.detailValue}>{formatDonationDate(donation.donatedAt)}</Text>
+                <Text style={styles.detailLabel}>{language === 'ar' ? 'المؤهلين:' : 'Eligible:'}</Text>
+                <Text style={styles.detailValue}>{donation.eligiblePatients}</Text>
+              </View>
+            </View>
+            {donation.donorMessage ? (
+              <View style={styles.donorMsgBox}>
+                <Text style={styles.donorMsgIcon}>{ICONS.file}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.donorMsgTitle}>{language === 'ar' ? 'رسالة من المتبرع:' : 'Message from Donor:'}</Text>
+                  <Text style={styles.donorMsgText}>{donation.donorMessage}</Text>
+                </View>
+              </View>
+            ) : null}
+            {donation.status === 'pending_assignment' && (
+              <View style={styles.eligibleBox}>
+                <Text style={styles.eligibleTitle}>{language === 'ar' ? 'المرضى المؤهلين:' : 'Eligible Patients:'}</Text>
+                {eligiblePatients.slice(0, donation.eligiblePatients).map((patient) => (
+                  <PatientCard
+                    key={patient.id}
+                    patient={patient}
+                    onView={handleViewPatientProfile}
+                    onAssign={(patientId) => handleAssignDonation(donation.id, patientId)}
+                    showActions={true}
+                    compact={false}
+                  />
+                ))}
+              </View>
+            )}
+            {donation.status === 'assigned' && donation.assignedTo && (
+              <View style={styles.assignedBox}>
+                <Text style={styles.assignedIcon}>{ICONS.check}</Text>
+                <Text style={styles.assignedLabel}>{language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'}</Text>
+                <Text style={styles.assignedValue}>{language === 'ar' ? donation.assignedTo : donation.assignedToEn}</Text>
+                <Text style={styles.badge}>{getStatusText(donation.status, language)}</Text>
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
 
-                  {/* Donor message with consistent styling */}
-                  {donation.donorMessage && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <div className={`flex items-start ${isRTL ? 'space-x-reverse' : ''} space-x-2`}>
-                        <div className="w-5 h-5 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <FileText size={12} className="text-blue-600" />
-                        </div>
-                        <div className="flex-1">
-                          <h5 className="font-medium text-blue-900 text-sm mb-1">
-                            {language === 'ar' ? 'رسالة من المتبرع:' : 'Message from Donor:'}
-                          </h5>
-                          <p className={`text-xs text-blue-700 leading-relaxed ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-                            {donation.donorMessage}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Eligible patients section using the new PatientCard component */}
-                  {donation.status === 'pending_assignment' && (
-                    <div>
-                      <h5 className="font-semibold text-gray-900 text-sm mb-3">
-                        {language === 'ar' ? 'المرضى المؤهلين:' : 'Eligible Patients:'}
-                      </h5>
-                      
-                      <div className="space-y-3">
-                        {eligiblePatients.slice(0, donation.eligiblePatients).map((patient) => (
-                          <PatientCard
-                            key={patient.id}
-                            patient={patient}
-                            onView={handleViewPatientProfile}
-                            onAssign={(patientId) => handleAssignDonation(donation.id, patientId)}
-                            showActions={true}
-                            compact={false}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Already assigned donations with consistent styling */}
-                  {donation.status === 'assigned' && donation.assignedTo && (
-                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2`}>
-                          <div className="w-5 h-5 bg-green-100 rounded-lg flex items-center justify-center">
-                            <Check size={12} className="text-green-600" />
-                          </div>
-                          <div>
-                            <span className="text-xs font-medium text-green-700">
-                              {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'} 
-                            </span>
-                            <span className="text-xs font-semibold text-green-900 ml-1">
-                              {language === 'ar' ? donation.assignedTo : donation.assignedToEn}
-                            </span>
-                          </div>
-                        </div>
-                        <Badge className="bg-green-100 text-green-700 text-xs px-2 py-1">
-                          {getStatusText(donation.status, language)}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Enhanced Patient Profile Dialog with proper RTL support */}
-      <Dialog open={showPatientDialog} onOpenChange={setShowPatientDialog}>
-        <DialogContent className="max-w-md" dir={isRTL ? 'rtl' : 'ltr'}>
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold">
-              {language === 'ar' ? 'ملف المريض' : 'Patient Profile'}
-            </DialogTitle>
-          </DialogHeader>
-          {selectedPatient && (
-            <div className="space-y-4">
-              {/* Patient header */}
-              <div className="text-center pb-3 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-1 text-base">
-                  {language === 'ar' ? selectedPatient.name : selectedPatient.nameEn}
-                </h4>
-                <p className="text-xs text-gray-600 arabic-numbers">
-                  {language === 'ar' ? 'العمر:' : 'Age:'} {selectedPatient.age} {language === 'ar' ? 'سنة' : 'years'}
-                </p>
-              </div>
-
-              {/* Patient details with proper structure */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-gray-500">
-                    {language === 'ar' ? 'الحالة الطبية:' : 'Medical Condition:'}
-                  </label>
-                  <span className="text-xs font-semibold text-gray-900 text-right max-w-[60%]">
-                    {language === 'ar' ? selectedPatient.condition : selectedPatient.conditionEn}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-gray-500">
-                    {language === 'ar' ? 'الوضع المالي:' : 'Financial Status:'}
-                  </label>
-                  <span className="text-xs font-semibold text-gray-900 text-right max-w-[60%]">
-                    {language === 'ar' ? selectedPatient.financialStatus : selectedPatient.financialStatusEn}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-gray-500">
-                    {language === 'ar' ? 'الأولوية الطبية:' : 'Medical Priority:'}
-                  </label>
-                  <Badge className={`text-xs px-2 py-1 ${getPriorityColor(language === 'ar' ? selectedPatient.medicalPriority : selectedPatient.medicalPriorityEn)}`}>
-                    {language === 'ar' ? selectedPatient.medicalPriority : selectedPatient.medicalPriorityEn}
-                  </Badge>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-gray-500">
-                    {language === 'ar' ? 'آخر زيارة:' : 'Last Visit:'}
-                  </label>
-                  <span className="text-xs font-semibold text-gray-900 arabic-numbers text-right">
-                    {formatDonationDate(selectedPatient.lastVisit)}
-                  </span>
-                </div>
-
-                {selectedPatient.notes && (
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 block mb-2">
-                      {language === 'ar' ? 'ملاحظات:' : 'Notes:'}
-                    </label>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <p className={`text-xs text-gray-900 leading-relaxed ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-                        {selectedPatient.notes}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Action buttons with consistent spacing and RTL support */}
-              <div className={`flex ${isRTL ? 'space-x-reverse' : ''} space-x-2 pt-3 border-t border-gray-200`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.location.href = `tel:${selectedPatient.phone}`}
-                  className="flex-1 text-xs"
-                >
-                  <Phone size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                  {language === 'ar' ? 'اتصال' : 'Call'}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setShowPatientDialog(false)}
-                  className="flex-1 bg-primary text-white text-xs"
-                >
-                  {language === 'ar' ? 'إغلاق' : 'Close'}
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+      {/* Patient Profile Modal */}
+      <Modal
+        visible={showPatientDialog}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowPatientDialog(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, isRTL && { alignItems: 'flex-end' }]}> 
+            {selectedPatient && (
+              <>
+                <Text style={styles.modalTitle}>{language === 'ar' ? 'ملف المريض' : 'Patient Profile'}</Text>
+                <View style={styles.modalHeaderBox}>
+                  <Text style={styles.modalHeaderName}>{language === 'ar' ? selectedPatient.name : selectedPatient.nameEn}</Text>
+                  <Text style={styles.modalHeaderAge}>{language === 'ar' ? 'العمر:' : 'Age:'} {selectedPatient.age} {language === 'ar' ? 'سنة' : 'years'}</Text>
+                </View>
+                <View style={styles.modalDetailsBox}>
+                  <Text style={styles.modalDetailLabel}>{language === 'ar' ? 'الحالة الطبية:' : 'Medical Condition:'}</Text>
+                  <Text style={styles.modalDetailValue}>{language === 'ar' ? selectedPatient.condition : selectedPatient.conditionEn}</Text>
+                  <Text style={styles.modalDetailLabel}>{language === 'ar' ? 'الوضع المالي:' : 'Financial Status:'}</Text>
+                  <Text style={styles.modalDetailValue}>{language === 'ar' ? selectedPatient.financialStatus : selectedPatient.financialStatusEn}</Text>
+                  <Text style={styles.modalDetailLabel}>{language === 'ar' ? 'الأولوية الطبية:' : 'Medical Priority:'}</Text>
+                  <Text style={styles.badge}>{language === 'ar' ? selectedPatient.medicalPriority : selectedPatient.medicalPriorityEn}</Text>
+                  <Text style={styles.modalDetailLabel}>{language === 'ar' ? 'آخر زيارة:' : 'Last Visit:'}</Text>
+                  <Text style={styles.modalDetailValue}>{formatDonationDate(selectedPatient.lastVisit)}</Text>
+                  {selectedPatient.notes ? (
+                    <View style={styles.modalNotesBox}>
+                      <Text style={styles.modalNotesLabel}>{language === 'ar' ? 'ملاحظات:' : 'Notes:'}</Text>
+                      <Text style={styles.modalNotesText}>{selectedPatient.notes}</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <View style={styles.modalActionsRow}>
+                  <TouchableOpacity
+                    style={[styles.modalActionBtn, { backgroundColor: '#eee' }]}
+                    onPress={() => Linking.openURL(`tel:${selectedPatient.phone}`)}
+                  >
+                    <Text style={styles.modalActionBtnText}>{ICONS.phone} {language === 'ar' ? 'اتصال' : 'Call'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalActionBtn, { backgroundColor: '#007bff' }]}
+                    onPress={() => setShowPatientDialog(false)}
+                  >
+                    <Text style={[styles.modalActionBtnText, { color: '#fff' }]}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f8fafc', padding: 12 },
+  headerBox: { backgroundColor: '#e6f4ea', borderRadius: 12, padding: 16, marginBottom: 16 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  headerIconBox: { width: 48, height: 48, backgroundColor: '#22c55e', borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  headerIcon: { fontSize: 28, color: '#fff' },
+  headerContent: { flex: 1 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 4 },
+  headerDesc: { fontSize: 13, color: '#555', marginBottom: 10 },
+  statsRow: { flexDirection: 'row', gap: 12 },
+  statBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 8, padding: 8, marginRight: 8, flex: 1 },
+  statIcon: { fontSize: 18, marginRight: 8 },
+  statNumber: { fontWeight: 'bold', fontSize: 15, color: '#222' },
+  statLabel: { fontSize: 12, color: '#555' },
+  sectionBox: { marginBottom: 24 },
+  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 10 },
+  donationCard: { backgroundColor: '#fff', borderRadius: 10, padding: 14, marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 2, elevation: 1 },
+  donationHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  donationTitle: { fontSize: 15, fontWeight: 'bold', color: '#222' },
+  badge: { fontSize: 12, backgroundColor: '#fef08a', color: '#b45309', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, overflow: 'hidden', marginLeft: 6 },
+  donationDetailsRow: { flexDirection: 'row', marginBottom: 8 },
+  donationDetailCol: { flex: 1, marginRight: 8 },
+  detailLabel: { fontSize: 12, color: '#555' },
+  detailValue: { fontSize: 13, fontWeight: 'bold', color: '#222', marginBottom: 6 },
+  donorMsgBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: '#e0e7ff', borderRadius: 8, padding: 10, marginBottom: 8 },
+  donorMsgIcon: { fontSize: 16, marginRight: 8 },
+  donorMsgTitle: { fontSize: 13, fontWeight: 'bold', color: '#3730a3', marginBottom: 2 },
+  donorMsgText: { fontSize: 12, color: '#3730a3' },
+  eligibleBox: { marginTop: 8, marginBottom: 8 },
+  eligibleTitle: { fontSize: 13, fontWeight: 'bold', color: '#222', marginBottom: 6 },
+  assignedBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#dcfce7', borderRadius: 8, padding: 10, marginTop: 8 },
+  assignedIcon: { fontSize: 16, marginRight: 6 },
+  assignedLabel: { fontSize: 12, color: '#15803d', marginRight: 4 },
+  assignedValue: { fontSize: 12, fontWeight: 'bold', color: '#166534', marginRight: 4 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.2)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: '#fff', borderRadius: 12, padding: 20, width: '85%' },
+  modalTitle: { fontSize: 17, fontWeight: 'bold', color: '#222', marginBottom: 10, alignSelf: 'center' },
+  modalHeaderBox: { alignItems: 'center', marginBottom: 10, borderBottomWidth: 1, borderBottomColor: '#eee', paddingBottom: 8 },
+  modalHeaderName: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 2 },
+  modalHeaderAge: { fontSize: 12, color: '#555' },
+  modalDetailsBox: { marginBottom: 10 },
+  modalDetailLabel: { fontSize: 12, color: '#555', marginTop: 6 },
+  modalDetailValue: { fontSize: 13, color: '#222', fontWeight: 'bold' },
+  modalNotesBox: { marginTop: 8, backgroundColor: '#f3f4f6', borderRadius: 8, padding: 8 },
+  modalNotesLabel: { fontSize: 12, color: '#555', marginBottom: 2 },
+  modalNotesText: { fontSize: 12, color: '#222' },
+  modalActionsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  modalActionBtn: { flex: 1, borderRadius: 8, padding: 10, marginHorizontal: 4, alignItems: 'center' },
+  modalActionBtnText: { fontSize: 13, fontWeight: 'bold' },
+});

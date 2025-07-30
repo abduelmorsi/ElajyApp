@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
-import { Plus, Minus, Trash2, MapPin, Clock, CreditCard, Banknote, ArrowRight, Shield, Truck, Calendar } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Switch } from './ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useLocalization, useRTL } from './services/LocalizationService';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDelivery } from './services/DeliveryService';
-import { toast } from 'sonner';
+import { useLocalization, useRTL } from './services/LocalizationService';
 
 export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   const { t, language } = useLocalization();
-  const { isRTL, getMargin } = useRTL();
-  const { 
-    addresses, 
-    deliveryOptions, 
-    selectedAddress, 
-    selectedDeliveryOption, 
+  const { isRTL } = useRTL();
+  const {
+    addresses,
+    deliveryOptions,
+    selectedAddress,
+    selectedDeliveryOption,
     selectedTimeSlot,
     selectAddress,
     selectDeliveryOption,
@@ -31,12 +21,11 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
     estimateDeliveryFee
   } = useDelivery();
 
-  const [currentStep, setCurrentStep] = useState('cart'); // cart, delivery, payment, confirmation
+  const [currentStep, setCurrentStep] = useState('cart');
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [contactlessDelivery, setContactlessDelivery] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [specialInstructions, setSpecialInstructions] = useState('');
-  const [showAddressDialog, setShowAddressDialog] = useState(false);
 
   const updateQuantity = (id, change) => {
     setCartItems(prev => prev.map(item => {
@@ -50,580 +39,575 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
 
   const removeItem = (id) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
-    toast.success(language === 'ar' ? 'تم حذف المنتج' : 'Item removed');
+    // Add toast here if you use a toast library
   };
 
   const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   };
 
+  // Helper functions for payment step
   const calculateDeliveryFee = () => {
-    if (!selectedDeliveryOption || !selectedAddress) return 0;
-    return estimateDeliveryFee(selectedAddress, selectedDeliveryOption);
+    if (!selectedDeliveryOption) return 0;
+    return selectedDeliveryOption.price || 0;
   };
 
   const calculateTotal = () => {
     return calculateSubtotal() + calculateDeliveryFee();
   };
 
-  const handleCheckout = () => {
-    if (cartItems.length === 0) {
-      toast.error(language === 'ar' ? 'السلة فارغة' : 'Cart is empty');
-      return;
-    }
-    setCurrentStep('delivery');
-  };
-
-  const handleDeliveryNext = () => {
-    if (!selectedAddress) {
-      toast.error(language === 'ar' ? 'يرجى اختيار عنوان التوصيل' : 'Please select delivery address');
-      return;
-    }
-    if (!selectedDeliveryOption) {
-      toast.error(language === 'ar' ? 'يرجى اختيار طريقة التوصيل' : 'Please select delivery method');
-      return;
-    }
-    if (selectedDeliveryOption.id === 'scheduled' && !selectedTimeSlot) {
-      toast.error(language === 'ar' ? 'يرجى اختيار وقت التوصيل' : 'Please select delivery time');
-      return;
-    }
-    setCurrentStep('payment');
-  };
-
   const handlePlaceOrder = () => {
-    const orderData = {
-      customerId: 'user_001',
-      pharmacyId: 'pharmacy_001',
-      items: cartItems,
-      deliveryAddress: selectedAddress,
-      deliveryOption: selectedDeliveryOption,
-      timeSlot: selectedTimeSlot,
-      paymentMethod,
-      total: calculateTotal(),
-      deliveryFee: calculateDeliveryFee(),
-      contactless: contactlessDelivery,
-      notes: specialInstructions
-    };
-
-    const order = createOrder(orderData);
-    setCartItems([]);
+    // You can add order creation logic here
     setCurrentStep('confirmation');
-    
-    // Navigate to tracking after a short delay
-    setTimeout(() => {
-      navigateTo('delivery-tracking', order.id);
-    }, 2000);
   };
-
-  const timeSlots = selectedDeliveryOption?.id === 'scheduled' ? getTimeSlots(selectedDate) : [];
 
   // Cart Step
   if (currentStep === 'cart') {
     return (
-      <div className="h-full overflow-y-auto bg-background">
+      <View style={styles.container}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-100 px-6 py-4">
-          <h1 className="text-xl font-semibold text-gray-900">
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>
             {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
-          </h1>
+          </Text>
           {cartItems.length > 0 && (
-            <p className="text-sm text-gray-500">
+            <Text style={styles.headerSubtitle}>
               {cartItems.length} {language === 'ar' ? 'منتجات' : 'items'}
-            </p>
+            </Text>
           )}
-        </div>
-
-        <div className="p-6">
+        </View>
+        <ScrollView contentContainerStyle={styles.content}>
           {cartItems.length === 0 ? (
-            <Card className="p-8 text-center bg-white border border-gray-100">
-              <div className="text-gray-400 mb-4">
-                <Truck size={48} className="mx-auto" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyIcon}>🚚</Text>
+              <Text style={styles.emptyTitle}>
                 {language === 'ar' ? 'السلة فارغة' : 'Cart is Empty'}
-              </h3>
-              <p className="text-gray-500 mb-4">
+              </Text>
+              <Text style={styles.emptyDesc}>
                 {language === 'ar' ? 'ابدأ بإضافة منتجات لسلة التسوق' : 'Start adding items to your cart'}
-              </p>
-              <Button onClick={() => navigateTo('search')} className="bg-primary text-white">
-                {language === 'ar' ? 'تسوق الآن' : 'Shop Now'}
-              </Button>
-            </Card>
+              </Text>
+              <TouchableOpacity style={styles.shopBtn} onPress={() => navigateTo('search')}>
+                <Text style={styles.shopBtnText}>
+                  {language === 'ar' ? 'تسوق الآن' : 'Shop Now'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           ) : (
-            <div className="space-y-4">
+            <View>
               {/* Cart Items */}
-              <div className="space-y-3">
-                {cartItems.map((item) => (
-                  <Card key={item.id} className="bg-white border border-gray-100">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
-                          <ImageWithFallback
-                            src={item.image}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 leading-tight">
-                            {language === 'ar' ? item.name : item.nameEn}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            {language === 'ar' ? item.brand : item.brandEn}
-                          </p>
-                          <p className="font-bold text-primary arabic-numbers">
-                            {item.price} {t('unit.sdg')}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="w-8 h-8 p-0 border-gray-200"
-                          >
-                            <Minus size={14} />
-                          </Button>
-                          <span className="w-8 text-center font-medium arabic-numbers">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="w-8 h-8 p-0 border-gray-200"
-                          >
-                            <Plus size={14} />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeItem(item.id)}
-                            className="text-red-500 hover:text-red-600 ml-2"
-                          >
-                            <Trash2 size={14} />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
+              {cartItems.map((item) => (
+                <View key={item.id} style={styles.cartItemCard}>
+                  <View style={styles.cartItemRow}>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={styles.cartItemImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.cartItemInfo}>
+                      <Text style={styles.cartItemName}>
+                        {language === 'ar' ? item.name : item.nameEn}
+                      </Text>
+                      <Text style={styles.cartItemBrand}>
+                        {language === 'ar' ? item.brand : item.brandEn}
+                      </Text>
+                      <Text style={styles.cartItemPrice}>
+                        {item.price} {t('unit.sdg')}
+                      </Text>
+                    </View>
+                    <View style={styles.cartItemActions}>
+                      <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}>
+                        <Text style={styles.qtyBtnText}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.qtyText}>{item.quantity}</Text>
+                      <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}>
+                        <Text style={styles.qtyBtnText}>+</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.id)}>
+                        <Text style={styles.removeBtnText}>🗑️</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              ))}
               {/* Order Summary */}
-              <Card className="bg-white border border-gray-100">
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
-                      <span className="font-semibold arabic-numbers">
-                        {calculateSubtotal()} {t('unit.sdg')}
-                      </span>
-                    </div>
-                    <div className="border-t border-gray-100 pt-3">
-                      <div className="flex justify-between text-lg font-bold">
-                        <span>{language === 'ar' ? 'الإجمالي' : 'Total'}</span>
-                        <span className="text-primary arabic-numbers">
-                          {calculateSubtotal()} {t('unit.sdg')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
+              <View style={styles.summaryCard}>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</Text>
+                  <Text style={styles.summaryValue}>
+                    {calculateSubtotal()} {t('unit.sdg')}
+                  </Text>
+                </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text>
+                  <Text style={styles.summaryTotalValue}>
+                    {calculateSubtotal()} {t('unit.sdg')}
+                  </Text>
+                </View>
+              </View>
               {/* Checkout Button */}
-              <Button
-                onClick={handleCheckout}
-                className="w-full bg-primary text-white h-12"
-              >
-                {language === 'ar' ? 'متابعة للدفع' : 'Proceed to Checkout'}
-                <ArrowRight size={18} className={getMargin('2', '0')} />
-              </Button>
-            </div>
+              <TouchableOpacity style={styles.checkoutBtn} onPress={() => setCurrentStep('delivery')}>
+                <Text style={styles.checkoutBtnText}>
+                  {language === 'ar' ? 'متابعة للدفع' : 'Proceed to Checkout'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           )}
-        </div>
-      </div>
+        </ScrollView>
+      </View>
     );
   }
 
   // Delivery Step
   if (currentStep === 'delivery') {
     return (
-      <div className="h-full overflow-y-auto bg-background">
+      <View style={styles.container}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-100 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900">
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>
               {language === 'ar' ? 'اختيار التوصيل' : 'Delivery Options'}
-            </h1>
-            <Button
-              variant="ghost"
-              onClick={() => setCurrentStep('cart')}
-              className="text-gray-500"
-            >
-              {language === 'ar' ? 'رجوع' : 'Back'}
-            </Button>
-          </div>
-        </div>
-
-        <div className="p-6 space-y-6">
+            </Text>
+            <TouchableOpacity onPress={() => setCurrentStep('cart')}>
+              <Text style={styles.backButton}>
+                {language === 'ar' ? 'رجوع' : 'Back'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ScrollView contentContainerStyle={styles.content}>
           {/* Delivery Address */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
               {language === 'ar' ? 'عنوان التوصيل' : 'Delivery Address'}
-            </h3>
+            </Text>
             {addresses.length === 0 ? (
-              <Card className="p-4 text-center border-dashed border-gray-300">
-                <MapPin size={24} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-gray-500 mb-3">
+              <View style={styles.emptyAddress}>
+                <Text style={styles.emptyAddressIcon}>📍</Text>
+                <Text style={styles.emptyAddressText}>
                   {language === 'ar' ? 'لا توجد عناوين محفوظة' : 'No saved addresses'}
-                </p>
-                <Button
-                  onClick={() => navigateTo('address-management')}
-                  variant="outline"
-                  size="sm"
+                </Text>
+                <TouchableOpacity
+                  style={styles.addAddressBtn}
+                  onPress={() => navigateTo('address-management')}
                 >
-                  {language === 'ar' ? 'إضافة عنوان' : 'Add Address'}
-                </Button>
-              </Card>
+                  <Text style={styles.addAddressBtnText}>
+                    {language === 'ar' ? 'إضافة عنوان' : 'Add Address'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             ) : (
-              <div className="space-y-3">
+              <View>
                 {addresses.map((address) => (
-                  <Card
+                  <TouchableOpacity
                     key={address.id}
-                    className={`cursor-pointer transition-all border ${
-                      selectedAddress?.id === address.id
-                        ? 'border-primary bg-primary/5'
-                        : 'border-gray-100 hover:border-gray-200'
-                    }`}
-                    onClick={() => selectAddress(address)}
+                    style={[
+                      styles.addressCard,
+                      selectedAddress?.id === address.id && styles.selectedAddressCard
+                    ]}
+                    onPress={() => selectAddress(address)}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3">
-                          <MapPin size={18} className="text-gray-400 mt-1" />
-                          <div>
-                            <h4 className="font-medium text-gray-900">
-                              {language === 'ar' ? address.title : address.titleEn}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {language === 'ar' ? address.street : address.streetEn}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {address.phone}
-                            </p>
-                          </div>
-                        </div>
-                        {address.isDefault && (
-                          <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
-                            {language === 'ar' ? 'افتراضي' : 'Default'}
-                          </Badge>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                    <Text style={styles.addressTitle}>
+                      {language === 'ar' ? address.title : address.titleEn}
+                    </Text>
+                    <Text style={styles.addressDetails}>
+                      {language === 'ar' ? address.street : address.streetEn}
+                    </Text>
+                    <Text style={styles.addressPhone}>{address.phone}</Text>
+                    {address.isDefault && (
+                      <Text style={styles.defaultBadge}>
+                        {language === 'ar' ? 'افتراضي' : 'Default'}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
                 ))}
-                <Button
-                  variant="outline"
-                  onClick={() => navigateTo('address-management')}
-                  className="w-full border-dashed"
+                <TouchableOpacity
+                  style={styles.manageAddressesBtn}
+                  onPress={() => navigateTo('address-management')}
                 >
-                  {language === 'ar' ? 'إدارة العناوين' : 'Manage Addresses'}
-                </Button>
-              </div>
+                  <Text style={styles.manageAddressesBtnText}>
+                    {language === 'ar' ? 'إدارة العناوين' : 'Manage Addresses'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
-          </div>
+          </View>
 
           {/* Delivery Options */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
               {language === 'ar' ? 'طريقة التوصيل' : 'Delivery Method'}
-            </h3>
-            <div className="space-y-3">
-              {deliveryOptions.map((option) => (
-                <Card
-                  key={option.id}
-                  className={`cursor-pointer transition-all border ${
-                    selectedDeliveryOption?.id === option.id
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-100 hover:border-gray-200'
-                  } ${!option.available ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  onClick={() => option.available && selectDeliveryOption(option)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-2xl">{option.icon}</div>
-                        <div>
-                          <h4 className="font-medium text-gray-900">
-                            {language === 'ar' ? option.name : option.nameEn}
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {language === 'ar' ? option.description : option.descriptionEn}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {language === 'ar' ? option.estimatedTime : option.estimatedTimeEn}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-900 arabic-numbers">
-                          {option.price === 0 
-                            ? (language === 'ar' ? 'مجاني' : 'Free')
-                            : `${option.price} ${t('unit.sdg')}`
-                          }
-                        </p>
-                        {!option.available && (
-                          <Badge variant="secondary" className="text-xs">
-                            {language === 'ar' ? 'غير متاح' : 'Unavailable'}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
+            </Text>
+            {deliveryOptions.map((option) => (
+              <TouchableOpacity
+                key={option.id}
+                style={[
+                  styles.deliveryOptionCard,
+                  selectedDeliveryOption?.id === option.id && styles.selectedDeliveryOptionCard,
+                  !option.available && styles.disabledDeliveryOption
+                ]}
+                onPress={() => option.available && selectDeliveryOption(option)}
+                disabled={!option.available}
+              >
+                <View style={styles.deliveryOptionContent}>
+                  <Text style={styles.deliveryOptionName}>
+                    {language === 'ar' ? option.name : option.nameEn}
+                  </Text>
+                  <Text style={styles.deliveryOptionDescription}>
+                    {language === 'ar' ? option.description : option.descriptionEn}
+                  </Text>
+                  <Text style={styles.deliveryOptionTime}>
+                    {language === 'ar' ? option.estimatedTime : option.estimatedTimeEn}
+                  </Text>
+                </View>
+                <View style={styles.deliveryOptionPriceContainer}>
+                  <Text style={styles.deliveryOptionPrice}>
+                    {option.price === 0 
+                      ? (language === 'ar' ? 'مجاني' : 'Free')
+                      : `${option.price} ${t('unit.sdg')}`
+                    }
+                  </Text>
+                  {!option.available && (
+                    <Text style={styles.unavailableBadge}>
+                      {language === 'ar' ? 'غير متاح' : 'Unavailable'}
+                    </Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
 
           {/* Time Slot Selection (for scheduled delivery) */}
           {selectedDeliveryOption?.id === 'scheduled' && (
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
                 {language === 'ar' ? 'اختيار الوقت' : 'Select Time'}
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <Label>{language === 'ar' ? 'التاريخ' : 'Date'}</Label>
-                  <Input
-                    type="date"
-                    value={selectedDate.toISOString().split('T')[0]}
-                    onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                </div>
-                <div>
-                  <Label>{language === 'ar' ? 'الوقت' : 'Time Slot'}</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {timeSlots.map((slot) => (
-                      <Button
-                        key={slot.id}
-                        variant={selectedTimeSlot?.id === slot.id ? "default" : "outline"}
-                        disabled={!slot.available}
-                        onClick={() => selectTimeSlot(slot)}
-                        className={`h-12 ${!slot.available ? 'opacity-50' : ''}`}
-                      >
+              </Text>
+              <View style={styles.timeSlotContainer}>
+                <View style={styles.datePickerContainer}>
+                  <Text style={styles.datePickerLabel}>{language === 'ar' ? 'التاريخ' : 'Date'}</Text>
+                  <TouchableOpacity style={styles.datePicker} onPress={() => {}}>
+                    <Text style={styles.datePickerText}>
+                      {selectedDate.toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                      })}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.timeSlots}>
+                  {getTimeSlots(selectedDate).map((slot) => (
+                    <TouchableOpacity
+                      key={slot.id}
+                      style={[
+                        styles.timeSlotButton,
+                        selectedTimeSlot?.id === slot.id && styles.selectedTimeSlotButton,
+                        !slot.available && styles.disabledTimeSlotButton
+                      ]}
+                      onPress={() => slot.available && selectTimeSlot(slot)}
+                      disabled={!slot.available}
+                    >
+                      <Text style={styles.timeSlotText}>
                         {language === 'ar' ? slot.time : slot.timeEn}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
           )}
 
           {/* Special Options */}
-          <Card className="bg-white border border-gray-100">
-            <CardContent className="p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Shield size={18} className="text-gray-600" />
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      {language === 'ar' ? 'توصيل بدون تلامس' : 'Contactless Delivery'}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {language === 'ar' ? 'ترك الطلب عند الباب' : 'Leave order at the door'}
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  checked={contactlessDelivery}
-                  onCheckedChange={setContactlessDelivery}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {language === 'ar' ? 'خيارات خاصة' : 'Special Options'}
+            </Text>
+            <View style={styles.optionRow}>
+              <Text style={styles.optionLabel}>
+                {language === 'ar' ? 'توصيل بدون تلامس' : 'Contactless Delivery'}
+              </Text>
+              <TouchableOpacity
+                style={[
+                  styles.switchButton,
+                  contactlessDelivery && styles.switchButtonActive
+                ]}
+                onPress={() => setContactlessDelivery(!contactlessDelivery)}
+              >
+                <View style={[
+                  styles.switchIndicator,
+                  contactlessDelivery && styles.switchIndicatorActive
+                ]} />
+              </TouchableOpacity>
+            </View>
+          </View>
 
           {/* Continue Button */}
-          <Button
-            onClick={handleDeliveryNext}
-            className="w-full bg-primary text-white h-12"
+          <TouchableOpacity
+            style={styles.checkoutBtn}
+            onPress={() => setCurrentStep('payment')}
             disabled={!selectedAddress || !selectedDeliveryOption}
           >
-            {language === 'ar' ? 'متابعة للدفع' : 'Continue to Payment'}
-            <ArrowRight size={18} className={getMargin('2', '0')} />
-          </Button>
-        </div>
-      </div>
+            <Text style={styles.checkoutBtnText}>
+              {language === 'ar' ? 'متابعة للدفع' : 'Continue to Payment'}
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     );
   }
 
   // Payment Step
   if (currentStep === 'payment') {
     return (
-      <div className="h-full overflow-y-auto bg-background">
+      <View style={styles.container}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-100 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900">
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>
               {language === 'ar' ? 'طريقة الدفع' : 'Payment Method'}
-            </h1>
-            <Button
-              variant="ghost"
-              onClick={() => setCurrentStep('delivery')}
-              className="text-gray-500"
-            >
-              {language === 'ar' ? 'رجوع' : 'Back'}
-            </Button>
-          </div>
-        </div>
-
-        <div className="p-6 space-y-6">
+            </Text>
+            <TouchableOpacity onPress={() => setCurrentStep('delivery')}>
+              <Text style={styles.backButton}>
+                {language === 'ar' ? 'رجوع' : 'Back'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ScrollView contentContainerStyle={styles.content}>
           {/* Payment Methods */}
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-4">
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
               {language === 'ar' ? 'اختر طريقة الدفع' : 'Choose Payment Method'}
-            </h3>
-            <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-              <div className="space-y-3">
-                <Card className="border border-gray-100">
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="cash" id="cash" />
-                      <div className="flex items-center space-x-3 flex-1">
-                        <Banknote size={24} className="text-gray-600" />
-                        <div>
-                          <Label htmlFor="cash" className="font-medium cursor-pointer">
-                            {language === 'ar' ? 'الدفع عند التوصيل' : 'Cash on Delivery'}
-                          </Label>
-                          <p className="text-sm text-gray-500">
-                            {language === 'ar' ? 'ادفع نقداً عند وصول الطلب' : 'Pay cash when order arrives'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+            </Text>
+            <View style={styles.radioGroup}>
+              <TouchableOpacity
+                style={[
+              styles.radioOption,
+              paymentMethod === 'cash' && styles.selectedRadioOption
+                ]}
+                onPress={() => setPaymentMethod('cash')}
+              >
+                <View style={styles.radioIndicator}>
+                  {paymentMethod === 'cash' && <View style={styles.radioInnerIndicator} />}
+                </View>
+                <Text style={styles.radioLabel}>
+                  {language === 'ar' ? 'الدفع عند التوصيل' : 'Cash on Delivery'}
+                </Text>
+              </TouchableOpacity>
 
-                <Card className="border border-gray-100 opacity-50">
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="card" id="card" disabled />
-                      <div className="flex items-center space-x-3 flex-1">
-                        <CreditCard size={24} className="text-gray-400" />
-                        <div>
-                          <Label htmlFor="card" className="font-medium text-gray-400">
-                            {language === 'ar' ? 'بطاقة الائتمان' : 'Credit Card'}
-                          </Label>
-                          <p className="text-sm text-gray-400">
-                            {language === 'ar' ? 'قريباً' : 'Coming Soon'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </RadioGroup>
-          </div>
+              <TouchableOpacity
+                style={[
+              styles.radioOption,
+              paymentMethod === 'card' && styles.selectedRadioOption,
+              styles.disabledRadioOption
+                ]}
+                onPress={() => {}}
+                disabled
+              >
+                <View style={styles.radioIndicator}>
+                  {paymentMethod === 'card' && <View style={styles.radioInnerIndicator} />}
+                </View>
+                <Text style={styles.radioLabelDisabled}>
+                  {language === 'ar' ? 'بطاقة الائتمان' : 'Credit Card'}
+                </Text>
+                <Text style={styles.comingSoonLabel}>
+                  {language === 'ar' ? 'قريباً' : 'Coming Soon'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
           {/* Special Instructions */}
-          <div>
-            <Label htmlFor="instructions" className="font-medium">
+          <View style={styles.section}>
+            <Text style={styles.instructionsLabel}>
               {language === 'ar' ? 'تعليمات خاصة' : 'Special Instructions'}
-            </Label>
-            <textarea
-              id="instructions"
+            </Text>
+            <TextInput
+              style={styles.instructionsInput}
               value={specialInstructions}
-              onChange={(e) => setSpecialInstructions(e.target.value)}
+              onChangeText={setSpecialInstructions}
               placeholder={language === 'ar' ? 'أي تعليمات إضافية للصيدلي أو السائق' : 'Any additional instructions for pharmacist or driver'}
-              className="mt-2 w-full p-3 border border-gray-200 rounded-lg resize-none"
-              rows={3}
+              multiline
+              numberOfLines={3}
             />
-          </div>
+          </View>
 
           {/* Order Summary */}
-          <Card className="bg-white border border-gray-100">
-            <CardHeader>
-              <CardTitle className="text-lg">
-                {language === 'ar' ? 'ملخص الطلب' : 'Order Summary'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600">{language === 'ar' ? 'المنتجات' : 'Items'}</span>
-                <span className="arabic-numbers">{calculateSubtotal()} {t('unit.sdg')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">{language === 'ar' ? 'التوصيل' : 'Delivery'}</span>
-                <span className="arabic-numbers">
-                  {calculateDeliveryFee() === 0 
-                    ? (language === 'ar' ? 'مجاني' : 'Free')
-                    : `${calculateDeliveryFee()} ${t('unit.sdg')}`
-                  }
-                </span>
-              </div>
-              <div className="border-t border-gray-100 pt-3">
-                <div className="flex justify-between text-lg font-bold">
-                  <span>{language === 'ar' ? 'الإجمالي' : 'Total'}</span>
-                  <span className="text-primary arabic-numbers">
-                    {calculateTotal()} {t('unit.sdg')}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <View style={styles.summaryCard}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>{language === 'ar' ? 'المنتجات' : 'Items'}</Text>
+              <Text style={styles.summaryValue}>
+                {calculateSubtotal()} {t('unit.sdg')}
+              </Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>{language === 'ar' ? 'التوصيل' : 'Delivery'}</Text>
+              <Text style={styles.summaryValue}>
+                {calculateDeliveryFee() === 0 
+                  ? (language === 'ar' ? 'مجاني' : 'Free')
+                  : `${calculateDeliveryFee()} ${t('unit.sdg')}`
+                }
+              </Text>
+            </View>
+            <View style={styles.summaryTotalRow}>
+              <Text style={styles.summaryTotalLabel}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text>
+              <Text style={styles.summaryTotalValue}>
+                {calculateTotal()} {t('unit.sdg')}
+              </Text>
+            </View>
+          </View>
 
           {/* Place Order Button */}
-          <Button
-            onClick={handlePlaceOrder}
-            className="w-full bg-primary text-white h-12"
+          <TouchableOpacity
+            style={styles.placeOrderButton}
+            onPress={handlePlaceOrder}
           >
-            {language === 'ar' ? 'تأكيد الطلب' : 'Place Order'}
-          </Button>
-        </div>
-      </div>
+            <Text style={styles.placeOrderButtonText}>
+              {language === 'ar' ? 'تأكيد الطلب' : 'Place Order'}
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     );
   }
 
   // Confirmation Step
   if (currentStep === 'confirmation') {
     return (
-      <div className="h-full flex items-center justify-center bg-background p-6">
-        <Card className="w-full max-w-sm text-center bg-white border border-gray-100">
-          <CardContent className="p-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Truck size={32} className="text-green-600" />
-            </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
-              {language === 'ar' ? 'تم تأكيد طلبك!' : 'Order Confirmed!'}
-            </h2>
-            <p className="text-gray-600 mb-6">
-              {language === 'ar' 
-                ? 'سيتم توصيل طلبك قريباً. يمكنك تتبع الطلب من خلال صفحة الطلبات.'
-                : 'Your order will be delivered soon. You can track your order from the orders page.'
-              }
-            </p>
-            <div className="space-y-3">
-              <Button
-                onClick={() => navigateTo('order-history')}
-                className="w-full bg-primary text-white"
-              >
+      <View style={styles.container}>
+        <View style={styles.confirmationCard}>
+          <Text style={styles.confirmationIcon}>✅</Text>
+          <Text style={styles.confirmationTitle}>
+            {language === 'ar' ? 'تم تأكيد طلبك!' : 'Order Confirmed!'}
+          </Text>
+          <Text style={styles.confirmationMessage}>
+            {language === 'ar' 
+              ? 'سيتم توصيل طلبك قريباً. يمكنك تتبع الطلب من خلال صفحة الطلبات.'
+              : 'Your order will be delivered soon. You can track your order from the orders page.'
+            }
+          </Text>
+          <View style={styles.confirmationButtons}>
+            <TouchableOpacity
+              style={styles.trackOrderButton}
+              onPress={() => navigateTo('order-history')}
+            >
+              <Text style={styles.trackOrderButtonText}>
                 {language === 'ar' ? 'تتبع الطلب' : 'Track Order'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigateTo('home')}
-                className="w-full"
-              >
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.backToHomeButton}
+              onPress={() => navigateTo('home')}
+            >
+              <Text style={styles.backToHomeButtonText}>
                 {language === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  // Payment step styles
+  radioGroup: { flexDirection: 'column', gap: 12, marginTop: 8 },
+  radioOption: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', marginBottom: 8, backgroundColor: '#fff' },
+  selectedRadioOption: { borderColor: '#007bff', backgroundColor: '#e6f7ff' },
+  disabledRadioOption: { opacity: 0.5 },
+  radioIndicator: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#007bff', alignItems: 'center', justifyContent: 'center', marginRight: 10, backgroundColor: '#fff' },
+  radioInnerIndicator: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#007bff' },
+  radioLabel: { fontSize: 15, color: '#222', fontWeight: 'bold' },
+  radioLabelDisabled: { fontSize: 15, color: '#bbb', fontWeight: 'bold' },
+  comingSoonLabel: { fontSize: 12, color: '#888', marginLeft: 8 },
+  instructionsLabel: { fontSize: 15, color: '#222', fontWeight: 'bold', marginBottom: 6 },
+  instructionsInput: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 12, fontSize: 14, color: '#222', minHeight: 60, textAlignVertical: 'top', borderWidth: 1, borderColor: '#eee' },
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  header: { backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
+  headerSubtitle: { fontSize: 13, color: '#666' },
+  content: { padding: 24 },
+  emptyCard: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', alignItems: 'center', padding: 32, marginBottom: 16 },
+  emptyIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 6 },
+  emptyDesc: { color: '#666', fontSize: 13, marginBottom: 16, textAlign: 'center' },
+  shopBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 12, marginTop: 8 },
+  shopBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+  cartItemCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginBottom: 12, padding: 12 },
+  cartItemRow: { flexDirection: 'row', alignItems: 'center' },
+  cartItemImage: { width: 64, height: 64, borderRadius: 8, backgroundColor: '#f3f3f3', marginRight: 12 },
+  cartItemInfo: { flex: 1 },
+  cartItemName: { fontWeight: 'bold', color: '#222', fontSize: 15 },
+  cartItemBrand: { color: '#888', fontSize: 12 },
+  cartItemPrice: { color: '#007bff', fontWeight: 'bold', fontSize: 14 },
+  cartItemActions: { flexDirection: 'row', alignItems: 'center', marginLeft: 8 },
+  qtyBtn: { backgroundColor: '#eee', borderRadius: 6, padding: 6, marginHorizontal: 2 },
+  qtyBtnText: { fontSize: 16, color: '#007bff', fontWeight: 'bold' },
+  qtyText: { width: 24, textAlign: 'center', fontWeight: 'bold', fontSize: 15 },
+  removeBtn: { marginLeft: 8, padding: 4 },
+  removeBtnText: { fontSize: 16, color: '#e00' },
+  summaryCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginTop: 16, padding: 16 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  summaryLabel: { color: '#666', fontSize: 14 },
+  summaryValue: { fontWeight: 'bold', fontSize: 14 },
+  summaryTotalRow: { borderTopWidth: 1, borderColor: '#eee', paddingTop: 8 },
+  summaryTotalLabel: { color: '#222', fontWeight: 'bold', fontSize: 16 },
+  summaryTotalValue: { color: '#007bff', fontWeight: 'bold', fontSize: 16 },
+  checkoutBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 16, marginTop: 16 },
+  checkoutBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  headerContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  backButton: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+  section: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginBottom: 16 },
+  sectionTitle: { fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 12 },
+  emptyAddress: { alignItems: 'center', padding: 32 },
+  emptyAddressIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyAddressText: { color: '#666', fontSize: 14, marginBottom: 16, textAlign: 'center' },
+  addAddressBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 12 },
+  addAddressBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+  addressCard: { padding: 16, borderRadius: 8, borderWidth: 1, borderColor: '#eee', marginBottom: 12 },
+  selectedAddressCard: { borderColor: '#007bff', backgroundColor: '#e6f7ff' },
+  addressTitle: { fontWeight: 'bold', color: '#222', fontSize: 15 },
+  addressDetails: { color: '#666', fontSize: 14 },
+  addressPhone: { color: '#007bff', fontWeight: 'bold', fontSize: 14 },
+  defaultBadge: { backgroundColor: '#007bff', borderRadius: 12, paddingVertical: 4, paddingHorizontal: 8, color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  manageAddressesBtn: { borderTopWidth: 1, borderColor: '#eee', paddingTop: 12 },
+  manageAddressesBtnText: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+  deliveryOptionCard: { padding: 16, borderRadius: 8, borderWidth: 1, borderColor: '#eee', marginBottom: 12 },
+  selectedDeliveryOptionCard: { borderColor: '#007bff', backgroundColor: '#e6f7ff' },
+  disabledDeliveryOption: { opacity: 0.6 },
+  deliveryOptionContent: { marginBottom: 8 },
+  deliveryOptionName: { fontWeight: 'bold', color: '#222', fontSize: 15 },
+  deliveryOptionDescription: { color: '#666', fontSize: 14 },
+  deliveryOptionTime: { color: '#888', fontSize: 13 },
+  deliveryOptionPriceContainer: { alignItems: 'flex-end' },
+  deliveryOptionPrice: { color: '#007bff', fontWeight: 'bold', fontSize: 16 },
+  unavailableBadge: { backgroundColor: '#f44336', borderRadius: 12, paddingVertical: 4, paddingHorizontal: 8, color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  timeSlotContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
+  datePickerContainer: { flex: 1, marginRight: 8 },
+  datePickerLabel: { color: '#666', fontSize: 14, marginBottom: 4 },
+  datePicker: { backgroundColor: '#f3f4f6', borderRadius: 8, paddingVertical: 12, alignItems: 'center' },
+  datePickerText: { color: '#222', fontWeight: 'bold', fontSize: 16 },
+  timeSlots: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  timeSlotButton: { backgroundColor: '#f3f4f6', borderRadius: 8, paddingVertical: 12, paddingHorizontal: 16, marginBottom: 8 },
+  selectedTimeSlotButton: { backgroundColor: '#007bff' },
+  disabledTimeSlotButton: { opacity: 0.6 },
+  timeSlotText: { color: '#222', fontWeight: 'bold', fontSize: 15 },
+  optionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
+  optionLabel: { color: '#222', fontWeight: 'bold', fontSize: 15 },
+  switchButton: { width: 50, height: 28, borderRadius: 14, backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' },
+  switchButtonActive: { backgroundColor: '#007bff' },
+  switchIndicator: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff' },
+  switchIndicatorActive: { transform: [{ translateX: 0 }] },
+  placeOrderButton: { backgroundColor: '#007bff', borderRadius: 8, paddingVertical: 16, marginTop: 16 },
+  placeOrderButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  confirmationCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 24, alignItems: 'center' },
+  confirmationIcon: { fontSize: 48, color: '#4caf50', marginBottom: 16 },
+  confirmationTitle: { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 8 },
+  confirmationMessage: { color: '#666', fontSize: 14, textAlign: 'center', marginBottom: 24 },
+  confirmationButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
+  trackOrderButton: { flex: 1, backgroundColor: '#007bff', borderRadius: 8, paddingVertical: 16, marginRight: 8 },
+  trackOrderButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16, textAlign: 'center' },
+  backToHomeButton: { flex: 1, borderRadius: 8, paddingVertical: 16, borderWidth: 1, borderColor: '#007bff' },
+  backToHomeButtonText: { color: '#007bff', fontWeight: 'bold', fontSize: 16, textAlign: 'center' },
+});

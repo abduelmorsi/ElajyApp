@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, MapPin, Edit3, Trash2, Check, X, Home, Briefcase, Star } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Switch } from './ui/switch';
-import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { useDelivery, DeliveryAddress } from './services/DeliveryService';
+import { Modal, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { DeliveryAddress, useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
 export default function AddressManagement({ navigateTo, onSelectAddress = null, selectionMode = false }) {
   const { t, language } = useLocalization();
-  const { isRTL, getMargin } = useRTL();
+  const { isRTL } = useRTL();
   const { addresses, addAddress, updateAddress, deleteAddress, setDefaultAddress, selectAddress } = useDelivery();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<DeliveryAddress | null>(null);
@@ -32,8 +25,7 @@ export default function AddressManagement({ navigateTo, onSelectAddress = null, 
     instructionsEn: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (editingAddress) {
       updateAddress(editingAddress.id, formData);
       setEditingAddress(null);
@@ -87,263 +79,243 @@ export default function AddressManagement({ navigateTo, onSelectAddress = null, 
     }
   };
 
+  // Replace with your icon logic for React Native
   const getAddressIcon = (title: string) => {
+    // You can use a string or icon name for your RN icon library
     const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes('منزل') || lowerTitle.includes('home')) return Home;
-    if (lowerTitle.includes('مكتب') || lowerTitle.includes('office') || lowerTitle.includes('عمل')) return Briefcase;
-    return MapPin;
+    if (lowerTitle.includes('منزل') || lowerTitle.includes('home')) return 'home';
+    if (lowerTitle.includes('مكتب') || lowerTitle.includes('office') || lowerTitle.includes('عمل')) return 'briefcase';
+    return 'map-pin';
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <View style={styles.container}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">
-            {selectionMode ? (language === 'ar' ? 'اختر عنوان التوصيل' : 'Select Delivery Address') : (language === 'ar' ? 'إدارة العناوين' : 'Manage Addresses')}
-          </h1>
-          <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-primary text-white">
-                <Plus size={16} className={getMargin('0', '2')} />
-                {language === 'ar' ? 'إضافة عنوان' : 'Add Address'}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingAddress 
-                    ? (language === 'ar' ? 'تعديل العنوان' : 'Edit Address')
-                    : (language === 'ar' ? 'إضافة عنوان جديد' : 'Add New Address')
-                  }
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="title">{language === 'ar' ? 'العنوان (عربي)' : 'Title (Arabic)'}</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder={language === 'ar' ? 'مثل: المنزل، المكتب' : 'e.g: Home, Office'}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="titleEn">{language === 'ar' ? 'العنوان (إنجليزي)' : 'Title (English)'}</Label>
-                    <Input
-                      id="titleEn"
-                      value={formData.titleEn}
-                      onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
-                      placeholder="e.g: Home, Office"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="street">{language === 'ar' ? 'الشارع والمنطقة' : 'Street & Area'}</Label>
-                  <Input
-                    id="street"
-                    value={formData.street}
-                    onChange={(e) => setFormData({ ...formData, street: e.target.value })}
-                    placeholder={language === 'ar' ? 'شارع النيل، الخرطوم' : 'Nile Street, Khartoum'}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="streetEn">{language === 'ar' ? 'الشارع والمنطقة (إنجليزي)' : 'Street & Area (English)'}</Label>
-                  <Input
-                    id="streetEn"
-                    value={formData.streetEn}
-                    onChange={(e) => setFormData({ ...formData, streetEn: e.target.value })}
-                    placeholder="Nile Street, Khartoum"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="district">{language === 'ar' ? 'المحلية' : 'District'}</Label>
-                    <Input
-                      id="district"
-                      value={formData.district}
-                      onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                      placeholder={language === 'ar' ? 'الخرطوم' : 'Khartoum'}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="city">{language === 'ar' ? 'المدينة' : 'City'}</Label>
-                    <Input
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      placeholder={language === 'ar' ? 'الخرطوم' : 'Khartoum'}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="phone">{language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</Label>
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+249 123 456 789"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="instructions">{language === 'ar' ? 'تعليمات إضافية' : 'Additional Instructions'}</Label>
-                  <Textarea
-                    id="instructions"
-                    value={formData.instructions}
-                    onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
-                    placeholder={language === 'ar' ? 'الشقة رقم 5، الطابق الثاني' : 'Apartment 5, Second Floor'}
-                    rows={2}
-                  />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="isDefault"
-                    checked={formData.isDefault}
-                    onCheckedChange={(checked) => setFormData({ ...formData, isDefault: checked })}
-                  />
-                  <Label htmlFor="isDefault">{language === 'ar' ? 'جعل هذا العنوان افتراضي' : 'Make this default address'}</Label>
-                </div>
-
-                <div className="flex space-x-3 pt-4">
-                  <Button type="submit" className="flex-1 bg-primary text-white">
-                    {editingAddress ? (language === 'ar' ? 'تحديث' : 'Update') : (language === 'ar' ? 'إضافة' : 'Add')}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setShowAddForm(false);
-                      setEditingAddress(null);
-                      resetForm();
-                    }}
-                    className="flex-1"
-                  >
-                    {language === 'ar' ? 'إلغاء' : 'Cancel'}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>
+          {selectionMode ? (language === 'ar' ? 'اختر عنوان التوصيل' : 'Select Delivery Address') : (language === 'ar' ? 'إدارة العناوين' : 'Manage Addresses')}
+        </Text>
+        <TouchableOpacity style={styles.addButton} onPress={() => setShowAddForm(true)}>
+          {/* Replace below with your icon */}
+          <Text style={styles.addButtonIcon}>+</Text>
+          <Text style={styles.addButtonText}>{language === 'ar' ? 'إضافة عنوان' : 'Add Address'}</Text>
+        </TouchableOpacity>
+      </View>
+      {/* Add/Edit Address Modal */}
+      <Modal visible={showAddForm} animationType="slide" onRequestClose={() => setShowAddForm(false)}>
+        <ScrollView contentContainerStyle={styles.modalContent}>
+          <Text style={styles.modalTitle}>
+            {editingAddress 
+              ? (language === 'ar' ? 'تعديل العنوان' : 'Edit Address')
+              : (language === 'ar' ? 'إضافة عنوان جديد' : 'Add New Address')
+            }
+          </Text>
+          {/* Form fields */}
+          <View style={styles.formRow2Col}>
+            <View style={styles.formCol}>
+              <Text style={styles.label}>{language === 'ar' ? 'العنوان (عربي)' : 'Title (Arabic)'}</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.title}
+                onChangeText={text => setFormData({ ...formData, title: text })}
+                placeholder={language === 'ar' ? 'مثل: المنزل، المكتب' : 'e.g: Home, Office'}
+              />
+            </View>
+            <View style={styles.formCol}>
+              <Text style={styles.label}>{language === 'ar' ? 'العنوان (إنجليزي)' : 'Title (English)'}</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.titleEn}
+                onChangeText={text => setFormData({ ...formData, titleEn: text })}
+                placeholder="e.g: Home, Office"
+              />
+            </View>
+          </View>
+          <Text style={styles.label}>{language === 'ar' ? 'الشارع والمنطقة' : 'Street & Area'}</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.street}
+            onChangeText={text => setFormData({ ...formData, street: text })}
+            placeholder={language === 'ar' ? 'شارع النيل، الخرطوم' : 'Nile Street, Khartoum'}
+          />
+          <Text style={styles.label}>{language === 'ar' ? 'الشارع والمنطقة (إنجليزي)' : 'Street & Area (English)'}</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.streetEn}
+            onChangeText={text => setFormData({ ...formData, streetEn: text })}
+            placeholder="Nile Street, Khartoum"
+          />
+          <View style={styles.formRow2Col}>
+            <View style={styles.formCol}>
+              <Text style={styles.label}>{language === 'ar' ? 'المحلية' : 'District'}</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.district}
+                onChangeText={text => setFormData({ ...formData, district: text })}
+                placeholder={language === 'ar' ? 'الخرطوم' : 'Khartoum'}
+              />
+            </View>
+            <View style={styles.formCol}>
+              <Text style={styles.label}>{language === 'ar' ? 'المدينة' : 'City'}</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.city}
+                onChangeText={text => setFormData({ ...formData, city: text })}
+                placeholder={language === 'ar' ? 'الخرطوم' : 'Khartoum'}
+              />
+            </View>
+          </View>
+          <Text style={styles.label}>{language === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.phone}
+            onChangeText={text => setFormData({ ...formData, phone: text })}
+            placeholder="+249 123 456 789"
+            keyboardType="phone-pad"
+          />
+          <Text style={styles.label}>{language === 'ar' ? 'تعليمات إضافية' : 'Additional Instructions'}</Text>
+          <TextInput
+            style={[styles.input, { height: 60 }]}
+            value={formData.instructions}
+            onChangeText={text => setFormData({ ...formData, instructions: text })}
+            placeholder={language === 'ar' ? 'الشقة رقم 5، الطابق الثاني' : 'Apartment 5, Second Floor'}
+            multiline
+          />
+          <View style={styles.switchRow}>
+            <Switch
+              value={formData.isDefault}
+              onValueChange={checked => setFormData({ ...formData, isDefault: checked })}
+            />
+            <Text style={styles.switchLabel}>{language === 'ar' ? 'جعل هذا العنوان افتراضي' : 'Make this default address'}</Text>
+          </View>
+          <View style={styles.formButtonRow}>
+            <TouchableOpacity style={[styles.formButton, styles.formButtonPrimary]} onPress={handleSubmit}>
+              <Text style={styles.formButtonText}>{editingAddress ? (language === 'ar' ? 'تحديث' : 'Update') : (language === 'ar' ? 'إضافة' : 'Add')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.formButton, styles.formButtonOutline]}
+              onPress={() => {
+                setShowAddForm(false);
+                setEditingAddress(null);
+                resetForm();
+              }}
+            >
+              <Text style={styles.formButtonText}>{language === 'ar' ? 'إلغاء' : 'Cancel'}</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </Modal>
       {/* Addresses List */}
-      <div className="p-6 space-y-4">
+      <ScrollView contentContainerStyle={styles.listContent}>
         {addresses.length === 0 ? (
-          <Card className="p-8 text-center bg-white border border-gray-100">
-            <div className="text-gray-400 mb-4">
-              <MapPin size={48} className="mx-auto" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {language === 'ar' ? 'لا توجد عناوين محفوظة' : 'No Saved Addresses'}
-            </h3>
-            <p className="text-gray-500 mb-4">
-              {language === 'ar' ? 'أضف عنوان توصيل لتسهيل عملية الطلب' : 'Add a delivery address to streamline your ordering'}
-            </p>
-            <Button onClick={() => setShowAddForm(true)} className="bg-primary text-white">
-              <Plus size={16} className={getMargin('0', '2')} />
-              {language === 'ar' ? 'إضافة عنوان' : 'Add Address'}
-            </Button>
-          </Card>
+          <View style={styles.emptyCard}>
+            {/* Replace below with your icon */}
+            <Text style={styles.emptyIcon}>📍</Text>
+            <Text style={styles.emptyTitle}>{language === 'ar' ? 'لا توجد عناوين محفوظة' : 'No Saved Addresses'}</Text>
+            <Text style={styles.emptyDesc}>{language === 'ar' ? 'أضف عنوان توصيل لتسهيل عملية الطلب' : 'Add a delivery address to streamline your ordering'}</Text>
+            <TouchableOpacity style={styles.addButton} onPress={() => setShowAddForm(true)}>
+              <Text style={styles.addButtonIcon}>+</Text>
+              <Text style={styles.addButtonText}>{language === 'ar' ? 'إضافة عنوان' : 'Add Address'}</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           addresses.map((address) => {
-            const AddressIcon = getAddressIcon(address.title);
+            const iconName = getAddressIcon(address.title);
             return (
-              <Card 
-                key={address.id} 
-                className={`border transition-all duration-200 ${
-                  selectionMode 
-                    ? 'cursor-pointer hover:border-primary hover:shadow-md' 
-                    : 'border-gray-100'
-                } ${address.isDefault ? 'ring-2 ring-primary/20' : ''}`}
-                onClick={() => handleAddressSelect(address)}
+              <TouchableOpacity
+                key={address.id}
+                style={[styles.addressCard, address.isDefault && styles.addressCardDefault]}
+                onPress={() => handleAddressSelect(address)}
+                activeOpacity={selectionMode ? 0.7 : 1}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-3 flex-1">
-                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <AddressIcon size={18} className="text-gray-600" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-semibold text-gray-900">
-                            {language === 'ar' ? address.title : address.titleEn}
-                          </h3>
-                          {address.isDefault && (
-                            <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
-                              <Star size={10} className="mr-1" />
-                              {language === 'ar' ? 'افتراضي' : 'Default'}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-600 mb-1">
-                          {language === 'ar' ? address.street : address.streetEn}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {language === 'ar' ? `${address.district}, ${address.city}` : `${address.districtEn}, ${address.cityEn}`}
-                        </p>
-                        <p className="text-sm text-gray-500">{address.phone}</p>
-                        {address.instructions && (
-                          <p className="text-xs text-gray-400 mt-1">
-                            {language === 'ar' ? address.instructions : address.instructionsEn}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {!selectionMode && (
-                      <div className="flex items-center space-x-2">
-                        {!address.isDefault && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setDefaultAddress(address.id)}
-                            className="text-gray-500 hover:text-primary"
-                          >
-                            <Star size={14} />
-                          </Button>
-                        )}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(address)}
-                          className="text-gray-500 hover:text-blue-600"
-                        >
-                          <Edit3 size={14} />
-                        </Button>
-                        {addresses.length > 1 && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => deleteAddress(address.id)}
-                            className="text-gray-500 hover:text-red-600"
-                          >
-                            <Trash2 size={14} />
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                <View style={styles.addressRow}>
+                  <View style={styles.addressIconBox}>
+                    {/* Replace below with your icon */}
+                    <Text style={styles.addressIcon}>{iconName === 'home' ? '🏠' : iconName === 'briefcase' ? '💼' : '📍'}</Text>
+                  </View>
+                  <View style={styles.addressInfo}>
+                    <View style={styles.addressTitleRow}>
+                      <Text style={styles.addressTitle}>{language === 'ar' ? address.title : address.titleEn}</Text>
+                      {address.isDefault && (
+                        <View style={styles.defaultBadge}>
+                          <Text style={styles.defaultBadgeText}>{language === 'ar' ? 'افتراضي' : 'Default'}</Text>
+                        </View>
+                      )}
+                    </View>
+                    <Text style={styles.addressStreet}>{language === 'ar' ? address.street : address.streetEn}</Text>
+                    <Text style={styles.addressCity}>{language === 'ar' ? `${address.district}, ${address.city}` : `${address.districtEn}, ${address.cityEn}`}</Text>
+                    <Text style={styles.addressPhone}>{address.phone}</Text>
+                    {address.instructions ? (
+                      <Text style={styles.addressInstructions}>{language === 'ar' ? address.instructions : address.instructionsEn}</Text>
+                    ) : null}
+                  </View>
+                  {!selectionMode && (
+                    <View style={styles.addressActions}>
+                      {!address.isDefault && (
+                        <TouchableOpacity style={styles.actionBtn} onPress={() => setDefaultAddress(address.id)}>
+                          <Text style={styles.actionBtnIcon}>★</Text>
+                        </TouchableOpacity>
+                      )}
+                      <TouchableOpacity style={styles.actionBtn} onPress={() => handleEdit(address)}>
+                        <Text style={styles.actionBtnIcon}>✎</Text>
+                      </TouchableOpacity>
+                      {addresses.length > 1 && (
+                        <TouchableOpacity style={styles.actionBtn} onPress={() => deleteAddress(address.id)}>
+                          <Text style={styles.actionBtnIcon}>🗑️</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
             );
           })
         )}
-      </div>
-    </div>
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
+  addButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
+  addButtonIcon: { color: '#fff', fontSize: 18, marginRight: 4 },
+  addButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  modalContent: { padding: 24, backgroundColor: '#fff' },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 16, color: '#222' },
+  formRow2Col: { flexDirection: 'row', gap: 12 },
+  formCol: { flex: 1 },
+  label: { fontSize: 13, color: '#444', marginBottom: 4, marginTop: 12 },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 6, padding: 8, fontSize: 14, backgroundColor: '#fff', marginBottom: 4 },
+  switchRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  switchLabel: { marginLeft: 8, fontSize: 13, color: '#444' },
+  formButtonRow: { flexDirection: 'row', gap: 12, marginTop: 20 },
+  formButton: { flex: 1, alignItems: 'center', padding: 12, borderRadius: 8 },
+  formButtonPrimary: { backgroundColor: '#007bff' },
+  formButtonOutline: { backgroundColor: '#eee' },
+  formButtonText: { color: '#fff', fontWeight: 'bold' },
+  listContent: { padding: 24, gap: 16 },
+  emptyCard: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', alignItems: 'center', padding: 32, marginBottom: 16 },
+  emptyIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 6 },
+  emptyDesc: { color: '#666', fontSize: 13, marginBottom: 16, textAlign: 'center' },
+  addressCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginBottom: 12, padding: 16 },
+  addressCardDefault: { borderColor: '#007bff', borderWidth: 2 },
+  addressRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  addressIconBox: { width: 40, height: 40, backgroundColor: '#f3f3f3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  addressIcon: { fontSize: 18, color: '#666' },
+  addressInfo: { flex: 1 },
+  addressTitleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
+  addressTitle: { fontWeight: 'bold', color: '#222', fontSize: 15, marginRight: 6 },
+  defaultBadge: { backgroundColor: '#e6f0ff', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 4 },
+  defaultBadgeText: { color: '#007bff', fontSize: 11, fontWeight: 'bold' },
+  addressStreet: { color: '#444', fontSize: 13, marginBottom: 2 },
+  addressCity: { color: '#888', fontSize: 12 },
+  addressPhone: { color: '#888', fontSize: 12 },
+  addressInstructions: { color: '#bbb', fontSize: 11, marginTop: 2 },
+  addressActions: { flexDirection: 'row', alignItems: 'center', marginLeft: 8 },
+  actionBtn: { marginLeft: 6, padding: 4 },
+  actionBtnIcon: { fontSize: 16, color: '#888' },
+});

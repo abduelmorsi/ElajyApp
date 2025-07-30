@@ -1,8 +1,6 @@
+
 import React from 'react';
-import { Eye, Check, Phone } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { useLocalization, useRTL } from '../services/LocalizationService';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getPriorityColor } from './donationHelpers';
 
 interface PatientCardProps {
@@ -13,97 +11,235 @@ interface PatientCardProps {
   compact?: boolean;
 }
 
-export default function PatientCard({ patient, onView, onAssign, showActions = true, compact = false }: PatientCardProps) {
-  const { language } = useLocalization();
-  const { isRTL } = useRTL();
+export default function PatientCard({ patient, onView, onAssign, showActions, compact }: PatientCardProps) {
+  // TODO: Add localization and RTL support when hooks are available
+  const language = 'ar'; // fallback for now
+  const isRTL = false;
+  const priorityColor = getPriorityColor(language === 'ar' ? patient.medicalPriority : patient.medicalPriorityEn);
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-      <div className={`${compact ? 'p-3' : 'p-4'}`}>
-        {/* Patient header with proper structure - prevents overlapping */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1 min-w-0">
-            {/* Patient name and basic info row - properly structured */}
-            <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-3 mb-2`}>
-              <h6 className={`font-semibold text-gray-900 ${compact ? 'text-sm' : 'text-sm'} truncate`}>
+    <View style={styles.card}>
+      <View style={[styles.inner, compact ? styles.compactPadding : styles.regularPadding]}>
+        {/* Header */}
+        <View style={styles.headerRow}>
+          <View style={styles.headerInfo}>
+            <View style={[styles.nameRow, isRTL && styles.rowReverse]}>
+              <Text style={[styles.name, compact && styles.nameCompact]} numberOfLines={1}>
                 {language === 'ar' ? patient.name : patient.nameEn}
-              </h6>
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 flex-shrink-0`}>
-                <span className="text-xs text-gray-600 arabic-numbers px-2 py-1 bg-gray-200 rounded-full whitespace-nowrap">
+              </Text>
+              <View style={[styles.infoRow, isRTL && styles.rowReverse]}>
+                <Text style={styles.ageBadge}>
                   {language === 'ar' ? 'العمر:' : 'Age:'} {patient.age}
-                </span>
-                <Badge className={`text-xs px-2 py-1 whitespace-nowrap ${getPriorityColor(language === 'ar' ? patient.medicalPriority : patient.medicalPriorityEn)}`}>
+                </Text>
+                <Text style={[styles.priorityBadge, priorityColor && { backgroundColor: priorityColor }]}> 
                   {language === 'ar' ? patient.medicalPriority : patient.medicalPriorityEn}
-                </Badge>
-              </div>
-            </div>
-          </div>
-          
-          {/* Action buttons positioned in header to prevent layout issues */}
+                </Text>
+              </View>
+            </View>
+          </View>
           {showActions && (
-            <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 ml-4 flex-shrink-0`}>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => onView(patient)}
-                className={`px-3 py-1.5 ${compact ? 'text-xs h-7' : 'text-xs h-8'} border-gray-300`}
+            <View style={[styles.actionsRow, isRTL && styles.rowReverse]}>
+              <TouchableOpacity
+                style={[styles.actionButton, compact ? styles.actionButtonCompact : styles.actionButtonRegular]}
+                onPress={() => onView(patient)}
               >
-                <Eye size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                {language === 'ar' ? 'عرض' : 'View'}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => onAssign(patient.id)}
-                className={`bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 ${compact ? 'text-xs h-7' : 'text-xs h-8'}`}
+                <Text style={styles.actionIcon}>👁️</Text>
+                <Text style={styles.actionText}>{language === 'ar' ? 'عرض' : 'View'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.assignButton, compact ? styles.actionButtonCompact : styles.actionButtonRegular]}
+                onPress={() => onAssign(patient.id)}
               >
-                <Check size={12} className={`${isRTL ? 'ml-1' : 'mr-1'}`} />
-                {language === 'ar' ? 'توزيع' : 'Assign'}
-              </Button>
-            </div>
+                <Text style={styles.actionIcon}>✅</Text>
+                <Text style={styles.actionText}>{language === 'ar' ? 'توزيع' : 'Assign'}</Text>
+              </TouchableOpacity>
+            </View>
           )}
-        </div>
-        
-        {/* Patient details with proper separation - prevents text overlapping */}
-        <div className="space-y-3">
-          {/* Medical condition row - completely separate */}
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500">
-                {language === 'ar' ? 'الحالة الطبية:' : 'Medical Condition:'}
-              </span>
-              <span className={`text-xs font-semibold text-gray-900 ${language === 'ar' ? 'text-right' : 'text-left'} max-w-[60%] truncate`}>
-                {language === 'ar' ? patient.condition : patient.conditionEn}
-              </span>
-            </div>
-          </div>
-          
-          {/* Financial status row - completely separate from condition */}
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500">
-                {language === 'ar' ? 'الوضع المالي:' : 'Financial Status:'}
-              </span>
-              <span className={`text-xs font-semibold text-gray-900 ${language === 'ar' ? 'text-right' : 'text-left'} max-w-[60%] truncate`}>
-                {language === 'ar' ? patient.financialStatus : patient.financialStatusEn}
-              </span>
-            </div>
-          </div>
-          
-          {/* Patient notes with proper RTL/LTR support and containment */}
+        </View>
+
+        {/* Details */}
+        <View style={styles.detailsSection}>
+          {/* Medical Condition */}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{language === 'ar' ? 'الحالة الطبية:' : 'Medical Condition:'}</Text>
+            <Text style={[styles.detailValue, language === 'ar' ? styles.textRight : styles.textLeft]} numberOfLines={1}>
+              {language === 'ar' ? patient.condition : patient.conditionEn}
+            </Text>
+          </View>
+          {/* Financial Status */}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{language === 'ar' ? 'الوضع المالي:' : 'Financial Status:'}</Text>
+            <Text style={[styles.detailValue, language === 'ar' ? styles.textRight : styles.textLeft]} numberOfLines={1}>
+              {language === 'ar' ? patient.financialStatus : patient.financialStatusEn}
+            </Text>
+          </View>
+          {/* Notes */}
           {patient.notes && (
-            <div>
-              <span className="text-xs font-medium text-gray-500 block mb-2">
-                {language === 'ar' ? 'ملاحظات:' : 'Notes:'}
-              </span>
-              <div className="bg-white border border-gray-200 rounded-lg p-3">
-                <p className={`text-xs text-gray-700 leading-relaxed ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-                  {patient.notes}
-                </p>
-              </div>
-            </div>
+            <View style={styles.notesSection}>
+              <Text style={styles.notesLabel}>{language === 'ar' ? 'ملاحظات:' : 'Notes:'}</Text>
+              <View style={styles.notesBox}>
+                <Text style={[styles.notesText, language === 'ar' ? styles.textRight : styles.textLeft]}>{patient.notes}</Text>
+              </View>
+            </View>
           )}
-        </div>
-      </div>
-    </div>
+        </View>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#f9fafb',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  inner: {
+    flex: 1,
+  },
+  compactPadding: {
+    padding: 12,
+  },
+  regularPadding: {
+    padding: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  headerInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  rowReverse: {
+    flexDirection: 'row-reverse',
+  },
+  name: {
+    fontWeight: 'bold',
+    color: '#222',
+    fontSize: 15,
+    flexShrink: 1,
+    marginRight: 8,
+    marginLeft: 0,
+  },
+  nameCompact: {
+    fontSize: 14,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  ageBadge: {
+    fontSize: 12,
+    color: '#666',
+    backgroundColor: '#e5e7eb',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginRight: 4,
+  },
+  priorityBadge: {
+    fontSize: 12,
+    color: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginLeft: 4,
+    backgroundColor: '#2563eb',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginLeft: 6,
+  },
+  actionButtonRegular: {
+    height: 32,
+  },
+  actionButtonCompact: {
+    height: 28,
+  },
+  assignButton: {
+    backgroundColor: '#22c55e',
+    borderColor: '#22c55e',
+  },
+  actionIcon: {
+    fontSize: 13,
+    marginRight: 4,
+    color: '#2563eb',
+  },
+  actionText: {
+    fontSize: 13,
+    color: '#222',
+    fontWeight: 'bold',
+  },
+  detailsSection: {
+    marginTop: 4,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  detailLabel: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
+    flex: 1,
+  },
+  detailValue: {
+    fontSize: 12,
+    color: '#222',
+    fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'right',
+  },
+  textRight: {
+    textAlign: 'right',
+  },
+  textLeft: {
+    textAlign: 'left',
+  },
+  notesSection: {
+    marginTop: 8,
+  },
+  notesLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 4,
+  },
+  notesBox: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    padding: 10,
+  },
+  notesText: {
+    fontSize: 12,
+    color: '#444',
+    lineHeight: 18,
+  },
+});

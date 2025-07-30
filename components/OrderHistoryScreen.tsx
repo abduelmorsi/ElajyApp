@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Package, Clock, CheckCircle, Truck, MapPin, Phone } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Separator } from './ui/separator';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const orders = [
   {
@@ -46,223 +41,497 @@ const orders = [
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'delivered': return 'bg-green-100 text-green-800';
-    case 'shipped': return 'bg-blue-100 text-blue-800';
-    case 'processing': return 'bg-yellow-100 text-yellow-800';
-    case 'cancelled': return 'bg-red-100 text-red-800';
-    default: return 'bg-gray-100 text-gray-800';
+    case 'delivered': return { backgroundColor: '#bbf7d0', color: '#166534' }; // green-100, green-800
+    case 'shipped': return { backgroundColor: '#dbeafe', color: '#1e40af' }; // blue-100, blue-800
+    case 'processing': return { backgroundColor: '#fef9c3', color: '#854d0e' }; // yellow-100, yellow-800
+    case 'cancelled': return { backgroundColor: '#fecaca', color: '#991b1b' }; // red-100, red-800
+    default: return { backgroundColor: '#f3f4f6', color: '#374151' }; // gray-100, gray-800
   }
 };
 
 const getStatusIcon = (status) => {
   switch (status) {
-    case 'delivered': return <CheckCircle size={16} className="text-green-600" />;
-    case 'shipped': return <Truck size={16} className="text-blue-600" />;
-    case 'processing': return <Clock size={16} className="text-yellow-600" />;
-    default: return <Package size={16} className="text-gray-600" />;
+    case 'delivered': return '✅';
+    case 'shipped': return '🚚';
+    case 'processing': return '⏳';
+    default: return '📦';
   }
 };
 
 export default function OrderHistoryScreen({ navigateTo }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [tab, setTab] = useState('active');
 
   const activeOrders = orders.filter(order => ['processing', 'shipped'].includes(order.status));
   const pastOrders = orders.filter(order => ['delivered', 'cancelled'].includes(order.status));
 
-  const OrderCard = ({ order, onClick }) => (
-    <Card className="p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <div className="flex items-center space-x-2 mb-1">
-            {getStatusIcon(order.status)}
-            <h4 className="text-sm">Order #{order.id}</h4>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {new Date(order.date).toLocaleDateString()}
-          </p>
-        </div>
-        <Badge className={getStatusColor(order.status)}>
-          {order.status}
-        </Badge>
-      </div>
-
-      <div className="space-y-2">
-        <div>
-          <p className="text-xs text-muted-foreground mb-1">{order.items.length} item(s):</p>
+  const OrderCard = ({ order, onPress }) => {
+    const statusColor = getStatusColor(order.status);
+    return (
+      <TouchableOpacity style={styles.card} onPress={onPress}>
+        <View style={styles.cardHeader}>
+          <View>
+            <View style={styles.cardHeaderRow}>
+              <Text style={styles.statusIcon}>{getStatusIcon(order.status)}</Text>
+              <Text style={styles.orderId}>Order #{order.id}</Text>
+            </View>
+            <Text style={styles.orderDate}>{new Date(order.date).toLocaleDateString()}</Text>
+          </View>
+          <View style={[styles.statusBadge, { backgroundColor: statusColor.backgroundColor }]}> 
+            <Text style={{ color: statusColor.color, fontWeight: 'bold', fontSize: 12 }}>{order.status}</Text>
+          </View>
+        </View>
+        <View style={{ marginTop: 8 }}>
+          <Text style={styles.itemsLabel}>{order.items.length} item(s):</Text>
           {order.items.slice(0, 2).map((item, index) => (
-            <p key={index} className="text-sm">
+            <Text key={index} style={styles.itemText}>
               {item.name} x{item.quantity}
-            </p>
+            </Text>
           ))}
           {order.items.length > 2 && (
-            <p className="text-sm text-muted-foreground">
-              +{order.items.length - 2} more items
-            </p>
+            <Text style={styles.moreItemsText}>+{order.items.length - 2} more items</Text>
           )}
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-sm">Total: ${order.total.toFixed(2)}</span>
+        </View>
+        <View style={styles.cardFooter}>
+          <Text style={styles.totalText}>Total: ${order.total.toFixed(2)}</Text>
           {order.status === 'shipped' && order.estimatedDelivery && (
-            <span className="text-xs text-muted-foreground">
+            <Text style={styles.estimatedDeliveryText}>
               Est. delivery: {new Date(order.estimatedDelivery).toLocaleDateString()}
-            </span>
+            </Text>
           )}
-        </div>
-      </div>
-    </Card>
-  );
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   if (selectedOrder) {
+    const statusColor = getStatusColor(selectedOrder.status);
     return (
-      <div className="h-full flex flex-col bg-background">
+      <SafeAreaView style={styles.container}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(null)}>
-            <ArrowLeft size={16} />
-          </Button>
-          <h3>Order Details</h3>
-          <div></div>
-        </div>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => setSelectedOrder(null)} style={styles.headerButton}>
+            <Text style={styles.headerIcon}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Order Details</Text>
+          <View style={{ width: 32 }} />
+        </View>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Order Status */}
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h4>Order #{selectedOrder.id}</h4>
-                <p className="text-sm text-muted-foreground">
+          <View style={styles.detailCard}>
+            <View style={styles.detailCardHeader}>
+              <View>
+                <Text style={styles.detailOrderId}>Order #{selectedOrder.id}</Text>
+                <Text style={styles.detailOrderDate}>
                   Placed on {new Date(selectedOrder.date).toLocaleDateString()}
-                </p>
-              </div>
-              <Badge className={getStatusColor(selectedOrder.status)}>
-                {selectedOrder.status}
-              </Badge>
-            </div>
-
+                </Text>
+              </View>
+              <View style={[styles.statusBadge, { backgroundColor: statusColor.backgroundColor }]}> 
+                <Text style={{ color: statusColor.color, fontWeight: 'bold', fontSize: 12 }}>{selectedOrder.status}</Text>
+              </View>
+            </View>
             {selectedOrder.trackingNumber && (
-              <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-sm">Tracking Number</p>
-                <p className="font-mono text-sm">{selectedOrder.trackingNumber}</p>
-              </div>
+              <View style={styles.trackingBox}>
+                <Text style={styles.trackingLabel}>Tracking Number</Text>
+                <Text style={styles.trackingNumber}>{selectedOrder.trackingNumber}</Text>
+              </View>
             )}
-          </Card>
+          </View>
 
           {/* Items */}
-          <Card className="p-4">
-            <h4 className="mb-3">Items Ordered</h4>
-            <div className="space-y-3">
-              {selectedOrder.items.map((item, index) => (
-                <div key={index}>
-                  <div className="flex justify-between">
-                    <div>
-                      <p className="text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
-                    </div>
-                    <p className="text-sm">${(item.price * item.quantity).toFixed(2)}</p>
-                  </div>
-                  {index < selectedOrder.items.length - 1 && <Separator className="mt-3" />}
-                </div>
-              ))}
-            </div>
-            <Separator className="my-3" />
-            <div className="flex justify-between">
-              <span>Total</span>
-              <span>${selectedOrder.total.toFixed(2)}</span>
-            </div>
-          </Card>
+          <View style={styles.detailCard}>
+            <Text style={styles.itemsTitle}>Items Ordered</Text>
+            {selectedOrder.items.map((item, index) => (
+              <View key={index} style={styles.itemRow}>
+                <View>
+                  <Text style={styles.itemText}>{item.name}</Text>
+                  <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
+                </View>
+                <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
+              </View>
+            ))}
+            <View style={styles.separator} />
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total</Text>
+              <Text style={styles.totalValue}>${selectedOrder.total.toFixed(2)}</Text>
+            </View>
+          </View>
 
           {/* Delivery Address */}
-          <Card className="p-4">
-            <div className="flex items-start space-x-3">
-              <MapPin size={20} className="text-muted-foreground mt-0.5" />
-              <div>
-                <h4 className="mb-1">Delivery Address</h4>
-                <p className="text-sm text-muted-foreground">{selectedOrder.deliveryAddress}</p>
-              </div>
-            </div>
-          </Card>
+          <View style={styles.detailCard}>
+            <View style={styles.addressRow}>
+              <Text style={styles.addressIcon}>📍</Text>
+              <View>
+                <Text style={styles.addressTitle}>Delivery Address</Text>
+                <Text style={styles.addressText}>{selectedOrder.deliveryAddress}</Text>
+              </View>
+            </View>
+          </View>
 
           {/* Actions */}
-          <div className="space-y-3">
+          <View style={styles.actionsContainer}>
             {selectedOrder.status === 'delivered' && (
-              <Button className="w-full" onClick={() => navigateTo('search')}>
-                Reorder Items
-              </Button>
+              <TouchableOpacity style={styles.actionButton} onPress={() => navigateTo('search')}>
+                <Text style={styles.actionButtonText}>Reorder Items</Text>
+              </TouchableOpacity>
             )}
             {selectedOrder.trackingNumber && (
-              <Button variant="outline" className="w-full">
-                Track Package
-              </Button>
+              <TouchableOpacity style={[styles.actionButton, styles.actionButtonOutline]}>
+                <Text style={[styles.actionButtonText, styles.actionButtonOutlineText]}>Track Package</Text>
+              </TouchableOpacity>
             )}
-            <Button variant="outline" className="w-full">
-              <Phone size={16} className="mr-2" />
-              Contact Support
-            </Button>
-          </div>
-        </div>
-      </div>
+            <TouchableOpacity style={[styles.actionButton, styles.actionButtonOutline]}>
+              <Text style={[styles.actionButtonText, styles.actionButtonOutlineText]}>📞 Contact Support</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <SafeAreaView style={styles.container}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <Button variant="ghost" size="sm" onClick={() => navigateTo('profile')}>
-          <ArrowLeft size={16} />
-        </Button>
-        <h3>Order History</h3>
-        <div></div>
-      </div>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigateTo('profile')} style={styles.headerButton}>
+          <Text style={styles.headerIcon}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Order History</Text>
+        <View style={{ width: 32 }} />
+      </View>
 
-      <Tabs defaultValue="active" className="flex-1 flex flex-col">
-        <div className="p-4">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active">Active Orders</TabsTrigger>
-            <TabsTrigger value="past">Past Orders</TabsTrigger>
-          </TabsList>
-        </div>
+      {/* Tabs */}
+      <View style={styles.tabsContainer}>
+        <TouchableOpacity
+          style={[styles.tabButton, tab === 'active' && styles.tabButtonActive]}
+          onPress={() => setTab('active')}
+        >
+          <Text style={[styles.tabButtonText, tab === 'active' && styles.tabButtonTextActive]}>Active Orders</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, tab === 'past' && styles.tabButtonActive]}
+          onPress={() => setTab('past')}
+        >
+          <Text style={[styles.tabButtonText, tab === 'past' && styles.tabButtonTextActive]}>Past Orders</Text>
+        </TouchableOpacity>
+      </View>
 
-        <TabsContent value="active" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {activeOrders.length === 0 ? (
-            <div className="text-center py-8">
-              <Package size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h4 className="mb-2">No Active Orders</h4>
-              <p className="text-muted-foreground mb-6">You don't have any active orders at the moment</p>
-              <Button onClick={() => navigateTo('search')}>
-                Browse Medicines
-              </Button>
-            </div>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {tab === 'active' ? (
+          activeOrders.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>📦</Text>
+              <Text style={styles.emptyTitle}>No Active Orders</Text>
+              <Text style={styles.emptyDesc}>You don't have any active orders at the moment</Text>
+              <TouchableOpacity style={styles.actionButton} onPress={() => navigateTo('search')}>
+                <Text style={styles.actionButtonText}>Browse Medicines</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             activeOrders.map((order) => (
               <OrderCard 
                 key={order.id} 
                 order={order} 
-                onClick={() => setSelectedOrder(order)}
+                onPress={() => setSelectedOrder(order)}
               />
             ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="past" className="flex-1 overflow-y-auto px-4 space-y-4">
-          {pastOrders.length === 0 ? (
-            <div className="text-center py-8">
-              <Clock size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h4 className="mb-2">No Past Orders</h4>
-              <p className="text-muted-foreground">Your completed orders will appear here</p>
-            </div>
+          )
+        ) : (
+          pastOrders.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>⏳</Text>
+              <Text style={styles.emptyTitle}>No Past Orders</Text>
+              <Text style={styles.emptyDesc}>Your completed orders will appear here</Text>
+            </View>
           ) : (
             pastOrders.map((order) => (
               <OrderCard 
                 key={order.id} 
                 order={order} 
-                onClick={() => setSelectedOrder(order)}
+                onPress={() => setSelectedOrder(order)}
               />
             ))
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+          )
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    backgroundColor: '#fff',
+  },
+  headerButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerIcon: {
+    fontSize: 20,
+    color: '#222',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f3f4f6',
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  tabButtonActive: {
+    backgroundColor: '#fff',
+  },
+  tabButtonText: {
+    fontSize: 15,
+    color: '#888',
+    fontWeight: 'bold',
+  },
+  tabButtonTextActive: {
+    color: '#2563eb',
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  statusIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  orderId: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  orderDate: {
+    fontSize: 12,
+    color: '#888',
+  },
+  statusBadge: {
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 60,
+  },
+  itemsLabel: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 2,
+  },
+  itemText: {
+    fontSize: 14,
+    color: '#222',
+  },
+  moreItemsText: {
+    fontSize: 13,
+    color: '#888',
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  totalText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  estimatedDeliveryText: {
+    fontSize: 12,
+    color: '#888',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 48,
+  },
+  emptyIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    color: '#222',
+  },
+  emptyDesc: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  detailCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  detailCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  detailOrderId: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+  detailOrderDate: {
+    fontSize: 13,
+    color: '#888',
+  },
+  trackingBox: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 8,
+  },
+  trackingLabel: {
+    fontSize: 13,
+    color: '#888',
+  },
+  trackingNumber: {
+    fontSize: 14,
+    fontFamily: 'monospace',
+    color: '#222',
+    marginTop: 2,
+  },
+  itemsTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#222',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  itemQty: {
+    fontSize: 12,
+    color: '#888',
+  },
+  itemPrice: {
+    fontSize: 14,
+    color: '#222',
+    fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#e5e7eb',
+    marginVertical: 12,
+  },
+  totalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  totalLabel: {
+    fontSize: 15,
+    color: '#222',
+    fontWeight: 'bold',
+  },
+  totalValue: {
+    fontSize: 15,
+    color: '#222',
+    fontWeight: 'bold',
+  },
+  addressRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  addressIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  addressTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 2,
+    color: '#222',
+  },
+  addressText: {
+    fontSize: 14,
+    color: '#888',
+  },
+  actionsContainer: {
+    marginTop: 8,
+  },
+  actionButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  actionButtonOutline: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#2563eb',
+  },
+  actionButtonOutlineText: {
+    color: '#2563eb',
+  },
+});

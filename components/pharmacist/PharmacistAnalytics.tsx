@@ -1,44 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Package, 
-  Users, 
-  FileText, 
-  Calendar,
-  Download,
-  Filter,
-  BarChart3,
-  PieChart,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  MapPin
-} from 'lucide-react';
-import { Card } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { 
-  LineChart, 
-  Line, 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Cell,
-  Legend
-} from 'recharts';
-import { useLocalization, sudanesePharmaceuticalData, useRTL } from '../services/LocalizationService';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { sudanesePharmaceuticalData, useLocalization, useRTL } from '../services/LocalizationService';
 
 // Mock analytics data with Sudanese context
 const generateAnalyticsData = () => {
@@ -110,9 +72,34 @@ const generateAnalyticsData = () => {
 
 const COLORS = ['#2d7d6b', '#22c55e', '#34d399', '#6ee7b7', '#86efac', '#a7f3d0'];
 
-export default function PharmacistAnalytics({ navigateTo }) {
+const ICONS = {
+  trendingUp: '📈',
+  trendingDown: '📉',
+  dollar: '💵',
+  package: '📦',
+  users: '👥',
+  file: '📄',
+  calendar: '📅',
+  download: '⬇️',
+  filter: '🔍',
+  barChart: '📊',
+  pieChart: '🥧',
+  activity: '🏃',
+  alert: '⚠️',
+  check: '✅',
+  clock: '⏰',
+  mapPin: '📍',
+};
+
+
+type PharmacistAnalyticsProps = {
+  navigateTo: (screen: string, data?: any) => void;
+  userData: any;
+};
+
+export default function PharmacistAnalytics({ navigateTo, userData }: PharmacistAnalyticsProps) {
   const { t, language } = useLocalization();
-  const { isRTL, getMargin } = useRTL();
+  const { isRTL } = useRTL();
   const [selectedPeriod, setSelectedPeriod] = useState('7days');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
   const [analyticsData] = useState(generateAnalyticsData());
@@ -125,10 +112,10 @@ export default function PharmacistAnalytics({ navigateTo }) {
   ];
 
   const metrics = [
-    { value: 'revenue', label: t('analytics.revenue'), icon: DollarSign },
-    { value: 'orders', label: t('analytics.orders'), icon: Package },
-    { value: 'customers', label: t('analytics.customers'), icon: Users },
-    { value: 'prescriptions', label: t('analytics.prescriptions'), icon: FileText }
+    { value: 'revenue', label: t('analytics.revenue'), icon: ICONS.dollar },
+    { value: 'orders', label: t('analytics.orders'), icon: ICONS.package },
+    { value: 'customers', label: t('analytics.customers'), icon: ICONS.users },
+    { value: 'prescriptions', label: t('analytics.prescriptions'), icon: ICONS.file }
   ];
 
   const getCurrentData = () => {
@@ -143,346 +130,267 @@ export default function PharmacistAnalytics({ navigateTo }) {
     return num.toLocaleString(language === 'ar' ? 'ar-SD' : 'en-US');
   };
 
-  const exportReport = () => {
-    // Mock export functionality
-    const reportData = {
-      period: selectedPeriod,
-      generatedAt: new Date().toISOString(),
-      summary: analyticsData.summary,
-      data: getCurrentData()
-    };
-    
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `pharmacy-analytics-${selectedPeriod}-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  // No exportReport in React Native
+
+  // Tab state
+  const [tab, setTab] = useState('overview');
 
   return (
-    <div className="h-full overflow-y-auto bg-background p-4 space-y-6">
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-primary">{t('analytics.title')}</h1>
-          <p className="text-sm text-muted-foreground">
+      <View style={styles.headerRow}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.headerTitle}>{t('analytics.title')}</Text>
+          <Text style={styles.headerDesc}>
             {language === 'ar' ? 'تحليل شامل لأداء الصيدلية' : 'Comprehensive pharmacy performance analysis'}
-          </p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {periods.map(period => (
-                <SelectItem key={period.value} value={period.value}>
-                  {period.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button variant="outline" onClick={exportReport}>
-            <Download size={16} className={getMargin('0', '1')} />
-            {t('analytics.export')}
-          </Button>
-        </div>
-      </div>
+          </Text>
+        </View>
+        <View style={{ marginLeft: 12 }}>
+          <View style={styles.pickerRow}>
+            {periods.map(period => (
+              <TouchableOpacity
+                key={period.value}
+                style={[styles.periodBtn, selectedPeriod === period.value && styles.periodBtnActive]}
+                onPress={() => setSelectedPeriod(period.value)}
+              >
+                <Text style={[styles.periodBtnText, selectedPeriod === period.value && styles.periodBtnTextActive]}>{period.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">{t('analytics.totalOrders')}</p>
-              <p className="text-2xl font-bold arabic-numbers">{formatNumber(analyticsData.summary.totalOrders)}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp size={12} className="text-success mr-1" />
-                <span className="text-xs text-success arabic-numbers">+{analyticsData.summary.growthRate}%</span>
-              </div>
-            </div>
-            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-              <Package size={20} className="text-primary" />
-            </div>
-          </div>
-        </Card>
+      <View style={styles.metricsGrid}>
+        {/* Orders */}
+        <View style={styles.metricCard}>
+          <View style={styles.metricCardRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.metricLabel}>{t('analytics.totalOrders')}</Text>
+              <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalOrders)}</Text>
+              <View style={styles.metricTrendRow}>
+                <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
+                <Text style={styles.metricTrendText}>+{analyticsData.summary.growthRate}%</Text>
+              </View>
+            </View>
+            <View style={styles.metricIconBox}>
+              <Text style={styles.metricIcon}>{ICONS.package}</Text>
+            </View>
+          </View>
+        </View>
+        {/* Revenue */}
+        <View style={styles.metricCard}>
+          <View style={styles.metricCardRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.metricLabel}>{t('analytics.revenue')}</Text>
+              <Text style={styles.metricValue}>{formatCurrency(analyticsData.summary.totalRevenue)}</Text>
+              <View style={styles.metricTrendRow}>
+                <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
+                <Text style={styles.metricTrendText}>+12.3%</Text>
+              </View>
+            </View>
+            <View style={styles.metricIconBox}>
+              <Text style={styles.metricIcon}>{ICONS.dollar}</Text>
+            </View>
+          </View>
+        </View>
+        {/* Customers */}
+        <View style={styles.metricCard}>
+          <View style={styles.metricCardRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.metricLabel}>{t('analytics.customers')}</Text>
+              <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalCustomers)}</Text>
+              <View style={styles.metricTrendRow}>
+                <Text style={styles.metricTrendIcon}>{ICONS.trendingUp}</Text>
+                <Text style={styles.metricTrendText}>+8.7%</Text>
+              </View>
+            </View>
+            <View style={styles.metricIconBox}>
+              <Text style={styles.metricIcon}>{ICONS.users}</Text>
+            </View>
+          </View>
+        </View>
+        {/* Prescriptions */}
+        <View style={styles.metricCard}>
+          <View style={styles.metricCardRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.metricLabel}>{t('analytics.prescriptions')}</Text>
+              <Text style={styles.metricValue}>{formatNumber(analyticsData.summary.totalPrescriptions)}</Text>
+              <View style={styles.metricTrendRow}>
+                <Text style={styles.metricTrendIcon}>{ICONS.check}</Text>
+                <Text style={styles.metricTrendText}>98.5%</Text>
+              </View>
+            </View>
+            <View style={styles.metricIconBox}>
+              <Text style={styles.metricIcon}>{ICONS.file}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">{t('analytics.revenue')}</p>
-              <p className="text-xl font-bold arabic-numbers">{formatCurrency(analyticsData.summary.totalRevenue)}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp size={12} className="text-success mr-1" />
-                <span className="text-xs text-success arabic-numbers">+12.3%</span>
-              </div>
-            </div>
-            <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
-              <DollarSign size={20} className="text-success" />
-            </div>
-          </div>
-        </Card>
+      {/* Tabs */}
+      <View style={styles.tabsRow}>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'overview' && styles.tabBtnActive]} onPress={() => setTab('overview')}>
+          <Text style={[styles.tabBtnText, tab === 'overview' && styles.tabBtnTextActive]}>{t('analytics.overview')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'sales' && styles.tabBtnActive]} onPress={() => setTab('sales')}>
+          <Text style={[styles.tabBtnText, tab === 'sales' && styles.tabBtnTextActive]}>{t('analytics.sales')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'products' && styles.tabBtnActive]} onPress={() => setTab('products')}>
+          <Text style={[styles.tabBtnText, tab === 'products' && styles.tabBtnTextActive]}>{t('analytics.products')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'locations' && styles.tabBtnActive]} onPress={() => setTab('locations')}>
+          <Text style={[styles.tabBtnText, tab === 'locations' && styles.tabBtnTextActive]}>{language === 'ar' ? 'المواقع' : 'Locations'}</Text>
+        </TouchableOpacity>
+      </View>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">{t('analytics.customers')}</p>
-              <p className="text-2xl font-bold arabic-numbers">{formatNumber(analyticsData.summary.totalCustomers)}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp size={12} className="text-info mr-1" />
-                <span className="text-xs text-info arabic-numbers">+8.7%</span>
-              </div>
-            </div>
-            <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center">
-              <Users size={20} className="text-info" />
-            </div>
-          </div>
-        </Card>
+      {/* Tab Content */}
+      {tab === 'overview' && (
+        <View style={styles.tabContentBox}>
+          {/* Chart Placeholder */}
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>{t('analytics.trends')}</Text>
+            <Text style={styles.chartPlaceholder}>[Chart not available in React Native]</Text>
+          </View>
+          {/* Category Distribution Placeholder */}
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>{language === 'ar' ? 'توزيع المبيعات بالفئات' : 'Sales by Category'}</Text>
+            <Text style={styles.chartPlaceholder}>[Pie chart not available in React Native]</Text>
+          </View>
+          {/* Performance Indicators */}
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>{language === 'ar' ? 'مؤشرات الأداء' : 'Performance Indicators'}</Text>
+            <View style={styles.performanceRow}>
+              <Text style={styles.performanceIcon}>{ICONS.check}</Text>
+              <Text style={styles.performanceLabel}>{language === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction'}</Text>
+              <Text style={styles.performanceValue}>{analyticsData.summary.customerSatisfaction}/5</Text>
+            </View>
+            <View style={styles.performanceRow}>
+              <Text style={styles.performanceIcon}>{ICONS.activity}</Text>
+              <Text style={styles.performanceLabel}>{language === 'ar' ? 'متوسط قيمة الطلب' : 'Average Order Value'}</Text>
+              <Text style={styles.performanceValue}>{formatCurrency(analyticsData.summary.averageOrderValue)}</Text>
+            </View>
+            <View style={styles.performanceRow}>
+              <Text style={styles.performanceIcon}>{ICONS.file}</Text>
+              <Text style={styles.performanceLabel}>{language === 'ar' ? 'دقة الوصفات' : 'Prescription Accuracy'}</Text>
+              <Text style={styles.performanceValue}>{analyticsData.summary.prescriptionAccuracy}%</Text>
+            </View>
+          </View>
+        </View>
+      )}
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">{t('analytics.prescriptions')}</p>
-              <p className="text-2xl font-bold arabic-numbers">{formatNumber(analyticsData.summary.totalPrescriptions)}</p>
-              <div className="flex items-center mt-1">
-                <CheckCircle size={12} className="text-primary mr-1" />
-                <span className="text-xs text-primary arabic-numbers">98.5%</span>
-              </div>
-            </div>
-            <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
-              <FileText size={20} className="text-warning" />
-            </div>
-          </div>
-        </Card>
-      </div>
+      {tab === 'sales' && (
+        <View style={styles.tabContentBox}>
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>{t('analytics.sales')} - {selectedPeriod}</Text>
+            <Text style={styles.chartPlaceholder}>[Bar chart not available in React Native]</Text>
+          </View>
+        </View>
+      )}
 
-      {/* Main Analytics Content */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 bg-muted/50">
-          <TabsTrigger value="overview">{t('analytics.overview')}</TabsTrigger>
-          <TabsTrigger value="sales">{t('analytics.sales')}</TabsTrigger>
-          <TabsTrigger value="products">{t('analytics.products')}</TabsTrigger>
-          <TabsTrigger value="locations">{language === 'ar' ? 'المواقع' : 'Locations'}</TabsTrigger>
-        </TabsList>
+      {tab === 'products' && (
+        <View style={styles.tabContentBox}>
+          <Text style={styles.chartTitle}>{t('analytics.topSellingProducts')}</Text>
+          {analyticsData.topProducts.map((product, index) => (
+            <View key={product.id} style={styles.productRow}>
+              <View style={styles.productRankBox}>
+                <Text style={styles.productRank}>{index + 1}</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.productName}>{language === 'ar' ? product.name : product.nameEn}</Text>
+                <Text style={styles.productBrand}>{language === 'ar' ? product.brand : product.brandEn}</Text>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={styles.productQty}>{formatNumber(product.soldQuantity)} {language === 'ar' ? 'وحدة' : 'units'}</Text>
+                <View style={styles.productGrowthRow}>
+                  <Text style={styles.productGrowthIcon}>{product.growth > 0 ? ICONS.trendingUp : ICONS.trendingDown}</Text>
+                  <Text style={[styles.productGrowthText, { color: product.growth > 0 ? '#22c55e' : '#e11d48' }]}>
+                    {product.growth > 0 ? '+' : ''}{product.growth.toFixed(1)}%
+                  </Text>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
 
-        <TabsContent value="overview" className="space-y-4">
-          {/* Revenue Trend Chart */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">{t('analytics.trends')}</h3>
-              <Select value={selectedMetric} onValueChange={setSelectedMetric}>
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {metrics.map(metric => (
-                    <SelectItem key={metric.value} value={metric.value}>
-                      {metric.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={getCurrentData()}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2ebe7" />
-                  <XAxis 
-                    dataKey={language === 'ar' ? 'day' : 'dayEn'} 
-                    stroke="#6b7b73"
-                    fontSize={12}
-                  />
-                  <YAxis stroke="#6b7b73" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#ffffff', 
-                      border: '1px solid #e2ebe7',
-                      borderRadius: '8px',
-                      direction: isRTL ? 'rtl' : 'ltr'
-                    }}
-                    formatter={(value, name) => [
-                      selectedMetric === 'sales' ? formatCurrency(value) : formatNumber(value),
-                      metrics.find(m => m.value === selectedMetric)?.label || name
-                    ]}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey={selectedMetric}
-                    stroke="#2d7d6b"
-                    fill="#2d7d6b"
-                    fillOpacity={0.1}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          {/* Category Distribution */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">{language === 'ar' ? 'توزيع المبيعات بالفئات' : 'Sales by Category'}</h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={analyticsData.categoryData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={5}
-                      dataKey="value"
-                      nameKey={language === 'ar' ? 'name' : 'nameEn'}
-                    >
-                      {analyticsData.categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      formatter={(value) => [`${value}%`, language === 'ar' ? 'النسبة' : 'Percentage']}
-                      contentStyle={{ direction: isRTL ? 'rtl' : 'ltr' }}
-                    />
-                    <Legend 
-                      formatter={(value, entry) => entry.payload[language === 'ar' ? 'name' : 'nameEn']}
-                    />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">{language === 'ar' ? 'مؤشرات الأداء' : 'Performance Indicators'}</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-success/5 rounded-lg">
-                  <div className="flex items-center">
-                    <CheckCircle size={20} className="text-success mr-2" />
-                    <span className="text-sm">{language === 'ar' ? 'رضا العملاء' : 'Customer Satisfaction'}</span>
-                  </div>
-                  <span className="font-semibold text-success arabic-numbers">
-                    {analyticsData.summary.customerSatisfaction}/5
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
-                  <div className="flex items-center">
-                    <Activity size={20} className="text-primary mr-2" />
-                    <span className="text-sm">{language === 'ar' ? 'متوسط قيمة الطلب' : 'Average Order Value'}</span>
-                  </div>
-                  <span className="font-semibold text-primary arabic-numbers">
-                    {formatCurrency(analyticsData.summary.averageOrderValue)}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-warning/5 rounded-lg">
-                  <div className="flex items-center">
-                    <FileText size={20} className="text-warning mr-2" />
-                    <span className="text-sm">{language === 'ar' ? 'دقة الوصفات' : 'Prescription Accuracy'}</span>
-                  </div>
-                  <span className="font-semibold text-warning arabic-numbers">
-                    {analyticsData.summary.prescriptionAccuracy}%
-                  </span>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="sales" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">{t('analytics.sales')} - {selectedPeriod}</h3>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getCurrentData()}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2ebe7" />
-                  <XAxis 
-                    dataKey={language === 'ar' ? 'day' : 'dayEn'} 
-                    stroke="#6b7b73"
-                    fontSize={12}
-                  />
-                  <YAxis stroke="#6b7b73" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{ 
-                      backgroundColor: '#ffffff', 
-                      border: '1px solid #e2ebe7',
-                      borderRadius: '8px'
-                    }}
-                    formatter={(value) => [formatCurrency(value), t('analytics.revenue')]}
-                  />
-                  <Bar dataKey="sales" fill="#2d7d6b" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="products" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">{t('analytics.topSellingProducts')}</h3>
-            <div className="space-y-4">
-              {analyticsData.topProducts.map((product, index) => (
-                <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-semibold text-primary arabic-numbers">{index + 1}</span>
-                    </div>
-                    <div>
-                      <h4 className="font-medium">{language === 'ar' ? product.name : product.nameEn}</h4>
-                      <p className="text-sm text-muted-foreground">{language === 'ar' ? product.brand : product.brandEn}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold arabic-numbers">{formatNumber(product.soldQuantity)} {language === 'ar' ? 'وحدة' : 'units'}</p>
-                    <div className="flex items-center">
-                      {product.growth > 0 ? (
-                        <TrendingUp size={12} className="text-success mr-1" />
-                      ) : (
-                        <TrendingDown size={12} className="text-destructive mr-1" />
-                      )}
-                      <span className={`text-xs arabic-numbers ${product.growth > 0 ? 'text-success' : 'text-destructive'}`}>
-                        {product.growth > 0 ? '+' : ''}{product.growth.toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="locations" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">{language === 'ar' ? 'أداء المواقع' : 'Location Performance'}</h3>
-            <div className="space-y-4">
-              {analyticsData.pharmacyLocations.map((location, index) => (
-                <div key={index} className="p-4 border rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center">
-                      <MapPin size={16} className="text-primary mr-2" />
-                      <h4 className="font-medium">{location.name}</h4>
-                    </div>
-                    <Badge variant={location.growth > 0 ? 'default' : 'secondary'}>
-                      {location.growth > 0 ? '+' : ''}{location.growth}%
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">{t('analytics.revenue')}</p>
-                      <p className="font-semibold arabic-numbers">{formatCurrency(location.sales)}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">{t('analytics.orders')}</p>
-                      <p className="font-semibold arabic-numbers">{formatNumber(location.orders)}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+      {tab === 'locations' && (
+        <View style={styles.tabContentBox}>
+          <Text style={styles.chartTitle}>{language === 'ar' ? 'أداء المواقع' : 'Location Performance'}</Text>
+          {analyticsData.pharmacyLocations.map((location, index) => (
+            <View key={index} style={styles.locationRow}>
+              <View style={styles.locationHeaderRow}>
+                <Text style={styles.locationIcon}>{ICONS.mapPin}</Text>
+                <Text style={styles.locationName}>{location.name}</Text>
+                <Text style={[styles.locationBadge, { backgroundColor: location.growth > 0 ? '#dcfce7' : '#f3f4f6', color: location.growth > 0 ? '#166534' : '#374151' }]}> {location.growth > 0 ? '+' : ''}{location.growth}% </Text>
+              </View>
+              <View style={styles.locationStatsRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.locationStatLabel}>{t('analytics.revenue')}</Text>
+                  <Text style={styles.locationStatValue}>{formatCurrency(location.sales)}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.locationStatLabel}>{t('analytics.orders')}</Text>
+                  <Text style={styles.locationStatValue}>{formatNumber(location.orders)}</Text>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  contentContainer: { padding: 16 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
+  headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#2d7d6b', marginBottom: 2 },
+  headerDesc: { fontSize: 14, color: '#555', marginBottom: 2 },
+  pickerRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' },
+  periodBtn: { backgroundColor: '#e5e7eb', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, marginRight: 6, marginBottom: 4 },
+  periodBtnActive: { backgroundColor: '#2d7d6b' },
+  periodBtnText: { color: '#222', fontSize: 13 },
+  periodBtnTextActive: { color: '#fff', fontWeight: 'bold' },
+  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 18 },
+  metricCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 12, width: '48%', minWidth: 160, elevation: 1 },
+  metricCardRow: { flexDirection: 'row', alignItems: 'center' },
+  metricLabel: { fontSize: 13, color: '#555' },
+  metricValue: { fontSize: 20, fontWeight: 'bold', color: '#222', marginBottom: 2 },
+  metricTrendRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  metricTrendIcon: { fontSize: 14, marginRight: 4 },
+  metricTrendText: { fontSize: 12, color: '#22c55e' },
+  metricIconBox: { width: 40, height: 40, borderRadius: 10, backgroundColor: '#e0e7ff', alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
+  metricIcon: { fontSize: 22 },
+  tabsRow: { flexDirection: 'row', marginBottom: 12, backgroundColor: '#e5e7eb', borderRadius: 8 },
+  tabBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 8 },
+  tabBtnActive: { backgroundColor: '#2d7d6b' },
+  tabBtnText: { color: '#222', fontSize: 15 },
+  tabBtnTextActive: { color: '#fff', fontWeight: 'bold' },
+  tabContentBox: { marginBottom: 18 },
+  chartCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 14, elevation: 1 },
+  chartTitle: { fontSize: 16, fontWeight: 'bold', color: '#2d7d6b', marginBottom: 8 },
+  chartPlaceholder: { color: '#bbb', fontSize: 14, textAlign: 'center', marginVertical: 24 },
+  performanceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  performanceIcon: { fontSize: 18, marginRight: 8 },
+  performanceLabel: { fontSize: 14, color: '#555', flex: 1 },
+  performanceValue: { fontSize: 14, fontWeight: 'bold', color: '#2d7d6b' },
+  productRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 10, elevation: 1 },
+  productRankBox: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#e0e7ff', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
+  productRank: { fontSize: 15, fontWeight: 'bold', color: '#2d7d6b' },
+  productName: { fontSize: 15, fontWeight: 'bold', color: '#222' },
+  productBrand: { fontSize: 12, color: '#555' },
+  productQty: { fontSize: 13, color: '#222', fontWeight: 'bold', marginBottom: 2 },
+  productGrowthRow: { flexDirection: 'row', alignItems: 'center' },
+  productGrowthIcon: { fontSize: 14, marginRight: 4 },
+  productGrowthText: { fontSize: 12 },
+  locationRow: { backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 10, elevation: 1 },
+  locationHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  locationIcon: { fontSize: 16, marginRight: 6 },
+  locationName: { fontSize: 15, fontWeight: 'bold', color: '#222', flex: 1 },
+  locationBadge: { fontSize: 12, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, overflow: 'hidden', marginLeft: 6 },
+  locationStatsRow: { flexDirection: 'row', gap: 12 },
+  locationStatLabel: { fontSize: 12, color: '#555' },
+  locationStatValue: { fontSize: 13, fontWeight: 'bold', color: '#222', marginBottom: 2 },
+});

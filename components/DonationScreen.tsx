@@ -1,8 +1,9 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
-import { useLocalization } from './services/LocalizationService';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PatientDonationFlow from './donation/PatientDonationFlow';
 import PharmacistDonationManager from './donation/PharmacistDonationManager';
+import { useLocalization } from './services/LocalizationService';
 
 interface DonationScreenProps {
   navigateTo: (screen: string, data?: any) => void;
@@ -14,47 +15,53 @@ export default function DonationScreen({ navigateTo, userType, userData }: Donat
   const { language } = useLocalization();
 
   return (
-    <div className="h-full overflow-y-auto bg-background pattern-nile">
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <Heart size={20} className="text-green-600" />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                {language === 'ar' ? 'التبرعات' : 'Donations'}
-              </h1>
-              <p className="text-sm text-gray-600">
-                {userType === 'patient' 
-                  ? (language === 'ar' ? 'ساعد المرضى المحتاجين' : 'Help patients in need')
-                  : (language === 'ar' ? 'إدارة التبرعات والتوزيع' : 'Manage donations and distribution')
-                }
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => navigateTo(userType === 'patient' ? 'home' : 'pharmacist-dashboard')}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              {language === 'ar' ? 'إغلاق' : 'Close'}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-6">
+      <View style={styles.headerRow}>
+        <View style={styles.headerLeftRow}>
+          <View style={styles.headerIconBox}>
+            <Text style={styles.headerIcon}>💚</Text>
+          </View>
+          <View>
+            <Text style={styles.headerTitle}>{language === 'ar' ? 'التبرعات' : 'Donations'}</Text>
+            <Text style={styles.headerSubtitle}>
+              {userType === 'patient'
+                ? (language === 'ar' ? 'ساعد المرضى المحتاجين' : 'Help patients in need')
+                : (language === 'ar' ? 'إدارة التبرعات والتوزيع' : 'Manage donations and distribution')}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.closeBtn}
+          onPress={() => navigateTo(userType === 'patient' ? 'home' : 'pharmacist-dashboard')}
+        >
+          <Text style={styles.closeBtnText}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.bodyContent}>
         {userType === 'patient' ? (
           <PatientDonationFlow navigateTo={navigateTo} />
         ) : (
-          <PharmacistDonationManager 
-            navigateTo={navigateTo} 
-            userData={userData} 
+          <PharmacistDonationManager
+            navigateTo={navigateTo}
+            userData={userData}
           />
         )}
-      </div>
-    </div>
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  content: { padding: 0 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  headerLeftRow: { flexDirection: 'row', alignItems: 'center' },
+  headerIconBox: { width: 40, height: 40, backgroundColor: '#d1fae5', borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  headerIcon: { fontSize: 20, color: '#22c55e' },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
+  headerSubtitle: { fontSize: 13, color: '#666' },
+  closeBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: '#f3f3f3' },
+  closeBtnText: { color: '#888', fontWeight: 'bold', fontSize: 14 },
+  bodyContent: { padding: 24 },
+});

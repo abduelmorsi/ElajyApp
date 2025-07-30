@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { I18nManager, View } from 'react-native';
 
 interface LocalizationContextType {
   language: 'ar' | 'en';
@@ -563,25 +565,35 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({
     return translations[language][key] || key;
   };
 
-  const toggleLanguage = () => {
+  const toggleLanguage = async () => {
     const newLang = language === 'ar' ? 'en' : 'ar';
     setLanguage(newLang);
-    localStorage.setItem('preferred-language', newLang);
+    try {
+      await AsyncStorage.setItem('preferred-language', newLang);
+    } catch {}
+    if (I18nManager.isRTL !== (newLang === 'ar')) {
+      I18nManager.forceRTL(newLang === 'ar');
+    }
   };
 
   // Load saved language preference
   useEffect(() => {
-    const saved = localStorage.getItem('preferred-language') as 'ar' | 'en';
-    if (saved && (saved === 'ar' || saved === 'en')) {
-      setLanguage(saved);
-    }
+    (async () => {
+      try {
+        const saved = await AsyncStorage.getItem('preferred-language');
+        if (saved === 'ar' || saved === 'en') {
+          setLanguage(saved);
+        }
+      } catch {}
+    })();
   }, []);
 
-  // Set HTML dir and lang attributes for RTL support
+  // Set RTL/LTR for React Native
   useEffect(() => {
-    document.documentElement.setAttribute('dir', direction);
-    document.documentElement.setAttribute('lang', language);
-  }, [direction, language]);
+    if (I18nManager.isRTL !== (language === 'ar')) {
+      I18nManager.forceRTL(language === 'ar');
+    }
+  }, [language]);
 
   const value: LocalizationContextType = {
     language,
@@ -593,9 +605,9 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({
 
   return (
     <LocalizationContext.Provider value={value}>
-      <div dir={direction} className={`${language === 'ar' ? 'font-arabic' : ''}`}>
+      <View style={{ flex: 1 }}>
         {children}
-      </div>
+      </View>
     </LocalizationContext.Provider>
   );
 };

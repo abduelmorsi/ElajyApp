@@ -1,17 +1,17 @@
 import * as React from "react";
+import { StyleSheet, TextInput } from "react-native";
 
-import { cn } from "./utils";
+type TextareaProps = React.ComponentPropsWithoutRef<typeof TextInput>;
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
-  ({ className, ...props }, ref) => {
+const Textarea = React.forwardRef<TextInput, TextareaProps>(
+  ({ style, ...props }, ref: React.ForwardedRef<TextInput>) => {
     return (
-      <textarea
-        data-slot="textarea"
-        className={cn(
-          "resize-none border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-input-background px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          className,
-        )}
+      <TextInput
         ref={ref}
+        style={[styles.textarea, style]}
+        multiline
+        numberOfLines={4}
+        placeholderTextColor="#9ca3af"
         {...props}
       />
     );
@@ -19,5 +19,21 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"tex
 );
 
 Textarea.displayName = "Textarea";
+
+const styles = StyleSheet.create({
+  textarea: {
+    minHeight: 64,
+    width: '100%',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    backgroundColor: '#f9fafb',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 16,
+    color: '#111827',
+    textAlignVertical: 'top',
+  },
+});
 
 export { Textarea };

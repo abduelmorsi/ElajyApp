@@ -1,56 +1,83 @@
-"use client";
 
 import * as React from "react";
-import { GripVerticalIcon } from "lucide-react";
-import * as ResizablePrimitive from "react-resizable-panels";
+import { Animated, PanResponder, StyleSheet, Text, View } from "react-native";
 
-import { cn } from "./utils";
+// Emoji for the handle
+const GripVerticalIcon = () => <Text style={styles.handleIcon}>⋮</Text>;
 
-function ResizablePanelGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) {
+// Simple horizontal resizable panel group for React Native
+const ResizablePanelGroup = ({ children, style }) => {
+  return <View style={[styles.group, style]}>{children}</View>;
+};
+
+const ResizablePanel = ({ children, style }) => {
+  return <View style={[styles.panel, style]}>{children}</View>;
+};
+
+const ResizableHandle = ({ withHandle = true, style, onResize }) => {
+  // Use PanResponder for drag
+  const pan = React.useRef(new Animated.ValueXY()).current;
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (e, gestureState) => {
+        if (onResize) onResize(gestureState.dx, gestureState.dy);
+      },
+      onPanResponderRelease: () => {
+        pan.setValue({ x: 0, y: 0 });
+      },
+    })
+  ).current;
+
   return (
-    <ResizablePrimitive.PanelGroup
-      data-slot="resizable-panel-group"
-      className={cn(
-        "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-function ResizablePanel({
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
-  return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
-}
-
-function ResizableHandle({
-  withHandle,
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
-  withHandle?: boolean;
-}) {
-  return (
-    <ResizablePrimitive.PanelResizeHandle
-      data-slot="resizable-handle"
-      className={cn(
-        "bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
-        className,
-      )}
-      {...props}
+    <Animated.View
+      style={[styles.handle, style]}
+      {...panResponder.panHandlers}
     >
       {withHandle && (
-        <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
-          <GripVerticalIcon className="size-2.5" />
-        </div>
+        <View style={styles.handleInner}>
+          <GripVerticalIcon />
+        </View>
       )}
-    </ResizablePrimitive.PanelResizeHandle>
+    </Animated.View>
   );
-}
+};
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
+const styles = StyleSheet.create({
+  group: {
+    flexDirection: 'row',
+    width: '100%',
+    height: '100%',
+  },
+  panel: {
+    flex: 1,
+    backgroundColor: '#fff',
+    minWidth: 40,
+    minHeight: 40,
+  },
+  handle: {
+    width: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e5e7eb',
+    cursor: 'col-resize', // ignored in RN, for parity
+  },
+  handleInner: {
+    backgroundColor: '#e5e7eb',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    width: 12,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  handleIcon: {
+    fontSize: 18,
+    color: '#888',
+  },
+});
+
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup };
+

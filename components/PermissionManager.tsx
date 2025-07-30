@@ -1,34 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Camera, 
-  MapPin, 
-  Bell, 
-  ContactRound, 
-  HardDrive,
-  Shield,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Info
-} from 'lucide-react';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
-import { Alert, AlertDescription } from './ui/alert';
+import React, { useEffect, useState } from 'react';
+import { Modal, Alert as RNAlert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalization, useRTL } from './services/LocalizationService';
-import { toast } from 'sonner';
 
 interface Permission {
   id: string;
   name: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: string; // emoji for icon
   description: string;
   required: boolean;
   status: 'granted' | 'denied' | 'prompt' | 'checking';
-  apiName?: PermissionName;
-  customCheck?: () => Promise<PermissionState>;
 }
+
+
+type PermissionState = 'granted' | 'denied' | 'prompt' | 'checking';
 
 interface PermissionManagerProps {
   requiredPermissions: string[];
@@ -55,63 +39,48 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [isCheckingPermissions, setIsCheckingPermissions] = useState(false);
 
-  // Define all available permissions
+  // Define all available permissions (use emoji for icons)
   const availablePermissions: Permission[] = [
     {
       id: 'camera',
       name: t('permission.camera'),
-      icon: Camera,
+      icon: '📷',
       description: t('permission.cameraDesc'),
       required: false,
       status: 'prompt',
-      customCheck: async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          stream.getTracks().forEach(track => track.stop());
-          return 'granted' as PermissionState;
-        } catch (error) {
-          if (error.name === 'NotAllowedError') return 'denied' as PermissionState;
-          return 'prompt' as PermissionState;
-        }
-      }
     },
     {
       id: 'location',
       name: t('permission.location'),
-      icon: MapPin,
+      icon: '📍',
       description: t('permission.locationDesc'),
       required: false,
       status: 'prompt',
-      apiName: 'geolocation' as PermissionName
     },
     {
       id: 'notifications',
       name: t('permission.notifications'),
-      icon: Bell,
+      icon: '🔔',
       description: t('permission.notificationsDesc'),
       required: false,
       status: 'prompt',
-      customCheck: async () => {
-        if (!('Notification' in window)) return 'denied' as PermissionState;
-        return Notification.permission as PermissionState;
-      }
     },
     {
       id: 'contacts',
       name: t('permission.contacts'),
-      icon: ContactRound,
+      icon: '👤',
       description: t('permission.contactsDesc'),
       required: false,
-      status: 'prompt'
+      status: 'prompt',
     },
     {
       id: 'storage',
       name: t('permission.storage'),
-      icon: HardDrive,
+      icon: '💾',
       description: t('permission.storageDesc'),
       required: false,
-      status: 'granted' // Usually granted by default
-    }
+      status: 'granted',
+    },
   ];
 
   // Initialize permissions based on required list
@@ -126,93 +95,25 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({
     setPermissions(filteredPermissions);
   }, [requiredPermissions]);
 
-  // Check current permission status
+  // Placeholder: In a real app, use react-native-permissions or similar
   const checkPermissionStatus = async (permission: Permission): Promise<PermissionState> => {
-    try {
-      if (permission.customCheck) {
-        return await permission.customCheck();
-      }
-
-      if (permission.apiName && 'permissions' in navigator) {
-        const result = await navigator.permissions.query({ name: permission.apiName });
-        return result.state;
-      }
-
-      return 'prompt';
-    } catch (error) {
-      console.warn(`Could not check permission for ${permission.id}:`, error);
-      return 'prompt';
-    }
+    // Always return 'prompt' for demo
+    return permission.status;
   };
 
-  // Request permission
+  // Request permission (placeholder for demo)
   const requestPermission = async (permission: Permission): Promise<PermissionState> => {
-    try {
-      switch (permission.id) {
-        case 'camera':
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            stream.getTracks().forEach(track => track.stop());
-            toast.success(t('permission.cameraGranted') || 'Camera access granted');
-            return 'granted';
-          } catch (error) {
-            if (error.name === 'NotAllowedError') {
-              toast.error(t('permission.cameraDenied') || 'Camera access denied');
-              return 'denied';
-            }
-            throw error;
-          }
-
-        case 'location':
-          return new Promise((resolve) => {
-            navigator.geolocation.getCurrentPosition(
-              () => {
-                toast.success(t('permission.locationGranted') || 'Location access granted');
-                resolve('granted');
-              },
-              (error) => {
-                if (error.code === error.PERMISSION_DENIED) {
-                  toast.error(t('permission.locationDenied') || 'Location access denied');
-                  resolve('denied');
-                } else {
-                  resolve('prompt');
-                }
-              },
-              { timeout: 10000 }
-            );
-          });
-
-        case 'notifications':
-          if (!('Notification' in window)) {
-            toast.error(t('permission.notificationsNotSupported') || 'Notifications not supported');
-            return 'denied';
-          }
-          
-          const result = await Notification.requestPermission();
-          if (result === 'granted') {
-            toast.success(t('permission.notificationsGranted') || 'Notifications enabled');
-          } else {
-            toast.error(t('permission.notificationsDenied') || 'Notifications denied');
-          }
-          return result as PermissionState;
-
-        case 'contacts':
-          // This is usually handled by the browser automatically
-          toast.info(t('permission.contactsInfo') || 'Contacts access will be requested when needed');
-          return 'granted';
-
-        case 'storage':
-          // Storage is usually granted by default
-          return 'granted';
-
-        default:
-          return 'prompt';
-      }
-    } catch (error) {
-      console.error(`Error requesting permission for ${permission.id}:`, error);
-      toast.error(t('permission.requestError') || 'Error requesting permission');
-      return 'denied';
-    }
+    // In a real app, use react-native-permissions or similar
+    RNAlert.alert(
+      t('permission.requestTitle') || 'Request Permission',
+      `${permission.name}: ${permission.description}`,
+      [
+        { text: t('permission.deny') || 'Deny', onPress: () => {}, style: 'cancel' },
+        { text: t('permission.grant') || 'Grant', onPress: () => {} },
+      ]
+    );
+    // Simulate granting permission
+    return 'granted';
   };
 
   // Check all permissions
@@ -266,13 +167,13 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({
   const getStatusBadge = (status: PermissionState | 'checking') => {
     switch (status) {
       case 'granted':
-        return <Badge className="bg-success text-success-foreground"><CheckCircle size={12} className="mr-1" />منح</Badge>;
+        return <Text style={[styles.badge, styles.badgeGranted]}>✅ {language === 'ar' ? 'منح' : 'Granted'}</Text>;
       case 'denied':
-        return <Badge variant="destructive"><XCircle size={12} className="mr-1" />مرفوض</Badge>;
+        return <Text style={[styles.badge, styles.badgeDenied]}>❌ {language === 'ar' ? 'مرفوض' : 'Denied'}</Text>;
       case 'checking':
-        return <Badge variant="outline">جاري التحقق...</Badge>;
+        return <Text style={[styles.badge, styles.badgeChecking]}>{language === 'ar' ? 'جاري التحقق...' : 'Checking...'}</Text>;
       default:
-        return <Badge variant="outline">مطلوب</Badge>;
+        return <Text style={[styles.badge, styles.badgePrompt]}>{language === 'ar' ? 'مطلوب' : 'Required'}</Text>;
     }
   };
 
@@ -280,13 +181,13 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({
   const getStatusIcon = (status: PermissionState | 'checking') => {
     switch (status) {
       case 'granted':
-        return <CheckCircle size={16} className="text-success" />;
+        return <Text style={styles.statusIcon}>✅</Text>;
       case 'denied':
-        return <XCircle size={16} className="text-destructive" />;
+        return <Text style={styles.statusIcon}>❌</Text>;
       case 'checking':
-        return <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />;
+        return <Text style={styles.statusIcon}>⏳</Text>;
       default:
-        return <AlertTriangle size={16} className="text-warning" />;
+        return <Text style={styles.statusIcon}>⚠️</Text>;
     }
   };
 
@@ -297,115 +198,110 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({
   }, [isOpen]);
 
   const PermissionContent = () => (
-    <div className="space-y-4">
+    <ScrollView contentContainerStyle={styles.contentContainer}>
       {/* Header */}
-      <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Shield size={32} className="text-primary" />
-        </div>
-        <h3 className="font-semibold text-lg mb-2">
+      <View style={styles.headerBox}>
+        <View style={styles.headerIconCircle}>
+          <Text style={styles.headerShield}>🛡️</Text>
+        </View>
+        <Text style={styles.headerTitleBox}>
           {title || (language === 'ar' ? 'أذونات التطبيق' : 'App Permissions')}
-        </h3>
-        <p className="text-sm text-muted-foreground">
+        </Text>
+        <Text style={styles.headerDesc}>
           {description || (language === 'ar' ? 
             'نحتاج هذه الأذونات لتوفير أفضل تجربة للمستخدم' :
             'We need these permissions to provide the best user experience'
           )}
-        </p>
-      </div>
+        </Text>
+      </View>
 
       {/* Permission List */}
-      <div className="space-y-3">
-        {permissions.map((permission) => {
-          const Icon = permission.icon;
-          return (
-            <Card key={permission.id} className="p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3 flex-1">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon size={20} className="text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <h4 className="font-medium">{permission.name}</h4>
-                      {permission.required && (
-                        <Badge variant="outline" className="text-xs">مطلوب</Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {permission.description}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end space-y-2 ml-3">
-                  {getStatusIcon(permission.status)}
-                  {permission.status === 'prompt' || permission.status === 'denied' ? (
-                    <Button
-                      size="sm"
-                      onClick={() => handlePermissionRequest(permission)}
-                      disabled={permission.status === 'checking'}
-                    >
-                      {t('permission.grant')}
-                    </Button>
-                  ) : (
-                    getStatusBadge(permission.status)
-                  )}
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+      {permissions.map((permission) => (
+        <View key={permission.id} style={styles.permissionCard}>
+          <View style={styles.permissionRow}>
+            <View style={styles.permissionIconCircle}>
+              <Text style={styles.permissionIcon}>{permission.icon}</Text>
+            </View>
+            <View style={styles.permissionInfoBox}>
+              <View style={styles.permissionTitleRow}>
+                <Text style={styles.permissionTitle}>{permission.name}</Text>
+                {permission.required && (
+                  <Text style={styles.badgeRequired}>{language === 'ar' ? 'مطلوب' : 'Required'}</Text>
+                )}
+              </View>
+              <Text style={styles.permissionDesc}>{permission.description}</Text>
+            </View>
+            <View style={styles.permissionStatusBox}>
+              {getStatusIcon(permission.status)}
+              {(permission.status === 'prompt' || permission.status === 'denied') ? (
+                <TouchableOpacity
+                  style={styles.grantButton}
+                  onPress={() => handlePermissionRequest(permission)}
+                  disabled={permission.status === 'checking' as PermissionState}
+                >
+                  <Text style={styles.grantButtonText}>{t('permission.grant')}</Text>
+                </TouchableOpacity>
+              ) : (
+                getStatusBadge(permission.status)
+              )}
+            </View>
+          </View>
+        </View>
+      ))}
 
       {/* Info Alert */}
-      <Alert className="border-info/20 bg-info/10">
-        <Info size={16} className="text-info" />
-        <AlertDescription className="text-info">
+      <View style={styles.infoAlert}>
+        <Text style={styles.infoIcon}>ℹ️</Text>
+        <Text style={styles.infoText}>
           {language === 'ar' ? 
-            'يمكنك تغيير هذه الأذونات في أي وقت من إعدادات المتصفح.' :
-            'You can change these permissions anytime in your browser settings.'
+            'يمكنك تغيير هذه الأذونات في أي وقت من إعدادات التطبيق.' :
+            'You can change these permissions anytime in your app settings.'
           }
-        </AlertDescription>
-      </Alert>
+        </Text>
+      </View>
 
       {/* Action Buttons */}
-      <div className="flex space-x-2 pt-4">
-        <Button 
-          onClick={checkAllPermissions} 
-          variant="outline" 
+      <View style={styles.actionRow}>
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.actionButtonOutline]} 
+          onPress={checkAllPermissions} 
           disabled={isCheckingPermissions}
-          className="flex-1"
         >
-          {isCheckingPermissions ? 'جاري التحقق...' : 'تحديث الحالة'}
-        </Button>
+          <Text style={[styles.actionButtonText, styles.actionButtonOutlineText]}>
+            {isCheckingPermissions ? 'جاري التحقق...' : 'تحديث الحالة'}
+          </Text>
+        </TouchableOpacity>
         {showInModal && (
-          <Button onClick={() => setIsOpen(false)} className="flex-1">
-            {language === 'ar' ? 'إغلاق' : 'Close'}
-          </Button>
+          <TouchableOpacity style={styles.actionButton} onPress={() => setIsOpen(false)}>
+            <Text style={styles.actionButtonText}>{language === 'ar' ? 'إغلاق' : 'Close'}</Text>
+          </TouchableOpacity>
         )}
-      </div>
-    </div>
+      </View>
+    </ScrollView>
   );
 
   if (showInModal) {
     return (
       <>
         {trigger ? (
-          <div onClick={() => setIsOpen(true)}>
-            {trigger}
-          </div>
+          <TouchableOpacity onPress={() => setIsOpen(true)}>{trigger}</TouchableOpacity>
         ) : (
-          <Button onClick={() => setIsOpen(true)}>
-            <Shield size={16} className={getMargin('0', '2')} />
-            {language === 'ar' ? 'إدارة الأذونات' : 'Manage Permissions'}
-          </Button>
+          <TouchableOpacity style={styles.openButton} onPress={() => setIsOpen(true)}>
+            <Text style={styles.openButtonText}>🛡️ {language === 'ar' ? 'إدارة الأذونات' : 'Manage Permissions'}</Text>
+          </TouchableOpacity>
         )}
-        
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
-            <PermissionContent />
-          </DialogContent>
-        </Dialog>
+        <Modal
+          visible={isOpen}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setIsOpen(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <PermissionContent />
+            </View>
+          </View>
+        </Modal>
       </>
     );
   }
@@ -413,17 +309,16 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({
   return <PermissionContent />;
 };
 
-// Hook for easy permission checking
+
+// Hook for easy permission checking (placeholder)
 export const usePermissions = () => {
   const [permissions, setPermissions] = useState<Record<string, PermissionState>>({});
 
   const checkPermission = async (permissionId: string): Promise<PermissionState> => {
-    // Implementation would check specific permission
     return 'prompt';
   };
 
   const requestPermission = async (permissionId: string): Promise<PermissionState> => {
-    // Implementation would request specific permission
     return 'granted';
   };
 
@@ -433,5 +328,218 @@ export const usePermissions = () => {
     requestPermission
   };
 };
+
+// Styles
+const styles = StyleSheet.create({
+  contentContainer: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  headerBox: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  headerIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#e0e7ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  headerShield: {
+    fontSize: 32,
+  },
+  headerTitleBox: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    color: '#222',
+    textAlign: 'center',
+  },
+  headerDesc: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+  permissionCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  permissionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  permissionIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#e0e7ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  permissionIcon: {
+    fontSize: 20,
+  },
+  permissionInfoBox: {
+    flex: 1,
+  },
+  permissionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  permissionTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#222',
+    marginRight: 8,
+  },
+  badgeRequired: {
+    fontSize: 12,
+    color: '#2563eb',
+    borderWidth: 1,
+    borderColor: '#2563eb',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginLeft: 4,
+  },
+  permissionDesc: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 2,
+  },
+  permissionStatusBox: {
+    alignItems: 'flex-end',
+    marginLeft: 12,
+  },
+  grantButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    marginTop: 6,
+  },
+  grantButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  badge: {
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    fontSize: 12,
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  badgeGranted: {
+    backgroundColor: '#bbf7d0',
+    color: '#166534',
+  },
+  badgeDenied: {
+    backgroundColor: '#fecaca',
+    color: '#991b1b',
+  },
+  badgeChecking: {
+    backgroundColor: '#fef9c3',
+    color: '#854d0e',
+  },
+  badgePrompt: {
+    backgroundColor: '#f3f4f6',
+    color: '#374151',
+  },
+  statusIcon: {
+    fontSize: 16,
+    marginTop: 2,
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  infoAlert: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e0e7ff',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  infoIcon: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+  infoText: {
+    fontSize: 13,
+    color: '#2563eb',
+    flex: 1,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    marginTop: 16,
+    marginBottom: 8,
+    justifyContent: 'space-between',
+  },
+  actionButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
+  },
+  actionButtonOutline: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#2563eb',
+    marginLeft: 0,
+    marginRight: 8,
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  actionButtonOutlineText: {
+    color: '#2563eb',
+  },
+  openButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    alignItems: 'center',
+    margin: 12,
+  },
+  openButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    width: '90%',
+    maxHeight: '80%',
+    padding: 0,
+    overflow: 'hidden',
+  },
+});
 
 export default PermissionManager;
