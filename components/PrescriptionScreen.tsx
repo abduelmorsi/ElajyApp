@@ -303,14 +303,14 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
             
             <View style={styles.uploadButtons}>
               <TouchableOpacity style={styles.uploadButton} onPress={takePhoto}>
-                <Icon name="camera-alt" size={24} color="#374151" style={styles.uploadButtonIcon} />
+                <Icon name="camera-alt" size={24} color="#49C5B8" style={styles.uploadButtonIcon} />
                 <Text style={styles.uploadButtonText}>
                   {language === 'ar' ? 'التقط صورة' : 'Take Photo'}
                 </Text>
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-                <Icon name="photo-library" size={24} color="#374151" style={styles.uploadButtonIcon} />
+                <Icon name="photo-library" size={24} color="#49C5B8" style={styles.uploadButtonIcon} />
                 <Text style={styles.uploadButtonText}>
                   {language === 'ar' ? 'اختر من المعرض' : 'Choose from Gallery'}
                 </Text>
@@ -395,7 +395,7 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
 
             {isProcessing && (
               <View style={styles.processingContainer}>
-                <ActivityIndicator size="large" color="#007bff" />
+                <ActivityIndicator size="large" color="#49C5B8" />
                 <Text style={styles.processingText}>
                   {processingProgress || (language === 'ar' ? 'جاري استخراج النص من الصورة...' : 'Extracting text from image...')}
                 </Text>
@@ -517,12 +517,12 @@ const styles = StyleSheet.create({
   },
   uploadButton: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#e6f7f5',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e5e7eb'
+    borderColor: '#49C5B8'
   },
   uploadButtonIcon: {
     marginBottom: 8
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   uploadButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: '#49C5B8',
     textAlign: 'center'
   },
   prescriptionsSection: {
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   doctorName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#222',
+    color: '#49C5B8',
     marginBottom: 4
   },
   prescriptionDate: {
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   },
   medicineText: {
     fontSize: 14,
-    color: '#374151',
+    color: '#49C5B8',
     marginBottom: 4
   },
   ocrTextContainer: {
@@ -596,12 +596,12 @@ const styles = StyleSheet.create({
   ocrTextLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#6b7280',
+    color: '#49C5B8',
     marginBottom: 4
   },
   ocrText: {
     fontSize: 13,
-    color: '#374151',
+    color: '#49C5B8',
     lineHeight: 18
   },
   modalHeader: {
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   processButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6
@@ -678,7 +678,7 @@ const styles = StyleSheet.create({
     color: '#222'
   },
   editButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#e6f7f5',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center'
@@ -730,11 +730,11 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#374151'
+    color: '#49C5B8'
   },
   saveButton: {
     flex: 1,
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center'

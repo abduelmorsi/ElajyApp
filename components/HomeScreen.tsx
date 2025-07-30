@@ -300,7 +300,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
   },
   sectionAction: {
     fontSize: 13,
-    color: '#2563eb',
+    color: '#49C5B8',
     fontWeight: '500',
   },
   quickActionsGrid: {
@@ -327,7 +327,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: '#e0e7ff',
+    backgroundColor: '#e6f7f5',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
@@ -458,7 +458,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
   },
   featuredPrice: {
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#49C5B8',
     fontSize: 12,
     marginRight: 4,
   },
@@ -474,7 +474,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     marginLeft: 4,
   },
   featuredAddButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -615,7 +615,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
                 onPress={() => handleQuickAction(action.id)}
               >
                 <View style={styles.quickActionIconContainer}>
-                  {renderIcon(action.icon, 24, '#007bff')}
+                  {renderIcon(action.icon, 24, '#49C5B8')}
                 </View>
                 <View style={styles.quickActionTextContainer}>
                   <Text style={styles.quickActionTitle}>{action.title}</Text>
@@ -630,22 +630,22 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
         {userData && (
           <View style={styles.statsGrid}>
             <View style={styles.statsCard}>
-              <View style={[styles.statsIcon, { backgroundColor: '#dbeafe' }]}> 
-                {renderIcon('ShoppingBag', 20, '#1e40af')}
+              <View style={[styles.statsIcon, { backgroundColor: '#e6f7f5' }]}> 
+                {renderIcon('ShoppingBag', 20, '#49C5B8')}
               </View>
               <Text style={styles.statsValue}>{userData.orderCount || 23}</Text>
               <Text style={styles.statsLabel}>{language === 'ar' ? 'طلب' : 'Orders'}</Text>
             </View>
             <View style={styles.statsCard}>
-              <View style={[styles.statsIcon, { backgroundColor: '#bbf7d0' }]}> 
-                {renderIcon('TrendingUp', 20, '#166534')}
+              <View style={[styles.statsIcon, { backgroundColor: '#e6f7f5' }]}> 
+                {renderIcon('TrendingUp', 20, '#49C5B8')}
               </View>
               <Text style={styles.statsValue}>{userData.savedMoney || 145}</Text>
               <Text style={styles.statsLabel}>{language === 'ar' ? 'ج.س موفرة' : 'SDG Saved'}</Text>
             </View>
             <View style={styles.statsCard}>
-              <View style={[styles.statsIcon, { backgroundColor: '#fef9c3' }]}> 
-                {renderIcon('Star', 20, '#ca8a04')}
+              <View style={[styles.statsIcon, { backgroundColor: '#e6f7f5' }]}> 
+                {renderIcon('Star', 20, '#49C5B8')}
               </View>
               <Text style={styles.statsValue}>{userData.points || 1250}</Text>
               <Text style={styles.statsLabel}>{language === 'ar' ? 'نقطة' : 'Points'}</Text>

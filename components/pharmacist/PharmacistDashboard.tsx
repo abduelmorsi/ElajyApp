@@ -56,8 +56,8 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       title: language === 'ar' ? 'الطلبات الجديدة' : 'New Orders',
       subtitle: language === 'ar' ? 'مراجعة الطلبات' : 'Review orders',
       icon: 'inventory',
-      color: '#e0e7ff',
-      iconColor: '#2563eb',
+      color: '#e6f7f5',
+      iconColor: '#49C5B8',
       count: 12
     },
     {
@@ -65,8 +65,8 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       title: language === 'ar' ? 'إدارة التبرعات' : 'Donation Management',
       subtitle: language === 'ar' ? 'توزيع الأدوية' : 'Distribute medicines',
       icon: 'favorite',
-      color: '#dcfce7',
-      iconColor: '#22c55e',
+      color: '#e6f7f5',
+      iconColor: '#49C5B8',
       count: 5
     },
     {
@@ -74,8 +74,8 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       title: language === 'ar' ? 'الاستشارات' : 'Consultations',
       subtitle: language === 'ar' ? 'استفسارات المرضى' : 'Patient inquiries',
       icon: 'chat',
-      color: '#ede9fe',
-      iconColor: '#a21caf',
+      color: '#e6f7f5',
+      iconColor: '#49C5B8',
       count: 8
     },
     {
@@ -83,8 +83,8 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       title: language === 'ar' ? 'المخزون' : 'Inventory',
       subtitle: language === 'ar' ? 'إدارة الأدوية' : 'Manage medicines',
       icon: 'local-pharmacy',
-      color: '#fef3c7',
-      iconColor: '#ea580c',
+      color: '#e6f7f5',
+      iconColor: '#49C5B8',
       count: 0
     }
   ];
@@ -96,8 +96,8 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       value: '24',
       change: 12,
       icon: 'shopping-cart',
-      bgColor: '#e0e7ff',
-      color: '#2563eb'
+      bgColor: '#e6f7f5',
+      color: '#49C5B8'
     },
     {
       title: language === 'ar' ? 'الإيرادات' : 'Revenue',

@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   tabButtonTextActive: {
-    color: '#2563eb',
+    color: '#49C5B8',
   },
   scrollContent: {
     padding: 16,
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   actionButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
@@ -533,9 +533,9 @@ const styles = StyleSheet.create({
   actionButtonOutline: {
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#2563eb',
+    borderColor: '#49C5B8',
   },
   actionButtonOutlineText: {
-    color: '#2563eb',
+    color: '#49C5B8',
   },
 });

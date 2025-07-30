@@ -9,19 +9,19 @@ const onboardingSlides = [
     icon: 'medication',
     titleKey: 'onboarding.title1',
     descKey: 'onboarding.desc1',
-    color: '#2563eb', // blue-500
+    color: '#49C5B8', // primary color
   },
   {
     icon: 'medical-services',
     titleKey: 'onboarding.title2',
     descKey: 'onboarding.desc2',
-    color: '#22c55e', // green-500
+    color: '#49C5B8', // primary color
   },
   {
     icon: 'local-shipping',
     titleKey: 'onboarding.title3',
     descKey: 'onboarding.desc3',
-    color: '#a21caf', // purple-700
+    color: '#49C5B8', // primary color
   },
 ];
 
@@ -42,11 +42,11 @@ export default function OnboardingScreen({ onNext, onSkip }) {
   const slide = onboardingSlides[currentSlide];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: '#f0f4ff', flex: 1 }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: '#f0f9f8', flex: 1 }]}>
       {/* Top Bar: Language Switcher & Skip Button */}
       <View style={[styles.topBar, { paddingTop: insets.top }]}> 
         <TouchableOpacity style={styles.langBtn} onPress={toggleLanguage}>
-          <Icon name="language" size={16} color="#007bff" style={{ marginRight: 4 }} />
+          <Icon name="language" size={16} color="#49C5B8" style={{ marginRight: 4 }} />
           <Text style={styles.langBtnText}>{language === 'ar' ? 'EN' : 'ع'}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
@@ -92,7 +92,7 @@ export default function OnboardingScreen({ onNext, onSkip }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f4ff', // blue-50
+    backgroundColor: '#f0f9f8', // primary-50 equivalent
     justifyContent: 'space-between',
   },
   skipContainer: {
@@ -161,13 +161,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   indicatorActive: {
-    backgroundColor: '#2563eb', // blue-500
+    backgroundColor: '#49C5B8', // primary color
   },
   indicatorInactive: {
     backgroundColor: '#e5e7eb', // muted
   },
   nextButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   brandTitle: {
-    color: '#2563eb',
+    color: '#49C5B8',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -218,6 +218,6 @@ const styles = StyleSheet.create({
   langBtnText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#007bff',
+    color: '#49C5B8',
   },
 });

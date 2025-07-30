@@ -365,7 +365,7 @@ function AppContent() {
                           <Icon 
                             name={getIconName(tab.icon)} 
                             size={22} 
-                            color={isActive ? '#007bff' : '#6b7280'} 
+                            color={isActive ? '#49C5B8' : '#6b7280'} 
                           />
                         {'badge' in tab && tab.badge !== undefined && tab.badge > 0 && (
                           <View style={styles.badge}>
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   tabLabelActive: {
-    color: '#007bff',
+    color: '#49C5B8',
     fontWeight: '600',
   },
   badge: {

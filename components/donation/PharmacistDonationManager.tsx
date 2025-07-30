@@ -93,8 +93,8 @@ export default function PharmacistDonationManager({ navigateTo, userData }) {
             <Text style={styles.actionButtonText}>{t('pharmacist.donation.approve')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionButton, styles.contactButton]}>
-            <Icon name={ICONS.phone} size={16} color="#007bff" />
-            <Text style={[styles.actionButtonText, { color: '#007bff' }]}>{t('action.call')}</Text>
+                          <Icon name={ICONS.phone} size={16} color="#49C5B8" />
+              <Text style={[styles.actionButtonText, { color: '#49C5B8' }]}>{t('action.call')}</Text>
           </TouchableOpacity>
                 </View>
       )}
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTab: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   tabText: {
     fontSize: 14,
@@ -261,12 +261,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   assignButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   contactButton: {
     backgroundColor: '#f3f4f6',
     borderWidth: 1,
-    borderColor: '#007bff',
+    borderColor: '#49C5B8',
   },
   actionButtonText: {
     fontSize: 14,
@@ -274,15 +274,15 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   assignedInfo: {
-    backgroundColor: '#f0f9ff',
+    backgroundColor: '#e6f7f5',
     padding: 8,
     borderRadius: 8,
     borderLeftWidth: 3,
-    borderLeftColor: '#007bff',
+    borderLeftColor: '#49C5B8',
   },
   assignedText: {
     fontSize: 14,
-    color: '#007bff',
+    color: '#49C5B8',
     fontWeight: '500',
   },
 });

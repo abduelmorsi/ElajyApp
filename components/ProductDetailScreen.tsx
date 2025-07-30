@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   primaryButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   headerActionIcon: {
     fontSize: 18,
-    color: '#2563eb',
+    color: '#49C5B8',
   },
   card: {
     backgroundColor: '#f3f4f6',
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   },
   qtyButtonText: {
     fontSize: 22,
-    color: '#2563eb',
+    color: '#49C5B8',
     fontWeight: 'bold',
   },
   qtyValueBox: {
@@ -367,17 +367,17 @@ const styles = StyleSheet.create({
   priceTotalValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#49C5B8',
   },
   addToCartButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 8,
   },
   addToCartButtonDisabled: {
-    backgroundColor: '#a5b4fc',
+    backgroundColor: '#a5d8d3',
   },
   addToCartButtonText: {
     color: '#fff',

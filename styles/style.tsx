@@ -11,7 +11,7 @@ export const lightTheme = {
   cardForeground: '#1f2937',
   popover: '#ffffff',
   popoverForeground: '#1f2937',
-  primary: '#0891b2',
+  primary: '#49C5B8',
   primaryForeground: '#ffffff',
   secondary: '#f8fafc',
   secondaryForeground: '#475569',
@@ -35,8 +35,8 @@ export const lightTheme = {
   healthStatusWarning: '#f59e0b',
   healthStatusError: '#ef4444',
   healthStatusInfo: '#3b82f6',
-  ring: '#0891b2',
-  chart1: '#0891b2',
+  ring: '#49C5B8',
+  chart1: '#49C5B8',
   chart2: '#059669',
   chart3: '#7c3aed',
   chart4: '#dc2626',
@@ -47,12 +47,12 @@ export const lightTheme = {
   radiusButton: 8, // 0.5rem ≈ 8px
   sidebar: '#ffffff',
   sidebarForeground: '#1f2937',
-  sidebarPrimary: '#0891b2',
+  sidebarPrimary: '#49C5B8',
   sidebarPrimaryForeground: '#ffffff',
   sidebarAccent: '#f8fafc',
   sidebarAccentForeground: '#475569',
   sidebarBorder: '#e2e8f0',
-  sidebarRing: '#0891b2',
+  sidebarRing: '#49C5B8',
   
   // Derived values
   radiusSm: 8,  // (12 - 4)
@@ -70,7 +70,7 @@ export const darkTheme = {
   cardForeground: '#f1f5f9',
   popover: '#1e293b',
   popoverForeground: '#f1f5f9',
-  primary: '#0ea5e9',
+  primary: '#49C5B8',
   primaryForeground: '#0f172a',
   secondary: '#1e293b',
   secondaryForeground: '#f1f5f9',
@@ -80,15 +80,15 @@ export const darkTheme = {
   accentForeground: '#f1f5f9',
   border: '#334155',
   input: '#334155',
-  ring: '#0ea5e9',
+  ring: '#49C5B8',
   sidebar: '#1e293b',
   sidebarForeground: '#f1f5f9',
-  sidebarPrimary: '#0ea5e9',
+  sidebarPrimary: '#49C5B8',
   sidebarPrimaryForeground: '#0f172a',
   sidebarAccent: '#334155',
   sidebarAccentForeground: '#f1f5f9',
   sidebarBorder: '#334155',
-  sidebarRing: '#0ea5e9',
+  sidebarRing: '#49C5B8',
 };
 
 // ==================== BASE STYLES ====================

@@ -508,7 +508,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
           style={[styles.viewModeButton, viewMode === 'list' && styles.viewModeButtonActive]}
           onPress={() => setViewMode('list')}
         >
-          <Icon name="list" size={20} color={viewMode === 'list' ? '#007bff' : '#666'} />
+          <Icon name="list" size={20} color={viewMode === 'list' ? '#49C5B8' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'list' && styles.viewModeTextActive]}>
             {language === 'ar' ? 'قائمة' : 'List'}
           </Text>
@@ -517,7 +517,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
           style={[styles.viewModeButton, viewMode === 'grid' && styles.viewModeButtonActive]}
           onPress={() => setViewMode('grid')}
         >
-          <Icon name="grid-view" size={20} color={viewMode === 'grid' ? '#007bff' : '#666'} />
+          <Icon name="grid-view" size={20} color={viewMode === 'grid' ? '#49C5B8' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'grid' && styles.viewModeTextActive]}>
             {language === 'ar' ? 'شبكة' : 'Grid'}
           </Text>
@@ -526,7 +526,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
           style={[styles.viewModeButton, viewMode === 'map' && styles.viewModeButtonActive]}
           onPress={() => setViewMode('map')}
         >
-          <Icon name="map" size={20} color={viewMode === 'map' ? '#007bff' : '#666'} />
+          <Icon name="map" size={20} color={viewMode === 'map' ? '#49C5B8' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'map' && styles.viewModeTextActive]}>
             {language === 'ar' ? 'خريطة' : 'Map'}
           </Text>
@@ -552,7 +552,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
                 description={language === 'ar' ? 'أنت هنا' : 'You are here'}
               >
                 <View style={{
-                  backgroundColor: '#007bff',
+                  backgroundColor: '#49C5B8',
                   borderRadius: 15,
                   padding: 8,
                   borderWidth: 2,
@@ -848,8 +848,8 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   categoryButtonActive: {
-    backgroundColor: '#007bff',
-    borderColor: '#007bff',
+    backgroundColor: '#49C5B8',
+    borderColor: '#49C5B8',
   },
   categoryText: {
     marginLeft: 6,
@@ -876,8 +876,8 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
   },
   filterButtonActive: {
-    backgroundColor: '#007bff',
-    borderColor: '#007bff',
+    backgroundColor: '#49C5B8',
+    borderColor: '#49C5B8',
   },
   filterText: {
     fontSize: 12,
@@ -976,7 +976,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   viewModeTextActive: {
-    color: '#007bff',
+    color: '#49C5B8',
     fontWeight: '600',
   },
   card: {
@@ -1034,7 +1034,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardPrice: { 
-    color: '#1e90ff',
+    color: '#49C5B8',
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -1043,7 +1043,7 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e90ff',
+    backgroundColor: '#49C5B8',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 6,
@@ -1146,13 +1146,13 @@ const styles = StyleSheet.create({
   },
   gridCardPrice: { 
     fontSize: 11,
-    color: '#1e90ff',
+    color: '#49C5B8',
     fontWeight: '600',
   },
   gridAddButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e90ff',
+    backgroundColor: '#49C5B8',
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 4,

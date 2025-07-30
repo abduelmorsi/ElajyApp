@@ -145,10 +145,10 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-              <Icon name="call" size={16} color="#007bff" />
+              <Icon name="call" size={16} color="#49C5B8" />
             </TouchableOpacity>
             <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-              <Icon name="videocam" size={16} color="#007bff" />
+              <Icon name="videocam" size={16} color="#49C5B8" />
             </TouchableOpacity>
           </View>
         </View>
@@ -196,7 +196,7 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
               onSubmitEditing={handleSendMessage}
               placeholderTextColor="#888"
             />
-            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#007bff' }} onPress={handleSendMessage}>
+            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#49C5B8' }} onPress={handleSendMessage}>
               <Icon name="send" size={16} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
@@ -239,7 +239,7 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
           <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, borderWidth: 1, borderColor: '#bae6fd', padding: 16, marginHorizontal: 8, marginBottom: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ width: 40, height: 40, backgroundColor: '#bae6fd', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-              <Icon name="chat" size={18} color="#007bff" />
+              <Icon name="chat" size={18} color="#49C5B8" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 4 }}>
@@ -259,18 +259,18 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
               {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
             </Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: '#dbeafe', borderRadius: 10, alignItems: 'center', padding: 14, marginRight: 6 }} onPress={() => setConsultationType('chat')}>
-              <Icon name="chat" size={20} color="#007bff" style={{ marginBottom: 6 }} />
+            <TouchableOpacity style={{ flex: 1, backgroundColor: '#e6f7f5', borderRadius: 10, alignItems: 'center', padding: 14, marginRight: 6 }} onPress={() => setConsultationType('chat')}>
+              <Icon name="chat" size={20} color="#49C5B8" style={{ marginBottom: 6 }} />
               <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'محادثة نصية' : 'Text Chat'}</Text>
               <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'رسائل فورية' : 'Instant messaging'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: '#bbf7d0', borderRadius: 10, alignItems: 'center', padding: 14, marginHorizontal: 6 }} onPress={() => setConsultationType('call')}>
-              <Icon name="call" size={20} color="#22c55e" style={{ marginBottom: 6 }} />
+            <TouchableOpacity style={{ flex: 1, backgroundColor: '#e6f7f5', borderRadius: 10, alignItems: 'center', padding: 14, marginHorizontal: 6 }} onPress={() => setConsultationType('call')}>
+              <Icon name="call" size={20} color="#49C5B8" style={{ marginBottom: 6 }} />
               <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'مكالمة صوتية' : 'Voice Call'}</Text>
               <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'تواصل مباشر' : 'Direct communication'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: '#ddd6fe', borderRadius: 10, alignItems: 'center', padding: 14, marginLeft: 6 }} onPress={() => setConsultationType('video')}>
-              <Icon name="videocam" size={20} color="#a78bfa" style={{ marginBottom: 6 }} />
+            <TouchableOpacity style={{ flex: 1, backgroundColor: '#e6f7f5', borderRadius: 10, alignItems: 'center', padding: 14, marginLeft: 6 }} onPress={() => setConsultationType('video')}>
+              <Icon name="videocam" size={20} color="#49C5B8" style={{ marginBottom: 6 }} />
               <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'مكالمة مرئية' : 'Video Call'}</Text>
               <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'تفاعل بصري' : 'Visual interaction'}</Text>
             </TouchableOpacity>
@@ -282,8 +282,8 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? 'الصيادلة المتاحون' : 'Available Pharmacists'}</Text>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}>
-              <Icon name="filter-list" size={14} color="#007bff" style={{ marginRight: 4 }} />
-              <Text style={{ color: '#007bff', fontWeight: 'bold', fontSize: 14 }}>{language === 'ar' ? 'فلتر' : 'Filter'}</Text>
+              <Icon name="filter-list" size={14} color="#49C5B8" style={{ marginRight: 4 }} />
+              <Text style={{ color: '#49C5B8', fontWeight: 'bold', fontSize: 14 }}>{language === 'ar' ? 'فلتر' : 'Filter'}</Text>
             </TouchableOpacity>
           </View>
           {filteredPharmacists.map((pharmacist) => (
@@ -308,13 +308,13 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
                   ))}
                 </View>
                 <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                  <TouchableOpacity style={{ backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'chat')}>
+                  <TouchableOpacity style={{ backgroundColor: '#49C5B8', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'chat')}>
                     <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'محادثة' : 'Chat'}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: '#22c55e', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'call')}>
+                  <TouchableOpacity style={{ backgroundColor: '#49C5B8', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'call')}>
                     <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'مكالمة' : 'Call'}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: '#a78bfa', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }} onPress={() => handleStartConsultation(pharmacist, 'video')}>
+                  <TouchableOpacity style={{ backgroundColor: '#49C5B8', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }} onPress={() => handleStartConsultation(pharmacist, 'video')}>
                     <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'مرئية' : 'Video'}</Text>
                   </TouchableOpacity>
                 </View>
@@ -373,8 +373,6 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     fontWeight: 'bold', 
     color: '#222',
-    textAlign: 'center',
-    numberOfLines: 1,
-    ellipsizeMode: 'tail'
+    textAlign: 'center'
   },
 });

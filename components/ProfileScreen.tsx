@@ -99,10 +99,10 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
         {/* User Stats */}
         <View style={styles.statsGrid}>
           {[
-            { icon: 'shopping-cart', label: language === 'ar' ? 'الطلبات' : 'Orders', value: profileData.orderCount, color: '#1976d2' },
-            { icon: 'savings', label: language === 'ar' ? 'المدخرات' : 'Saved', value: `$${profileData.savedMoney}`, color: '#388e3c' },
-            { icon: 'star', label: language === 'ar' ? 'النقاط' : 'Points', value: profileData.points, color: '#fbc02d' },
-            { icon: 'description', label: language === 'ar' ? 'الوصفات' : 'Prescriptions', value: profileData.prescriptions, color: '#0288d1' },
+            { icon: 'shopping-cart', label: language === 'ar' ? 'الطلبات' : 'Orders', value: profileData.orderCount, color: '#49C5B8' },
+            { icon: 'savings', label: language === 'ar' ? 'المدخرات' : 'Saved', value: `$${profileData.savedMoney}`, color: '#49C5B8' },
+            { icon: 'star', label: language === 'ar' ? 'النقاط' : 'Points', value: profileData.points, color: '#49C5B8' },
+            { icon: 'description', label: language === 'ar' ? 'الوصفات' : 'Prescriptions', value: profileData.prescriptions, color: '#49C5B8' },
           ].map((stat, idx) => (
             <View key={idx} style={styles.statCard}>
               <View style={[styles.statIconBox, { backgroundColor: stat.color + '22' }]}> 
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#1976d2',
+    backgroundColor: '#49C5B8',
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
   headerName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1976d2',
+    color: '#49C5B8',
     marginBottom: 4,
   },
   headerLocation: {
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   sectionTitleText: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#1976d2',
+    color: '#49C5B8',
     marginBottom: 12,
   },
   card: {
@@ -529,13 +529,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   langBtn: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#e6f7f5',
     borderRadius: 8,
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
   langBtnText: {
-    color: '#1976d2',
+    color: '#49C5B8',
     fontWeight: 'bold',
     fontSize: 13,
   },
@@ -682,13 +682,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   cancelButton: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#e6f7f5',
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   cancelButtonText: {
-    color: '#374151',
+    color: '#49C5B8',
     fontSize: 16,
     fontWeight: '500',
   },

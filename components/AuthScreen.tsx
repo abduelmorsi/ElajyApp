@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   langBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#007bff',
+    color: '#49C5B8',
     marginLeft: 4,
   },
   content: {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   userTypeBtnActive: {
-    borderColor: '#007bff',
+    borderColor: '#49C5B8',
     backgroundColor: '#f8fbff',
     shadowOpacity: 0.1,
   },
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     color: '#6c757d',
   },
   userTypeIconActive: {
-    color: '#007bff',
+    color: '#49C5B8',
   },
   userTypeLabel: {
     fontSize: 14,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     color: '#495057',
   },
   userTypeLabelActive: {
-    color: '#007bff',
+    color: '#49C5B8',
   },
   authFormSection: {
     backgroundColor: '#ffffff',
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     color: '#6c757d',
   },
   authTabTextActive: {
-    color: '#007bff',
+    color: '#49C5B8',
   },
   form: {
     marginTop: 8,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
   },
   inputFocused: {
-    borderColor: '#007bff',
+    borderColor: '#49C5B8',
     backgroundColor: '#ffffff',
   },
   passwordRow: {
@@ -232,15 +232,15 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     fontSize: 20,
-    color: '#6c757d',
+    color: '#49C5B8',
   },
   submitBtn: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
     borderRadius: 10,
     alignItems: 'center',
     paddingVertical: 14,
     marginTop: 6,
-    shadowColor: '#007bff',
+    shadowColor: '#49C5B8',
     shadowOffset: {
       width: 0,
       height: 4,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     fontSize: 14,
-    color: '#007bff',
+    color: '#49C5B8',
     fontWeight: '500',
   },
   divider: {
@@ -356,7 +356,7 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
               />
             </View>
             <TouchableOpacity style={styles.langBtn} onPress={onLanguageToggle}>
-              <Icon name="language" size={16} color="#007bff" />
+              <Icon name="language" size={16} color="#49C5B8" />
               <Text style={styles.langBtnText}>
                 {currentLanguage === 'ar' ? 'EN' : 'ع'}
               </Text>
@@ -519,7 +519,7 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
                       <MCIcon
                         name={showPassword ? 'eye-off' : 'eye'}
                         size={20}
-                        color="#6c757d"
+                        color="#49C5B8"
                       />
                     </TouchableOpacity>
                   </View>
@@ -548,11 +548,11 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
                         style={styles.eyeBtn} 
                         onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
-                        <MCIcon
-                          name={showConfirmPassword ? 'eye-off' : 'eye'}
-                          size={20}
-                          color="#6c757d"
-                        />
+                                              <MCIcon
+                        name={showConfirmPassword ? 'eye-off' : 'eye'}
+                        size={20}
+                        color="#49C5B8"
+                      />
                       </TouchableOpacity>
                     </View>
                   </View>

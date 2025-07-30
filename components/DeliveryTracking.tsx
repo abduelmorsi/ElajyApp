@@ -176,7 +176,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       {/* Status Overview */}
       <View style={styles.card}>
         <View style={styles.statusRow}>
-          <View style={[styles.statusIconBox, { backgroundColor: '#e0e7ff' }]}> {/* bgColor placeholder */}
+          <View style={[styles.statusIconBox, { backgroundColor: '#e6f7f5' }]}> {/* bgColor placeholder */}
             <Text style={styles.statusIcon}>{statusInfo.icon}</Text>
           </View>
           <View style={{ flex: 1 }}>
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   statusTitle: { fontSize: 16, fontWeight: 'bold', color: '#222' },
   statusSubtitle: { fontSize: 13, color: '#666' },
   progressBar: { height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, marginTop: 8, overflow: 'hidden' },
-  progressFill: { height: 8, backgroundColor: '#007bff', borderRadius: 4 },
+  progressFill: { height: 8, backgroundColor: '#49C5B8', borderRadius: 4 },
   sectionTitle: { fontSize: 15, fontWeight: 'bold', color: '#222', marginBottom: 8 },
   addressRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8 },
   addressIcon: { fontSize: 18, color: '#888', marginRight: 8 },
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   addressStreet: { color: '#444', fontSize: 13 },
   addressPhone: { color: '#888', fontSize: 12 },
   driverRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  driverAvatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#e0e7ff', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  driverAvatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#e6f7f5', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   driverAvatarIcon: { fontSize: 24, color: '#888' },
   driverName: { fontWeight: 'bold', color: '#222', fontSize: 15 },
   driverRatingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   driverActionIcon: { fontSize: 18 },
   timelineRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
   timelineIconBox: { width: 32, height: 32, borderRadius: 16, borderWidth: 2, borderColor: '#eee', alignItems: 'center', justifyContent: 'center', marginRight: 10, backgroundColor: '#fff' },
-  timelineIconBoxActive: { backgroundColor: '#007bff', borderColor: '#007bff' },
+  timelineIconBoxActive: { backgroundColor: '#49C5B8', borderColor: '#49C5B8' },
   timelineIcon: { fontSize: 16, color: '#fff' },
   timelineTitle: { fontSize: 14, color: '#888', fontWeight: 'bold' },
   timelineTitleActive: { color: '#222' },
@@ -318,17 +318,17 @@ const styles = StyleSheet.create({
   itemImage: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#f3f3f3', marginRight: 12 },
   itemName: { fontWeight: 'bold', color: '#222', fontSize: 14 },
   itemQty: { color: '#888', fontSize: 12 },
-  itemPrice: { fontWeight: 'bold', color: '#007bff', fontSize: 14 },
+  itemPrice: { fontWeight: 'bold', color: '#49C5B8', fontSize: 14 },
   orderSummaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
   orderSummaryLabel: { color: '#666', fontSize: 13 },
   orderSummaryValue: { color: '#222', fontWeight: 'bold', fontSize: 13 },
-  orderSummaryTotal: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+  orderSummaryTotal: { color: '#49C5B8', fontWeight: 'bold', fontSize: 15 },
   actionRow: { marginTop: 12 },
   cancelBtn: { backgroundColor: '#fff0f0', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginBottom: 8 },
   cancelBtnText: { color: '#e00', fontWeight: 'bold', fontSize: 15 },
   contactBtn: { backgroundColor: '#f3f3f3', borderRadius: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingVertical: 14 },
   contactBtnIcon: { fontSize: 18, marginRight: 6 },
-  contactBtnText: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+  contactBtnText: { color: '#49C5B8', fontWeight: 'bold', fontSize: 15 },
   container: { flex: 1, backgroundColor: '#f9fafb' },
   header: {
     flexDirection: 'row',
