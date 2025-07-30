@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type DrawerProps = {
   visible: boolean;
@@ -26,7 +27,7 @@ const DrawerTrigger = ({ children, onPress, style }: { children: React.ReactNode
 
 const DrawerClose = ({ onPress, style }: { onPress: () => void; style?: any }) => (
   <TouchableOpacity onPress={onPress} style={[styles.closeButton, style]}>
-    <Text style={styles.closeButtonText}>✖️</Text>
+                <Icon name="close" size={20} color="#666" />
   </TouchableOpacity>
 );
 

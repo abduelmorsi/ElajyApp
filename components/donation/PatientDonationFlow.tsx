@@ -1,15 +1,15 @@
 
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { donationMedicines, participatingPharmacies } from './donationData';
 import { calculateDonationTotal, getDemandColor } from './donationHelpers';
-// TODO: Add correct imports for useLocalization and useRTL hooks if/when available
+import { useLocalization, useRTL } from '../services/LocalizationService';
 
 export default function PatientDonationFlow({ navigateTo }) {
-  // TODO: Add localization and RTL support when hooks are available
-  const language = 'ar'; // fallback for now
-  const isRTL = false;
+  const { t, language } = useLocalization();
+  const { isRTL, getMargin } = useRTL();
   const [currentStep, setCurrentStep] = useState('select-pharmacy');
   const [selectedPharmacy, setSelectedPharmacy] = useState(null);
   const [donationItems, setDonationItems] = useState([]);
@@ -49,9 +49,9 @@ export default function PatientDonationFlow({ navigateTo }) {
       <View style={styles.introCard}>
         <View style={styles.introContent}>
           <View style={styles.introIconBox}>
-            <Text style={styles.introIcon}>❤️</Text>
+            <Icon name="favorite" size={32} color="#ef4444" />
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, minWidth: 0 }}>
             <Text style={styles.introTitle}>
               {language === 'ar' ? 'برنامج التبرع بالأدوية' : 'Medicine Donation Program'}
             </Text>
@@ -62,11 +62,11 @@ export default function PatientDonationFlow({ navigateTo }) {
             </Text>
             <View style={styles.introStatsRow}>
               <View style={styles.introStatBox}>
-                <Text style={styles.introStatIcon}>👥</Text>
+                <Icon name="people" size={20} color="#22c55e" />
                 <Text style={styles.introStatText}>{language === 'ar' ? '450+ مريض استفاد' : '450+ Patients Helped'}</Text>
               </View>
               <View style={styles.introStatBox}>
-                <Text style={styles.introStatIcon}>📦</Text>
+                <Icon name="inventory" size={20} color="#22c55e" />
                 <Text style={styles.introStatText}>{language === 'ar' ? '1,240 دواء تم التبرع به' : '1,240 Medicines Donated'}</Text>
               </View>
             </View>
@@ -76,7 +76,7 @@ export default function PatientDonationFlow({ navigateTo }) {
 
       {/* Search */}
       <View style={styles.searchBox}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <Icon name="search" size={20} color="#6b7280" />
         <TextInput
           style={styles.searchInput}
           placeholder={language === 'ar' ? 'ابحث عن صيدلية...' : 'Search for pharmacy...'}
@@ -100,39 +100,32 @@ export default function PatientDonationFlow({ navigateTo }) {
               activeOpacity={0.8}
             >
               <View style={styles.pharmacyCardContent}>
-                <View style={styles.pharmacyImageBox}>
-                  {/* No image property in pharmacy data, use a placeholder or skip */}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.pharmacyHeaderRow}>
-                    <View style={{ flex: 1 }}>
-                      <View style={styles.pharmacyNameRow}>
-                        <Text style={styles.pharmacyName}>
-                          {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
-                        </Text>
-                      </View>
-                      <View style={styles.pharmacyLocationRow}>
-                        <Text style={styles.pharmacyLocationIcon}>📍</Text>
-                        <Text style={styles.pharmacyLocationText}>
-                          {language === 'ar' ? pharmacy.address : pharmacy.addressEn}
-                        </Text>
-                      </View>
-                      <View style={styles.pharmacyStatsRow}>
-                        <View style={styles.pharmacyStatBox}>
-                          <Text style={styles.pharmacyStatIcon}>⭐</Text>
-                          <Text style={styles.pharmacyStatText}>{pharmacy.rating}</Text>
-                        </View>
-                        <Text style={styles.pharmacyStatText}>{pharmacy.donationsReceived} {language === 'ar' ? 'تبرع' : 'donations'}</Text>
-                        <Text style={styles.pharmacyStatText}>{pharmacy.donationsDistributed} {language === 'ar' ? 'دواء وُزع' : 'medicines distributed'}</Text>
-                      </View>
-                      <View style={styles.pharmacyProgramsRow}>
-                        {(language === 'ar' ? pharmacy.specialServices : pharmacy.specialServicesEn).map((program, index) => (
-                          <Text key={index} style={styles.pharmacyProgramBadge}>{program}</Text>
-                        ))}
-                      </View>
-                    </View>
-                    <Text style={styles.arrowIcon}>➡️</Text>
+                <View style={styles.pharmacyInfo}>
+                  <Text style={styles.pharmacyName}>
+                    {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
+                  </Text>
+                  <View style={styles.pharmacyLocationRow}>
+                    <Icon name="location-on" size={16} color="#6b7280" style={{ marginRight: 4, marginTop: 1 }} />
+                    <Text style={styles.pharmacyLocation}>
+                      {language === 'ar' ? pharmacy.address : pharmacy.addressEn}
+                    </Text>
                   </View>
+                  <Text style={styles.pharmacyStats}>
+                    {language === 'ar' ? `${pharmacy.donationsDistributed} دواء تم توزيعه` : `${pharmacy.donationsDistributed} medicines distributed`}
+                  </Text>
+                </View>
+                <View style={styles.pharmacyActions}>
+                  <View style={styles.demandIndicator}>
+                    <View style={[styles.demandDot, { backgroundColor: '#22c55e' }]} />
+                    <Text style={styles.demandText}>
+                      {language === 'ar' ? 'متاح للتبرع' : 'Available for Donation'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={styles.selectButton}>
+                    <Text style={styles.selectButtonText}>
+                      {language === 'ar' ? 'اختر' : 'Select'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </TouchableOpacity>
@@ -141,7 +134,6 @@ export default function PatientDonationFlow({ navigateTo }) {
       </View>
     </ScrollView>
   );
-// ...existing code...
 
   const renderMedicineSelection = () => (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -175,18 +167,18 @@ export default function PatientDonationFlow({ navigateTo }) {
                 alt={medicine.name}
                 style={styles.medicineImage}
               />
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={styles.medicineName}>{language === 'ar' ? medicine.name : medicine.nameEn}</Text>
-                <Text style={styles.medicineDesc}>{language === 'ar' ? medicine.description : medicine.descriptionEn}</Text>
-                <View style={styles.medicineInfoRow}>
-                  <Text style={[styles.medicineBadge, { color: getDemandColor(language === 'ar' ? medicine.demand : medicine.demandEn) }]}> 
-                    {language === 'ar' ? `الطلب: ${medicine.demand}` : `Demand: ${medicine.demandEn}`}
-                  </Text>
-                  <Text style={styles.medicinePrice}>
-                    {medicine.estimatedValue} {language === 'ar' ? medicine.currency : medicine.currencyEn}
-                  </Text>
-                </View>
-              </View>
+                             <View style={{ flex: 1, marginLeft: 12, minWidth: 0 }}>
+                 <Text style={styles.medicineName}>{language === 'ar' ? medicine.name : medicine.nameEn}</Text>
+                 <Text style={styles.medicineDesc}>{language === 'ar' ? medicine.description : medicine.descriptionEn}</Text>
+                 <View style={styles.medicineInfoRow}>
+                   <Text style={[styles.medicineBadge, { color: getDemandColor(language === 'ar' ? medicine.demand : medicine.demandEn) }]}> 
+                     {language === 'ar' ? `الطلب: ${medicine.demand}` : `Demand: ${medicine.demandEn}`}
+                   </Text>
+                   <Text style={styles.medicinePrice}>
+                     {medicine.estimatedValue} {language === 'ar' ? medicine.currency : medicine.currencyEn}
+                   </Text>
+                 </View>
+               </View>
               <View style={styles.medicineActions}>
                 {quantity > 0 ? (
                   <View style={styles.qtyActions}>
@@ -276,7 +268,7 @@ export default function PatientDonationFlow({ navigateTo }) {
   const renderDonationComplete = () => (
     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
       <View style={styles.completeIconBox}>
-        <Text style={styles.completeIcon}>✅</Text>
+        <Icon name="check-circle" size={40} color="#059669" />
       </View>
       <View style={styles.completeTextBox}>
         <Text style={styles.completeTitle}>{language === 'ar' ? 'شكراً لك على تبرعك!' : 'Thank you for your donation!'}</Text>
@@ -309,88 +301,83 @@ export default function PatientDonationFlow({ navigateTo }) {
   );
 
   return (
-    <>
+    <View>
       {currentStep === 'select-pharmacy' && renderPharmacySelection()}
       {currentStep === 'select-medicines' && renderMedicineSelection()}
       {currentStep === 'confirm-donation' && renderConfirmDonation()}
       {currentStep === 'donation-complete' && renderDonationComplete()}
-    </>
+    </View>
   );
 }
 
 import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
-  introCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, elevation: 2 },
-  introContent: { flexDirection: 'row', alignItems: 'center' },
-  introIconBox: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center', marginRight: 16 },
+  introCard: { backgroundColor: '#fff', borderRadius: 12, padding: 20, marginBottom: 16, elevation: 2 },
+  introContent: { flexDirection: 'row', alignItems: 'flex-start' },
+  introIconBox: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center', marginRight: 16, flexShrink: 0 },
   introIcon: { fontSize: 28 },
-  introTitle: { fontWeight: 'bold', fontSize: 18, color: '#222', marginBottom: 4 },
-  introDesc: { color: '#666', fontSize: 14, marginBottom: 8 },
-  introStatsRow: { flexDirection: 'row', marginTop: 8 },
-  introStatBox: { flexDirection: 'row', alignItems: 'center', marginRight: 16 },
-  introStatIcon: { fontSize: 18, marginRight: 4 },
-  introStatText: { color: '#444', fontSize: 13 },
-  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 12, marginBottom: 16 },
+  introTitle: { fontWeight: 'bold', fontSize: 18, color: '#222', marginBottom: 8, lineHeight: 24 },
+  introDesc: { color: '#666', fontSize: 14, marginBottom: 12, lineHeight: 20 },
+  introStatsRow: { flexDirection: 'row', marginTop: 12, flexWrap: 'wrap', justifyContent: 'space-between' },
+  introStatBox: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, flex: 1, minWidth: '48%', maxWidth: '48%' },
+  introStatIcon: { fontSize: 18, marginRight: 6 },
+  introStatText: { color: '#444', fontSize: 13, lineHeight: 18, flex: 1, flexWrap: 'wrap' },
+  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16 },
   searchIcon: { fontSize: 18, color: '#888', marginRight: 8 },
   searchInput: { flex: 1, fontSize: 15, color: '#222', paddingVertical: 10 },
   sectionTitle: { fontWeight: 'bold', fontSize: 16, color: '#222', marginBottom: 10 },
   pharmacyCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginBottom: 12, elevation: 1 },
-  pharmacyCardContent: { flexDirection: 'row', alignItems: 'center', padding: 12 },
-  pharmacyImageBox: { width: 56, height: 56, borderRadius: 8, backgroundColor: '#f3f3f3', marginRight: 12, overflow: 'hidden' },
-  pharmacyImage: { width: 56, height: 56, borderRadius: 8 },
-  pharmacyHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 4 },
-  pharmacyNameRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
-  pharmacyName: { fontWeight: 'bold', fontSize: 15, color: '#222', marginRight: 6 },
-  pharmacyBadge: { backgroundColor: '#e6f7ff', color: '#007bff', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, fontSize: 11, marginLeft: 4 },
-  pharmacyLocationRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
-  pharmacyLocationIcon: { fontSize: 13, color: '#888', marginRight: 2 },
-  pharmacyLocationText: { color: '#666', fontSize: 13 },
-  pharmacyStatsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  pharmacyStatBox: { flexDirection: 'row', alignItems: 'center', marginRight: 8 },
-  pharmacyStatIcon: { fontSize: 13, color: '#fbbf24', marginRight: 2 },
-  pharmacyStatText: { color: '#888', fontSize: 12, marginRight: 8 },
-  pharmacyProgramsRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 },
-  pharmacyProgramBadge: { backgroundColor: '#e0e7ff', color: '#3730a3', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, fontSize: 11, marginRight: 4, marginBottom: 2 },
-  arrowIcon: { fontSize: 18, color: '#bbb', marginLeft: 8 },
+  pharmacyCardContent: { flexDirection: 'row', alignItems: 'flex-start', padding: 12 },
+  pharmacyInfo: { flex: 1, marginRight: 12 },
+  pharmacyName: { fontWeight: 'bold', fontSize: 15, color: '#222', marginBottom: 2 },
+  pharmacyLocationRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 2 },
+  pharmacyLocation: { color: '#666', fontSize: 13, flex: 1, flexWrap: 'wrap' },
+  pharmacyStats: { color: '#888', fontSize: 12 },
+  pharmacyActions: { alignItems: 'flex-end', justifyContent: 'space-between', minHeight: 60 },
+  demandIndicator: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, marginBottom: 8, flexWrap: 'wrap' },
+  demandDot: { width: 8, height: 8, borderRadius: 4, marginRight: 4 },
+  demandText: { color: '#444', fontSize: 12, flexWrap: 'wrap' },
+  selectButton: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
+  selectButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
   selectedPharmacyCard: { backgroundColor: '#e6f7ff', borderRadius: 10, padding: 12, marginBottom: 16 },
-  selectedPharmacyContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  selectedPharmacyContent: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   selectedPharmacyLabel: { fontSize: 14, color: '#007bff', fontWeight: 'bold' },
   selectedPharmacyName: { fontSize: 15, color: '#222', fontWeight: 'bold', marginTop: 2 },
   changePharmacyBtn: { backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#007bff', paddingHorizontal: 12, paddingVertical: 6 },
   changePharmacyBtnText: { color: '#007bff', fontWeight: 'bold', fontSize: 14 },
   medicineCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginBottom: 12 },
-  medicineCardContent: { flexDirection: 'row', alignItems: 'center', padding: 12 },
-  medicineImage: { width: 56, height: 56, borderRadius: 8, marginRight: 12 },
+  medicineCardContent: { flexDirection: 'row', alignItems: 'flex-start', padding: 12 },
+  medicineImage: { width: 56, height: 56, borderRadius: 8, marginRight: 12, flexShrink: 0 },
   medicineName: { fontWeight: 'bold', fontSize: 15, color: '#222' },
-  medicineDesc: { color: '#666', fontSize: 13, marginBottom: 2 },
-  medicineInfoRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  medicineDesc: { color: '#666', fontSize: 13, marginBottom: 2, flexWrap: 'wrap' },
+  medicineInfoRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2, flexWrap: 'wrap' },
   medicineBadge: { backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, fontSize: 11, marginRight: 8 },
   medicinePrice: { color: '#007bff', fontWeight: 'bold', fontSize: 14 },
-  medicineActions: { alignItems: 'center', justifyContent: 'center' },
+  medicineActions: { alignItems: 'flex-end', justifyContent: 'center', marginLeft: 12 },
   qtyActions: { flexDirection: 'row', alignItems: 'center' },
   qtyBtn: { backgroundColor: '#eee', borderRadius: 6, padding: 6, marginHorizontal: 2 },
   qtyBtnText: { fontSize: 16, color: '#007bff', fontWeight: 'bold' },
   qtyText: { width: 24, textAlign: 'center', fontWeight: 'bold', fontSize: 15 },
   donateBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
   donateBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
-  donationSummaryCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginTop: 16, padding: 16 },
-  donationSummaryTitle: { fontWeight: 'bold', fontSize: 16, color: '#222', marginBottom: 8 },
-  donationSummaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  donationSummaryItem: { color: '#222', fontSize: 14 },
-  donationSummaryAmount: { color: '#007bff', fontWeight: 'bold', fontSize: 14 },
-  donationSummaryTotalRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderColor: '#eee', paddingTop: 8, marginTop: 8 },
-  donationSummaryTotalLabel: { color: '#222', fontWeight: 'bold', fontSize: 15 },
-  donationSummaryTotalAmount: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
-  continueBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginTop: 16 },
+  donationSummaryCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', marginTop: 16, padding: 16, elevation: 2 },
+  donationSummaryTitle: { fontWeight: 'bold', fontSize: 16, color: '#222', marginBottom: 12, textAlign: 'center' },
+  donationSummaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, paddingVertical: 4 },
+  donationSummaryItem: { color: '#222', fontSize: 14, flex: 1, marginRight: 8 },
+  donationSummaryAmount: { color: '#007bff', fontWeight: 'bold', fontSize: 14, textAlign: 'right' },
+  donationSummaryTotalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderColor: '#eee', paddingTop: 12, marginTop: 12 },
+  donationSummaryTotalLabel: { color: '#222', fontWeight: 'bold', fontSize: 16 },
+  donationSummaryTotalAmount: { color: '#007bff', fontWeight: 'bold', fontSize: 16, textAlign: 'right' },
+  continueBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginTop: 20 },
   continueBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
-  confirmCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, elevation: 2 },
-  confirmTitle: { fontWeight: 'bold', fontSize: 18, color: '#222', marginBottom: 12, textAlign: 'center' },
-  confirmSection: { marginBottom: 12 },
-  confirmSectionTitle: { fontWeight: 'bold', fontSize: 15, color: '#222', marginBottom: 2 },
-  confirmSectionText: { color: '#666', fontSize: 14 },
-  confirmMedicineRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 },
-  confirmMedicineName: { color: '#222', fontSize: 14 },
-  confirmMedicineAmount: { color: '#007bff', fontWeight: 'bold', fontSize: 14 },
+  confirmCard: { backgroundColor: '#fff', borderRadius: 12, padding: 20, elevation: 2 },
+  confirmTitle: { fontWeight: 'bold', fontSize: 18, color: '#222', marginBottom: 16, textAlign: 'center' },
+  confirmSection: { marginBottom: 16 },
+  confirmSectionTitle: { fontWeight: 'bold', fontSize: 15, color: '#222', marginBottom: 6 },
+  confirmSectionText: { color: '#666', fontSize: 14, lineHeight: 20 },
+  confirmMedicineRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, paddingVertical: 2 },
+  confirmMedicineName: { color: '#222', fontSize: 14, flex: 1, marginRight: 8 },
+  confirmMedicineAmount: { color: '#007bff', fontWeight: 'bold', fontSize: 14, textAlign: 'right' },
   confirmMessageInput: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 10, fontSize: 14, color: '#222', minHeight: 60, textAlignVertical: 'top', borderWidth: 1, borderColor: '#eee' },
   confirmTotalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderColor: '#eee', paddingTop: 10, marginTop: 10 },
   confirmTotalLabel: { color: '#222', fontWeight: 'bold', fontSize: 15 },
@@ -399,10 +386,10 @@ const styles = StyleSheet.create({
   confirmBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
   completeIconBox: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#d1fae5', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
   completeIcon: { fontSize: 40, color: '#059669' },
-  completeTextBox: { alignItems: 'center', marginBottom: 16 },
+  completeTextBox: { alignItems: 'center', marginBottom: 16, paddingHorizontal: 20 },
   completeTitle: { fontWeight: 'bold', fontSize: 20, color: '#222', marginBottom: 6 },
   completeMessage: { color: '#666', fontSize: 15, textAlign: 'center', marginBottom: 8 },
-  completeDetailsCard: { backgroundColor: '#f0fdf4', borderRadius: 10, padding: 16, alignItems: 'center', marginBottom: 16 },
+  completeDetailsCard: { backgroundColor: '#f0fdf4', borderRadius: 10, padding: 16, alignItems: 'center', marginBottom: 16, width: '100%' },
   completeDetailsTitle: { fontWeight: 'bold', fontSize: 15, color: '#059669', marginBottom: 4 },
   completeDetailsText: { color: '#059669', fontSize: 14 },
   completeHomeBtn: { backgroundColor: '#007bff', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginBottom: 10, width: '100%' },

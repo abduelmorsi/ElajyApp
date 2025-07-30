@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const orders = [
   {
@@ -59,6 +60,7 @@ const getStatusIcon = (status) => {
 };
 
 export default function OrderHistoryScreen({ navigateTo }) {
+  const insets = useSafeAreaInsets();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [tab, setTab] = useState('active');
 
@@ -191,70 +193,72 @@ export default function OrderHistoryScreen({ navigateTo }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigateTo('profile')} style={styles.headerButton}>
-          <Text style={styles.headerIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Order History</Text>
-        <View style={{ width: 32 }} />
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+          <TouchableOpacity onPress={() => navigateTo('profile')} style={styles.headerButton}>
+            <Text style={styles.headerIcon}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Order History</Text>
+          <View style={{ width: 32 }} />
+        </View>
 
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tabButton, tab === 'active' && styles.tabButtonActive]}
-          onPress={() => setTab('active')}
-        >
-          <Text style={[styles.tabButtonText, tab === 'active' && styles.tabButtonTextActive]}>Active Orders</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tabButton, tab === 'past' && styles.tabButtonActive]}
-          onPress={() => setTab('past')}
-        >
-          <Text style={[styles.tabButtonText, tab === 'past' && styles.tabButtonTextActive]}>Past Orders</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity
+            style={[styles.tabButton, tab === 'active' && styles.tabButtonActive]}
+            onPress={() => setTab('active')}
+          >
+            <Text style={[styles.tabButtonText, tab === 'active' && styles.tabButtonTextActive]}>Active Orders</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, tab === 'past' && styles.tabButtonActive]}
+            onPress={() => setTab('past')}
+          >
+            <Text style={[styles.tabButtonText, tab === 'past' && styles.tabButtonTextActive]}>Past Orders</Text>
+          </TouchableOpacity>
+        </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {tab === 'active' ? (
-          activeOrders.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>📦</Text>
-              <Text style={styles.emptyTitle}>No Active Orders</Text>
-              <Text style={styles.emptyDesc}>You don't have any active orders at the moment</Text>
-              <TouchableOpacity style={styles.actionButton} onPress={() => navigateTo('search')}>
-                <Text style={styles.actionButtonText}>Browse Medicines</Text>
-              </TouchableOpacity>
-            </View>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {tab === 'active' ? (
+            activeOrders.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyIcon}>📦</Text>
+                <Text style={styles.emptyTitle}>No Active Orders</Text>
+                <Text style={styles.emptyDesc}>You don't have any active orders at the moment</Text>
+                <TouchableOpacity style={styles.actionButton} onPress={() => navigateTo('search')}>
+                  <Text style={styles.actionButtonText}>Browse Medicines</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              activeOrders.map((order) => (
+                <OrderCard 
+                  key={order.id} 
+                  order={order} 
+                  onPress={() => setSelectedOrder(order)}
+                />
+              ))
+            )
           ) : (
-            activeOrders.map((order) => (
-              <OrderCard 
-                key={order.id} 
-                order={order} 
-                onPress={() => setSelectedOrder(order)}
-              />
-            ))
-          )
-        ) : (
-          pastOrders.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>⏳</Text>
-              <Text style={styles.emptyTitle}>No Past Orders</Text>
-              <Text style={styles.emptyDesc}>Your completed orders will appear here</Text>
-            </View>
-          ) : (
-            pastOrders.map((order) => (
-              <OrderCard 
-                key={order.id} 
-                order={order} 
-                onPress={() => setSelectedOrder(order)}
-              />
-            ))
-          )
-        )}
-      </ScrollView>
+            pastOrders.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyIcon}>⏳</Text>
+                <Text style={styles.emptyTitle}>No Past Orders</Text>
+                <Text style={styles.emptyDesc}>Your completed orders will appear here</Text>
+              </View>
+            ) : (
+              pastOrders.map((order) => (
+                <OrderCard 
+                  key={order.id} 
+                  order={order} 
+                  onPress={() => setSelectedOrder(order)}
+                />
+              ))
+            )
+          )}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

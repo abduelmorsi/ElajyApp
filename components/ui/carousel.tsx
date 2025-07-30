@@ -77,7 +77,7 @@ const CarouselNext = ({ onPress, disabled }: CarouselNavButtonProps) => (
 );
 
 const CarouselContent = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
+  <View>{children}</View>
 );
 
 const CarouselItem = ({ children, style }: { children: React.ReactNode; style?: any }) => (

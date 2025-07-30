@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
 
 export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   const { t, language } = useLocalization();
   const { isRTL } = useRTL();
+  const insets = useSafeAreaInsets();
   const {
     addresses,
     deliveryOptions,
@@ -64,9 +66,9 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
   // Cart Step
   if (currentStep === 'cart') {
     return (
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        {/* Fixed Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <Text style={styles.headerTitle}>
             {language === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
           </Text>
@@ -76,84 +78,84 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
             </Text>
           )}
         </View>
-        <ScrollView contentContainerStyle={styles.content}>
-          {cartItems.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyIcon}>🚚</Text>
-              <Text style={styles.emptyTitle}>
-                {language === 'ar' ? 'السلة فارغة' : 'Cart is Empty'}
-              </Text>
-              <Text style={styles.emptyDesc}>
-                {language === 'ar' ? 'ابدأ بإضافة منتجات لسلة التسوق' : 'Start adding items to your cart'}
-              </Text>
-              <TouchableOpacity style={styles.shopBtn} onPress={() => navigateTo('search')}>
-                <Text style={styles.shopBtnText}>
-                  {language === 'ar' ? 'تسوق الآن' : 'Shop Now'}
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+            {cartItems.length === 0 ? (
+              <View style={styles.emptyCard}>
+                <Icon name="shopping-cart" size={48} color="#bbb" style={styles.emptyIcon} />
+                <Text style={styles.emptyTitle}>
+                  {language === 'ar' ? 'السلة فارغة' : 'Cart is Empty'}
                 </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              {/* Cart Items */}
-              {cartItems.map((item) => (
-                <View key={item.id} style={styles.cartItemCard}>
-                  <View style={styles.cartItemRow}>
-                    <Image
-                      source={{ uri: item.image }}
-                      style={styles.cartItemImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.cartItemInfo}>
-                      <Text style={styles.cartItemName}>
-                        {language === 'ar' ? item.name : item.nameEn}
-                      </Text>
-                      <Text style={styles.cartItemBrand}>
-                        {language === 'ar' ? item.brand : item.brandEn}
-                      </Text>
-                      <Text style={styles.cartItemPrice}>
-                        {item.price} {t('unit.sdg')}
-                      </Text>
-                    </View>
-                    <View style={styles.cartItemActions}>
-                      <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}>
-                        <Text style={styles.qtyBtnText}>-</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.qtyText}>{item.quantity}</Text>
-                      <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}>
-                        <Text style={styles.qtyBtnText}>+</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.id)}>
-                        <Text style={styles.removeBtnText}>🗑️</Text>
-                      </TouchableOpacity>
+                <Text style={styles.emptyDesc}>
+                  {language === 'ar' ? 'ابدأ بإضافة منتجات لسلة التسوق' : 'Start adding items to your cart'}
+                </Text>
+                <TouchableOpacity style={styles.shopBtn} onPress={() => navigateTo('search')}>
+                  <Text style={styles.shopBtnText}>
+                    {language === 'ar' ? 'تسوق الآن' : 'Shop Now'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                {/* Cart Items */}
+                {cartItems.map((item) => (
+                  <View key={item.id} style={styles.cartItemCard}>
+                    <View style={styles.cartItemRow}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={styles.cartItemImage}
+                        resizeMode="cover"
+                      />
+                      <View style={styles.cartItemInfo}>
+                        <Text style={styles.cartItemName}>
+                          {language === 'ar' ? item.name : item.nameEn}
+                        </Text>
+                        <Text style={styles.cartItemBrand}>
+                          {language === 'ar' ? item.brand : item.brandEn}
+                        </Text>
+                        <Text style={styles.cartItemPrice}>
+                          {item.price} {t('unit.sdg')}
+                        </Text>
+                      </View>
+                      <View style={styles.cartItemActions}>
+                        <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}>
+                          <Text style={styles.qtyBtnText}>-</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.qtyText}>{item.quantity}</Text>
+                        <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}>
+                          <Text style={styles.qtyBtnText}>+</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.id)}>
+                          <Icon name="delete" size={20} color="#e00" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
+                ))}
+                {/* Order Summary */}
+                <View style={styles.summaryCard}>
+                  <View style={styles.summaryRow}>
+                    <Text style={styles.summaryLabel}>{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</Text>
+                    <Text style={styles.summaryValue}>
+                      {calculateSubtotal()} {t('unit.sdg')}
+                    </Text>
+                  </View>
+                  <View style={styles.summaryRow}>
+                    <Text style={styles.summaryLabel}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text>
+                    <Text style={styles.summaryTotalValue}>
+                      {calculateSubtotal()} {t('unit.sdg')}
+                    </Text>
+                  </View>
                 </View>
-              ))}
-              {/* Order Summary */}
-              <View style={styles.summaryCard}>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</Text>
-                  <Text style={styles.summaryValue}>
-                    {calculateSubtotal()} {t('unit.sdg')}
+                {/* Checkout Button */}
+                <TouchableOpacity style={styles.checkoutBtn} onPress={() => setCurrentStep('delivery')}>
+                  <Text style={styles.checkoutBtnText}>
+                    {language === 'ar' ? 'متابعة للدفع' : 'Proceed to Checkout'}
                   </Text>
-                </View>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text>
-                  <Text style={styles.summaryTotalValue}>
-                    {calculateSubtotal()} {t('unit.sdg')}
-                  </Text>
-                </View>
+                </TouchableOpacity>
               </View>
-              {/* Checkout Button */}
-              <TouchableOpacity style={styles.checkoutBtn} onPress={() => setCurrentStep('delivery')}>
-                <Text style={styles.checkoutBtnText}>
-                  {language === 'ar' ? 'متابعة للدفع' : 'Proceed to Checkout'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </ScrollView>
-      </View>
+            )}
+          </ScrollView>
+      </SafeAreaView>
     );
   }
 
@@ -182,7 +184,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
             </Text>
             {addresses.length === 0 ? (
               <View style={styles.emptyAddress}>
-                <Text style={styles.emptyAddressIcon}>📍</Text>
+                <Icon name="location-on" size={48} color="#bbb" style={styles.emptyAddressIcon} />
                 <Text style={styles.emptyAddressText}>
                   {language === 'ar' ? 'لا توجد عناوين محفوظة' : 'No saved addresses'}
                 </Text>
@@ -476,7 +478,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo }) {
     return (
       <View style={styles.container}>
         <View style={styles.confirmationCard}>
-          <Text style={styles.confirmationIcon}>✅</Text>
+          <Icon name="check-circle" size={64} color="#22c55e" style={styles.confirmationIcon} />
           <Text style={styles.confirmationTitle}>
             {language === 'ar' ? 'تم تأكيد طلبك!' : 'Order Confirmed!'}
           </Text>
@@ -524,12 +526,24 @@ const styles = StyleSheet.create({
   instructionsLabel: { fontSize: 15, color: '#222', fontWeight: 'bold', marginBottom: 6 },
   instructionsInput: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 12, fontSize: 14, color: '#222', minHeight: 60, textAlignVertical: 'top', borderWidth: 1, borderColor: '#eee' },
   container: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingHorizontal: 24, paddingVertical: 16 },
+  header: { 
+    backgroundColor: '#fff', 
+    borderBottomWidth: 1, 
+    borderColor: '#eee', 
+    paddingHorizontal: 24, 
+    paddingVertical: 16,
+    zIndex: 1000,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
   headerSubtitle: { fontSize: 13, color: '#666' },
   content: { padding: 24 },
   emptyCard: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', alignItems: 'center', padding: 32, marginBottom: 16 },
-  emptyIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyIcon: { marginBottom: 12 },
   emptyTitle: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 6 },
   emptyDesc: { color: '#666', fontSize: 13, marginBottom: 16, textAlign: 'center' },
   shopBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 12, marginTop: 8 },
@@ -561,7 +575,7 @@ const styles = StyleSheet.create({
   section: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginBottom: 16 },
   sectionTitle: { fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 12 },
   emptyAddress: { alignItems: 'center', padding: 32 },
-  emptyAddressIcon: { fontSize: 40, color: '#bbb', marginBottom: 12 },
+  emptyAddressIcon: { marginBottom: 12 },
   emptyAddressText: { color: '#666', fontSize: 14, marginBottom: 16, textAlign: 'center' },
   addAddressBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 20, paddingVertical: 12 },
   addAddressBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
@@ -602,7 +616,7 @@ const styles = StyleSheet.create({
   placeOrderButton: { backgroundColor: '#007bff', borderRadius: 8, paddingVertical: 16, marginTop: 16 },
   placeOrderButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   confirmationCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 24, alignItems: 'center' },
-  confirmationIcon: { fontSize: 48, color: '#4caf50', marginBottom: 16 },
+  confirmationIcon: { marginBottom: 16 },
   confirmationTitle: { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 8 },
   confirmationMessage: { color: '#666', fontSize: 14, textAlign: 'center', marginBottom: 24 },
   confirmationButtons: { flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
