@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { MessageCircle, Video, Phone, User, Star, Clock, Send, Paperclip, Mic, Search, Filter } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
-export default function ConsultScreen() {
+type ConsultScreenProps = {
+  navigateTo: (screen: string, data?: any) => void;
+};
+
+export default function ConsultScreen({ navigateTo }: ConsultScreenProps) {
   const { t, language } = useLocalization();
   const { isRTL, getMargin } = useRTL();
   const [selectedPharmacist, setSelectedPharmacist] = useState(null);
@@ -110,380 +107,194 @@ export default function ConsultScreen() {
 
   if (selectedPharmacist) {
     return (
-      <div className="h-full flex flex-col bg-background pattern-geometric">
+      <View style={{ flex: 1, backgroundColor: '#f9fafb' }}>
         {/* Consultation Header */}
-        <div className="bg-white border-b border-gray-100 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedPharmacist(null)}
-                className="text-gray-500"
-              >
-                ←
-              </Button>
-              <Avatar className="w-10 h-10">
-                <ImageWithFallback
-                  src={selectedPharmacist.avatar}
-                  alt={selectedPharmacist.name}
-                  className="w-full h-full object-cover"
-                />
-                <AvatarFallback>
-                  {(language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn).charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h3 className="font-semibold text-gray-900">
-                  {language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn}
-                </h3>
-                <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${selectedPharmacist.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                  <span className="text-sm text-gray-600">
-                    {selectedPharmacist.isOnline 
-                      ? (language === 'ar' ? 'متصل' : 'Online')
-                      : (language === 'ar' ? 'غير متصل' : 'Offline')
-                    }
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                <Phone size={16} />
-              </Button>
-              <Button variant="outline" size="sm">
-                <Video size={16} />
-              </Button>
-            </div>
-          </div>
-        </div>
-
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingVertical: 14, paddingHorizontal: 12 }}>
+          <TouchableOpacity style={{ marginRight: 10, padding: 6, borderRadius: 8, backgroundColor: '#f3f4f6' }} onPress={() => setSelectedPharmacist(null)}>
+            <Text style={{ fontSize: 20, color: '#007bff' }}>←</Text>
+          </TouchableOpacity>
+          <Image source={{ uri: selectedPharmacist.avatar }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: selectedPharmacist.isOnline ? '#22c55e' : '#aaa', marginRight: 4 }} />
+              <Text style={{ color: '#666', fontSize: 12 }}>
+                {selectedPharmacist.isOnline
+                  ? (language === 'ar' ? 'متصل' : 'Online')
+                  : (language === 'ar' ? 'غير متصل' : 'Offline')}
+              </Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}><Text style={{ fontSize: 18 }}>📞</Text></TouchableOpacity>
+            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}><Text style={{ fontSize: 18 }}>🎥</Text></TouchableOpacity>
+          </View>
+        </View>
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
           {/* Welcome Message */}
-          <div className="flex justify-start">
-            <div className="max-w-xs lg:max-w-md">
-              <div className="bg-white rounded-lg border border-gray-100 p-3 shadow-sm">
-                <p className="text-sm text-gray-900">
-                  {language === 'ar' 
-                    ? `مرحبا! أنا ${selectedPharmacist.name}. كيف يمكنني مساعدتك اليوم؟`
-                    : `Hello! I'm ${selectedPharmacist.nameEn}. How can I help you today?`
-                  }
-                </p>
-                <span className="text-xs text-gray-500 mt-1 block">
-                  {language === 'ar' ? 'الآن' : 'Now'}
-                </span>
-              </div>
-            </div>
-          </div>
-
+          <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+            <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, padding: 12, maxWidth: '80%' }}>
+              <Text style={{ color: '#222', fontSize: 14, marginBottom: 2 }}>
+                {language === 'ar'
+                  ? `مرحبا! أنا ${selectedPharmacist.name}. كيف يمكنني مساعدتك اليوم؟`
+                  : `Hello! I'm ${selectedPharmacist.nameEn}. How can I help you today?`}
+              </Text>
+              <Text style={{ color: '#888', fontSize: 11, textAlign: 'right' }}>{language === 'ar' ? 'الآن' : 'Now'}</Text>
+            </View>
+          </View>
           {/* Consultation Info */}
-          <Card className="bg-blue-50 border border-blue-100">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <MessageCircle size={16} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-blue-900 mb-1">
-                    {language === 'ar' ? 'بدء الاستشارة' : 'Consultation Started'}
-                  </h4>
-                  <p className="text-sm text-blue-700">
-                    {language === 'ar' 
-                      ? 'يمكنك الآن طرح أسئلتك حول الأدوية والعلاجات'
-                      : 'You can now ask questions about medications and treatments'
-                    }
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
+          <View style={{ backgroundColor: '#bae6fd', borderRadius: 10, padding: 10, flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            <View style={{ width: 32, height: 32, backgroundColor: '#38bdf8', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}><Text style={{ color: '#fff', fontSize: 18 }}>💬</Text></View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'بدء الاستشارة' : 'Consultation Started'}</Text>
+              <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar'
+                ? 'يمكنك الآن طرح أسئلتك حول الأدوية والعلاجات'
+                : 'You can now ask questions about medications and treatments'}</Text>
+            </View>
+          </View>
+        </ScrollView>
         {/* Message Input */}
-        <div className="bg-white border-t border-gray-100 p-4">
-          <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm">
-              <Paperclip size={16} />
-            </Button>
-            <div className="flex-1 relative">
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="pr-12"
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                onClick={handleSendMessage}
-              >
-                <Send size={16} />
-              </Button>
-            </div>
-            <Button variant="outline" size="sm">
-              <Mic size={16} />
-            </Button>
-          </div>
-        </div>
-      </div>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#eee', padding: 10 }}>
+          <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}><Text style={{ fontSize: 18 }}>📎</Text></TouchableOpacity>
+          <TextInput
+            style={{ flex: 1, fontSize: 15, color: '#222', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, marginHorizontal: 6 }}
+            value={message}
+            onChangeText={setMessage}
+            placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
+            onSubmitEditing={handleSendMessage}
+            placeholderTextColor="#888"
+          />
+          <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#007bff' }} onPress={handleSendMessage}><Text style={{ fontSize: 18, color: '#fff' }}>➡️</Text></TouchableOpacity>
+          <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}><Text style={{ fontSize: 18 }}>🎤</Text></TouchableOpacity>
+        </View>
+      </View>
     );
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-background pattern-nile">
+    <ScrollView style={{ flex: 1, backgroundColor: '#f9fafb' }} contentContainerStyle={{ padding: 16 }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4">
-        <div className="space-y-4">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">
-              {language === 'ar' ? 'الاستشارات الصيدلانية' : 'Pharmacy Consultations'}
-            </h1>
-            <p className="text-sm text-gray-600">
-              {language === 'ar' ? 'تواصل مع صيادلة مختصين' : 'Connect with qualified pharmacists'}
-            </p>
-          </div>
+      <View style={{ backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#eee', paddingVertical: 16, paddingHorizontal: 12, marginBottom: 16 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222', marginBottom: 4 }}>
+          {language === 'ar' ? 'الاستشارات الصيدلانية' : 'Pharmacy Consultations'}
+        </Text>
+        <Text style={{ fontSize: 14, color: '#666' }}>
+          {language === 'ar' ? 'تواصل مع صيادلة مختصين' : 'Connect with qualified pharmacists'}
+        </Text>
+        {/* Search */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, marginTop: 12, paddingHorizontal: 10 }}>
+          <Text style={{ fontSize: 18, color: '#888', marginRight: 8 }}>🔍</Text>
+          <TextInput
+            style={{ flex: 1, fontSize: 15, color: '#222', paddingVertical: 10 }}
+            placeholder={language === 'ar' ? 'ابحث عن صيدلي...' : 'Search for pharmacist...'}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#888"
+          />
+        </View>
+      </View>
 
-          {/* Search */}
-          <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input
-              type="text"
-              placeholder={language === 'ar' ? 'ابحث عن صيدلي...' : 'Search for pharmacist...'}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 bg-gray-50 border-gray-200 focus:bg-white"
-            />
-          </div>
-        </div>
-      </div>
+      {/* Service Overview */}
+      <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, borderWidth: 1, borderColor: '#bae6fd', padding: 16, marginBottom: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ width: 40, height: 40, backgroundColor: '#bae6fd', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+            <Text style={{ fontSize: 20 }}>💬</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 4 }}>
+              {language === 'ar' ? 'خدمات الاستشارة المتاحة' : 'Available Consultation Services'}
+            </Text>
+            <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'استشارات حول الأدوية والجرعات' : 'Medication and dosage consultations'}</Text>
+            <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'مراجعة التداخلات الدوائية' : 'Drug interaction reviews'}</Text>
+            <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'نصائح صحية وإرشادات' : 'Health tips and guidance'}</Text>
+            <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'استفسارات حول الأعراض الجانبية' : 'Side effects inquiries'}</Text>
+          </View>
+        </View>
+      </View>
 
-      <div className="p-6 space-y-6">
-        {/* Service Overview - Neutral presentation */}
-        <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-start space-x-3">
-              <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
-                <MessageCircle size={20} className="text-primary" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {language === 'ar' ? 'خدمات الاستشارة المتاحة' : 'Available Consultation Services'}
-                </h3>
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-600">
-                    • {language === 'ar' ? 'استشارات حول الأدوية والجرعات' : 'Medication and dosage consultations'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    • {language === 'ar' ? 'مراجعة التداخلات الدوائية' : 'Drug interaction reviews'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    • {language === 'ar' ? 'نصائح صحية وإرشادات' : 'Health tips and guidance'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    • {language === 'ar' ? 'استفسارات حول الأعراض الجانبية' : 'Side effects inquiries'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Consultation Types */}
+      <View style={{ marginBottom: 20 }}>
+        <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 10 }}>
+          {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
+        </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TouchableOpacity style={{ flex: 1, backgroundColor: '#dbeafe', borderRadius: 10, alignItems: 'center', padding: 14, marginRight: 6 }} onPress={() => setConsultationType('chat')}>
+            <Text style={{ fontSize: 22, marginBottom: 6 }}>💬</Text>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'محادثة نصية' : 'Text Chat'}</Text>
+            <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'رسائل فورية' : 'Instant messaging'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flex: 1, backgroundColor: '#bbf7d0', borderRadius: 10, alignItems: 'center', padding: 14, marginHorizontal: 6 }} onPress={() => setConsultationType('call')}>
+            <Text style={{ fontSize: 22, marginBottom: 6 }}>📞</Text>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'مكالمة صوتية' : 'Voice Call'}</Text>
+            <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'تواصل مباشر' : 'Direct communication'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flex: 1, backgroundColor: '#ddd6fe', borderRadius: 10, alignItems: 'center', padding: 14, marginLeft: 6 }} onPress={() => setConsultationType('video')}>
+            <Text style={{ fontSize: 22, marginBottom: 6 }}>🎥</Text>
+            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'مكالمة مرئية' : 'Video Call'}</Text>
+            <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'تفاعل بصري' : 'Visual interaction'}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-        {/* Consultation Types */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">
-            {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <MessageCircle size={24} className="text-blue-600" />
-                </div>
-                <h4 className="font-medium text-gray-900 text-sm mb-1">
-                  {language === 'ar' ? 'محادثة نصية' : 'Text Chat'}
-                </h4>
-                <p className="text-xs text-gray-600">
-                  {language === 'ar' ? 'رسائل فورية' : 'Instant messaging'}
-                </p>
-              </CardContent>
-            </Card>
+      {/* Available Pharmacists */}
+      <View style={{ marginBottom: 20 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+          <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? 'الصيادلة المتاحون' : 'Available Pharmacists'}</Text>
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}>
+            <Text style={{ fontSize: 15, color: '#007bff', marginRight: 4 }}>⚙️</Text>
+            <Text style={{ color: '#007bff', fontWeight: 'bold', fontSize: 14 }}>{language === 'ar' ? 'فلتر' : 'Filter'}</Text>
+          </TouchableOpacity>
+        </View>
+        {filteredPharmacists.map((pharmacist) => (
+          <View key={pharmacist.id} style={{ backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', marginBottom: 12, padding: 14, flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={{ uri: pharmacist.avatar }} style={{ width: 64, height: 64, borderRadius: 32, marginRight: 14 }} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 15 }}>{language === 'ar' ? pharmacist.name : pharmacist.nameEn}</Text>
+              <Text style={{ color: '#666', fontSize: 13 }}>{language === 'ar' ? pharmacist.specialization : pharmacist.specializationEn}</Text>
+              <Text style={{ color: '#888', fontSize: 12 }}>{language === 'ar' ? pharmacist.experience : pharmacist.experienceEn} • {language === 'ar' ? pharmacist.location : pharmacist.locationEn}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                <Text style={{ fontSize: 13, color: '#fbbf24', marginRight: 2 }}>⭐</Text>
+                <Text style={{ color: '#666', fontSize: 12 }}>{pharmacist.rating}</Text>
+                <Text style={{ color: '#aaa', fontSize: 12 }}>({pharmacist.reviewCount})</Text>
+                <Text style={{ fontSize: 13, color: '#888', marginLeft: 8 }}>⏱️</Text>
+                <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? pharmacist.responseTime : pharmacist.responseTimeEn}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>
+                {pharmacist.languages.map((lang, index) => (
+                  <View key={index} style={{ backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, marginRight: 4, marginBottom: 2 }}>
+                    <Text style={{ color: '#444', fontSize: 11 }}>{language === 'ar' ? lang : pharmacist.languagesEn[index]}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                <TouchableOpacity style={{ backgroundColor: '#007bff', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'chat')}>
+                  <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'محادثة' : 'Chat'}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ backgroundColor: '#22c55e', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'call')}>
+                  <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'مكالمة' : 'Call'}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ backgroundColor: '#a78bfa', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }} onPress={() => handleStartConsultation(pharmacist, 'video')}>
+                  <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'مرئية' : 'Video'}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
 
-            <Card className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Phone size={24} className="text-green-600" />
-                </div>
-                <h4 className="font-medium text-gray-900 text-sm mb-1">
-                  {language === 'ar' ? 'مكالمة صوتية' : 'Voice Call'}
-                </h4>
-                <p className="text-xs text-gray-600">
-                  {language === 'ar' ? 'تواصل مباشر' : 'Direct communication'}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200">
-              <CardContent className="p-4 text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Video size={24} className="text-purple-600" />
-                </div>
-                <h4 className="font-medium text-gray-900 text-sm mb-1">
-                  {language === 'ar' ? 'مكالمة مرئية' : 'Video Call'}
-                </h4>
-                <p className="text-xs text-gray-600">
-                  {language === 'ar' ? 'تفاعل بصري' : 'Visual interaction'}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Available Pharmacists */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">
-              {language === 'ar' ? 'الصيادلة المتاحون' : 'Available Pharmacists'}
-            </h3>
-            <Button variant="ghost" size="sm">
-              <Filter size={16} className={getMargin('0', '2')} />
-              {language === 'ar' ? 'فلتر' : 'Filter'}
-            </Button>
-          </div>
-
-          <div className="space-y-4">
-            {filteredPharmacists.map((pharmacist) => (
-              <Card
-                key={pharmacist.id}
-                className="hover:shadow-md hover:border-primary/20 transition-all duration-200"
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start space-x-4">
-                    <div className="relative">
-                      <Avatar className="w-16 h-16">
-                        <ImageWithFallback
-                          src={pharmacist.avatar}
-                          alt={pharmacist.name}
-                          className="w-full h-full object-cover"
-                        />
-                        <AvatarFallback>
-                          {(language === 'ar' ? pharmacist.name : pharmacist.nameEn).charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                        pharmacist.isOnline ? 'bg-green-500' : 'bg-gray-400'
-                      }`}></div>
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-semibold text-gray-900">
-                            {language === 'ar' ? pharmacist.name : pharmacist.nameEn}
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {language === 'ar' ? pharmacist.specialization : pharmacist.specializationEn}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {language === 'ar' ? pharmacist.experience : pharmacist.experienceEn} • {language === 'ar' ? pharmacist.location : pharmacist.locationEn}
-                          </p>
-                          
-                          <div className="flex items-center space-x-4 mt-2">
-                            <div className="flex items-center">
-                              <Star size={12} className="text-yellow-400 fill-current mr-1" />
-                              <span className="text-sm text-gray-600 arabic-numbers">{pharmacist.rating}</span>
-                              <span className="text-sm text-gray-500 arabic-numbers">
-                                ({pharmacist.reviewCount})
-                              </span>
-                            </div>
-                            <div className="flex items-center">
-                              <Clock size={12} className="text-gray-400 mr-1" />
-                              <span className="text-sm text-gray-600">
-                                {language === 'ar' ? pharmacist.responseTime : pharmacist.responseTimeEn}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {pharmacist.languages.map((lang, index) => (
-                              <Badge key={index} className="bg-gray-100 text-gray-700 text-xs">
-                                {language === 'ar' ? lang : pharmacist.languagesEn[index]}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 mt-3">
-                        <Button
-                          size="sm"
-                          onClick={() => handleStartConsultation(pharmacist, 'chat')}
-                          className="bg-primary text-white flex-1"
-                        >
-                          <MessageCircle size={14} className={getMargin('0', '2')} />
-                          {language === 'ar' ? 'محادثة' : 'Chat'}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleStartConsultation(pharmacist, 'call')}
-                          className="border-gray-200"
-                        >
-                          <Phone size={14} />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleStartConsultation(pharmacist, 'video')}
-                          className="border-gray-200"
-                        >
-                          <Video size={14} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* FAQ Section */}
-        <Card className="bg-gray-50 border border-gray-100">
-          <CardHeader>
-            <CardTitle className="text-base">
-              {language === 'ar' ? 'أسئلة شائعة' : 'Frequently Asked Questions'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <h5 className="font-medium text-gray-900 mb-1">
-                {language === 'ar' ? 'ما هي مدة الاستشارة؟' : 'How long is a consultation?'}
-              </h5>
-              <p className="text-sm text-gray-600">
-                {language === 'ar' 
-                  ? 'عادة ما تستغرق الاستشارة بين 15-30 دقيقة حسب حالتك'
-                  : 'Consultations typically last 15-30 minutes depending on your case'
-                }
-              </p>
-            </div>
-            <div>
-              <h5 className="font-medium text-gray-900 mb-1">
-                {language === 'ar' ? 'هل المعلومات سرية؟' : 'Is my information confidential?'}
-              </h5>
-              <p className="text-sm text-gray-600">
-                {language === 'ar' 
-                  ? 'نعم، جميع المعلومات والاستشارات سرية تماماً'
-                  : 'Yes, all information and consultations are completely confidential'
-                }
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+      {/* FAQ Section */}
+      <View style={{ backgroundColor: '#f3f4f6', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginBottom: 24 }}>
+        <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 15, marginBottom: 8 }}>{language === 'ar' ? 'أسئلة شائعة' : 'Frequently Asked Questions'}</Text>
+        <View style={{ marginBottom: 10 }}>
+          <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 13, marginBottom: 2 }}>{language === 'ar' ? 'ما هي مدة الاستشارة؟' : 'How long is a consultation?'}</Text>
+          <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'عادة ما تستغرق الاستشارة بين 15-30 دقيقة حسب حالتك' : 'Consultations typically last 15-30 minutes depending on your case'}</Text>
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 13, marginBottom: 2 }}>{language === 'ar' ? 'هل المعلومات سرية؟' : 'Is my information confidential?'}</Text>
+          <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'نعم، جميع المعلومات والاستشارات سرية تماماً' : 'Yes, all information and consultations are completely confidential'}</Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }

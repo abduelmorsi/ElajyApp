@@ -1,63 +1,116 @@
-"use client";
-
 import * as React from "react";
-import * as SliderPrimitive from "@radix-ui/react-slider";
+import { Animated, PanResponder, StyleSheet, View } from "react-native";
 
-import { cn } from "./utils";
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(val, max));
+}
 
 function Slider({
-  className,
-  defaultValue,
   value,
+  defaultValue,
   min = 0,
   max = 100,
+  step = 1,
+  onValueChange,
+  style,
+  trackStyle,
+  thumbStyle,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  const _values = React.useMemo(
-    () =>
-      Array.isArray(value)
-        ? value
-        : Array.isArray(defaultValue)
-          ? defaultValue
-          : [min, max],
-    [value, defaultValue, min, max],
+}) {
+  const [internalValue, setInternalValue] = React.useState(
+    value ?? defaultValue ?? min
   );
+  const sliderValue = value !== undefined ? value : internalValue;
+  const trackRef = React.useRef(null);
+  const [trackWidth, setTrackWidth] = React.useState(1);
+
+  // Calculate thumb position
+  const percent = (sliderValue - min) / (max - min);
+  const thumbPosition = percent * trackWidth;
+
+  // PanResponder for thumb drag
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {},
+      onPanResponderMove: (evt, gestureState) => {
+        const x = clamp(gestureState.dx + thumbPosition, 0, trackWidth);
+        const newValue = clamp(
+          Math.round((x / trackWidth) * (max - min) / step) * step + min,
+          min,
+          max
+        );
+        if (onValueChange) onValueChange(newValue);
+        if (value === undefined) setInternalValue(newValue);
+      },
+    })
+  ).current;
 
   return (
-    <SliderPrimitive.Root
-      data-slot="slider"
-      defaultValue={defaultValue}
-      value={value}
-      min={min}
-      max={max}
-      className={cn(
-        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
-        className,
-      )}
+    <View
+      style={[styles.root, style]}
+      onLayout={e => setTrackWidth(e.nativeEvent.layout.width)}
+      ref={trackRef}
       {...props}
     >
-      <SliderPrimitive.Track
-        data-slot="slider-track"
-        className={cn(
-          "bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-4 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5",
-        )}
-      >
-        <SliderPrimitive.Range
-          data-slot="slider-range"
-          className={cn(
-            "bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full",
-          )}
+      <View style={[styles.track, trackStyle]}>
+        <View
+          style={[
+            styles.range,
+            { width: thumbPosition, backgroundColor: '#2563eb' },
+          ]}
         />
-      </SliderPrimitive.Track>
-      {Array.from({ length: _values.length }, (_, index) => (
-        <SliderPrimitive.Thumb
-          data-slot="slider-thumb"
-          key={index}
-          className="border-primary bg-background ring-ring/50 block size-4 shrink-0 rounded-full border shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+        <Animated.View
+          style={[
+            styles.thumb,
+            { left: thumbPosition - 12 },
+            thumbStyle,
+          ]}
+          {...panResponder.panHandlers}
         />
-      ))}
-    </SliderPrimitive.Root>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+  },
+  track: {
+    height: 16,
+    width: '100%',
+    backgroundColor: '#e5e7eb',
+    borderRadius: 8,
+    justifyContent: 'center',
+  },
+  range: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: 8,
+    backgroundColor: '#2563eb',
+    height: 16,
+  },
+  thumb: {
+    position: 'absolute',
+    top: -4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#2563eb',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+});
 
 export { Slider };

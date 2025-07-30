@@ -1,27 +1,25 @@
 import React, { useState } from 'react';
-import { ChevronRight, Pill, Stethoscope, Truck } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const onboardingSlides = [
   {
-    icon: Pill,
-    title: "Find Your Medicines",
-    description: "Search and discover medicines from verified pharmacies with detailed information and reviews.",
-    color: "text-blue-500"
+    icon: '💊',
+    title: 'Find Your Medicines',
+    description: 'Search and discover medicines from verified pharmacies with detailed information and reviews.',
+    color: '#2563eb', // blue-500
   },
   {
-    icon: Stethoscope,
-    title: "Consult Pharmacists",
-    description: "Get expert advice from licensed pharmacists through our secure consultation platform.",
-    color: "text-green-500"
+    icon: '🩺',
+    title: 'Consult Pharmacists',
+    description: 'Get expert advice from licensed pharmacists through our secure consultation platform.',
+    color: '#22c55e', // green-500
   },
   {
-    icon: Truck,
-    title: "Fast Delivery",
-    description: "Order medicines for home delivery or schedule pickup from nearby pharmacies at your convenience.",
-    color: "text-purple-500"
-  }
+    icon: '🚚',
+    title: 'Fast Delivery',
+    description: 'Order medicines for home delivery or schedule pickup from nearby pharmacies at your convenience.',
+    color: '#a21caf', // purple-700
+  },
 ];
 
 export default function OnboardingScreen({ onNext, onSkip }) {
@@ -36,53 +34,157 @@ export default function OnboardingScreen({ onNext, onSkip }) {
   };
 
   const slide = onboardingSlides[currentSlide];
-  const Icon = slide.icon;
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+    <SafeAreaView style={styles.container}>
       {/* Skip Button */}
-      <div className="flex justify-end p-4">
-        <Button variant="ghost" onClick={onSkip}>
-          Skip
-        </Button>
-      </div>
+      <View style={styles.skipContainer}>
+        <TouchableOpacity onPress={onSkip} style={styles.skipButton}>
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8">
-        <Card className="p-8 w-full max-w-sm text-center shadow-lg">
-          <div className="mb-6">
-            <div className={`inline-flex p-4 rounded-full bg-background ${slide.color}`}>
-              <Icon size={48} />
-            </div>
-          </div>
-          
-          <h1 className="mb-4">{slide.title}</h1>
-          <p className="text-muted-foreground mb-8">{slide.description}</p>
+      <View style={styles.mainContent}>
+        <View style={styles.card}>
+          <View style={styles.iconContainer}>
+            <View style={[styles.iconCircle, { backgroundColor: '#fff', borderColor: slide.color, borderWidth: 2 }]}> 
+              <Text style={{ fontSize: 48 }}>{slide.icon}</Text>
+            </View>
+          </View>
+          <Text style={styles.title}>{slide.title}</Text>
+          <Text style={styles.description}>{slide.description}</Text>
 
           {/* Slide Indicators */}
-          <div className="flex justify-center space-x-2 mb-8">
+          <View style={styles.indicatorContainer}>
             {onboardingSlides.map((_, index) => (
-              <div
+              <View
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentSlide ? 'bg-primary' : 'bg-muted'
-                }`}
+                style={[styles.indicator, index === currentSlide ? styles.indicatorActive : styles.indicatorInactive]}
               />
             ))}
-          </div>
+          </View>
 
-          <Button onClick={nextSlide} className="w-full">
-            {currentSlide === onboardingSlides.length - 1 ? 'Get Started' : 'Next'}
-            <ChevronRight className="ml-2" size={16} />
-          </Button>
-        </Card>
-      </div>
+          <TouchableOpacity onPress={nextSlide} style={styles.nextButton}>
+            <Text style={styles.nextButtonText}>
+              {currentSlide === onboardingSlides.length - 1 ? 'Get Started' : 'Next'}{' '}
+              <Text style={{ fontSize: 16 }}>➡️</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Brand */}
-      <div className="p-8 text-center">
-        <h2 className="text-primary">PharmaCare</h2>
-        <p className="text-sm text-muted-foreground">Your trusted pharmacy companion</p>
-      </div>
-    </div>
+      <View style={styles.brandContainer}>
+        <Text style={styles.brandTitle}>PharmaCare</Text>
+        <Text style={styles.brandSubtitle}>Your trusted pharmacy companion</Text>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f0f4ff', // blue-50
+    justifyContent: 'space-between',
+  },
+  skipContainer: {
+    alignItems: 'flex-end',
+    padding: 16,
+  },
+  skipButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  skipText: {
+    color: '#888',
+    fontSize: 16,
+  },
+  mainContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 32,
+    width: '100%',
+    maxWidth: 340,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  iconContainer: {
+    marginBottom: 24,
+  },
+  iconCircle: {
+    padding: 16,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 0,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center',
+    color: '#222',
+  },
+  description: {
+    fontSize: 15,
+    color: '#666',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  indicatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 24,
+  },
+  indicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 4,
+  },
+  indicatorActive: {
+    backgroundColor: '#2563eb', // blue-500
+  },
+  indicatorInactive: {
+    backgroundColor: '#e5e7eb', // muted
+  },
+  nextButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    width: '100%',
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  brandContainer: {
+    padding: 32,
+    alignItems: 'center',
+  },
+  brandTitle: {
+    color: '#2563eb',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  brandSubtitle: {
+    color: '#888',
+    fontSize: 14,
+  },
+});

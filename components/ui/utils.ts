@@ -1,6 +1,5 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+// Dummy cn function for React Native: just flattens and returns the input array
+export function cn(...inputs: any[]): any[] {
+  return inputs.flat();
 }

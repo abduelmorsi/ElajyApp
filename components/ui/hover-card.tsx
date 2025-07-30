@@ -1,44 +1,100 @@
-"use client";
 
 import * as React from "react";
-import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { cn } from "./utils";
+// Custom HoverCard for React Native: uses tap/long-press to show content in a modal
 
-function HoverCard({
-  ...props
-}: React.ComponentProps<typeof HoverCardPrimitive.Root>) {
-  return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />;
-}
+type HoverCardContextType = {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+const HoverCardContext = React.createContext<HoverCardContextType>({ open: false, setOpen: () => {} });
 
-function HoverCardTrigger({
-  ...props
-}: React.ComponentProps<typeof HoverCardPrimitive.Trigger>) {
+
+type HoverCardProps = {
+  children: React.ReactNode;
+};
+function HoverCard({ children }: HoverCardProps) {
+  const [open, setOpen] = React.useState(false);
   return (
-    <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
+    <HoverCardContext.Provider value={{ open, setOpen }}>
+      {children}
+    </HoverCardContext.Provider>
   );
 }
 
-function HoverCardContent({
-  className,
-  align = "center",
-  sideOffset = 4,
-  ...props
-}: React.ComponentProps<typeof HoverCardPrimitive.Content>) {
+
+type HoverCardTriggerProps = {
+  children: React.ReactNode;
+  style?: any;
+  [key: string]: any;
+};
+function HoverCardTrigger({ children, style, ...props }: HoverCardTriggerProps) {
+  const { setOpen } = React.useContext(HoverCardContext);
+  // Use long press to open hover card (or tap for demo)
   return (
-    <HoverCardPrimitive.Portal data-slot="hover-card-portal">
-      <HoverCardPrimitive.Content
-        data-slot="hover-card-content"
-        align={align}
-        sideOffset={sideOffset}
-        className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-64 origin-(--radix-hover-card-content-transform-origin) rounded-md border p-4 shadow-md outline-hidden",
-          className,
-        )}
-        {...props}
-      />
-    </HoverCardPrimitive.Portal>
+    <TouchableOpacity
+      onLongPress={() => setOpen(true)}
+      onPress={() => setOpen(true)}
+      style={style}
+      {...props}
+    >
+      {children}
+    </TouchableOpacity>
   );
 }
 
-export { HoverCard, HoverCardTrigger, HoverCardContent };
+
+type HoverCardContentProps = {
+  children: React.ReactNode;
+  style?: any;
+  [key: string]: any;
+};
+function HoverCardContent({ children, style, ...props }: HoverCardContentProps) {
+  const { open, setOpen } = React.useContext(HoverCardContext);
+  return (
+    <Modal
+      visible={open}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setOpen(false)}
+    >
+      <View style={styles.overlay}>
+        <TouchableOpacity style={styles.background} onPress={() => setOpen(false)} />
+        <View style={[styles.content, style]} {...props}>
+          {children}
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  background: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  content: {
+    minWidth: 256,
+    maxWidth: 320,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#eee',
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+    zIndex: 50,
+  },
+});
+
+export { HoverCard, HoverCardContent, HoverCardTrigger };
+

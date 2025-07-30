@@ -1,77 +1,129 @@
-"use client";
 
 import * as React from "react";
-import { OTPInput, OTPInputContext } from "input-otp";
-import { MinusIcon } from "lucide-react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
-import { cn } from "./utils";
+// Custom OTP Input for React Native
+type InputOTPProps = {
+  value: string;
+  onChange: (val: string) => void;
+  length?: number;
+  style?: any;
+  inputStyle?: any;
+  containerStyle?: any;
+  disabled?: boolean;
+};
 
-function InputOTP({
-  className,
-  containerClassName,
-  ...props
-}: React.ComponentProps<typeof OTPInput> & {
-  containerClassName?: string;
-}) {
+function InputOTP({ value, onChange, length = 6, style, inputStyle, containerStyle, disabled }: InputOTPProps) {
+  const inputsRef = React.useRef<Array<TextInput | null>>([]);
+  const chars = value.split("");
+
   return (
-    <OTPInput
-      data-slot="input-otp"
-      containerClassName={cn(
-        "flex items-center gap-2 has-disabled:opacity-50",
-        containerClassName,
-      )}
-      className={cn("disabled:cursor-not-allowed", className)}
-      {...props}
-    />
+    <View style={[styles.otpContainer, containerStyle, style]}>
+      {Array.from({ length }).map((_, idx) => (
+        <TextInput
+          key={idx}
+          ref={ref => { inputsRef.current[idx] = ref; }}
+          style={[styles.otpInput, inputStyle]}
+          value={chars[idx] || ""}
+          onChangeText={text => {
+            let newVal = chars.slice();
+            newVal[idx] = text.replace(/[^0-9a-zA-Z]/g, "").slice(0, 1);
+            // Fill next input if available
+            if (text && idx < length - 1) {
+              inputsRef.current[idx + 1]?.focus();
+            }
+            onChange(newVal.join(""));
+          }}
+          keyboardType="number-pad"
+          maxLength={1}
+          editable={!disabled}
+          selectTextOnFocus
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+      ))}
+    </View>
   );
 }
 
-function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
+type InputOTPGroupProps = {
+  children: React.ReactNode;
+  style?: any;
+};
+function InputOTPGroup({ children, style }: InputOTPGroupProps) {
+  return <View style={[styles.otpGroup, style]}>{children}</View>;
+}
+
+type InputOTPSlotProps = {
+  value: string;
+  isActive?: boolean;
+  hasFakeCaret?: boolean;
+  style?: any;
+};
+function InputOTPSlot({ value, isActive, hasFakeCaret, style }: InputOTPSlotProps) {
   return (
-    <div
-      data-slot="input-otp-group"
-      className={cn("flex items-center gap-1", className)}
-      {...props}
-    />
+    <View style={[styles.otpInput, isActive && styles.activeInput, style]}>
+      <Text style={styles.otpChar}>{value}</Text>
+      {hasFakeCaret && <View style={styles.fakeCaret} />}
+    </View>
   );
 }
 
-function InputOTPSlot({
-  index,
-  className,
-  ...props
-}: React.ComponentProps<"div"> & {
-  index: number;
-}) {
-  const inputOTPContext = React.useContext(OTPInputContext);
-  const { char, hasFakeCaret, isActive } = inputOTPContext?.slots[index] ?? {};
-
+function InputOTPSeparator() {
   return (
-    <div
-      data-slot="input-otp-slot"
-      data-active={isActive}
-      className={cn(
-        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
-        className,
-      )}
-      {...props}
-    >
-      {char}
-      {hasFakeCaret && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="animate-caret-blink bg-foreground h-4 w-px duration-1000" />
-        </div>
-      )}
-    </div>
+    <Text style={styles.separator}>-</Text>
   );
 }
 
-function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
-  return (
-    <div data-slot="input-otp-separator" role="separator" {...props}>
-      <MinusIcon />
-    </div>
-  );
-}
+const styles = StyleSheet.create({
+  otpContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // gap: 8, // Not supported in React Native
+  },
+  otpGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // gap: 4, // Not supported in React Native
+  },
+  otpInput: {
+    width: 36,
+    height: 36,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    textAlign: 'center',
+    fontSize: 18,
+    backgroundColor: '#fff',
+    marginHorizontal: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeInput: {
+    borderColor: '#007AFF',
+    shadowColor: '#007AFF',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  otpChar: {
+    fontSize: 18,
+    color: '#222',
+    textAlign: 'center',
+  },
+  fakeCaret: {
+    width: 2,
+    height: 20,
+    backgroundColor: '#222',
+    marginTop: 2,
+    alignSelf: 'center',
+  },
+  separator: {
+    fontSize: 18,
+    color: '#888',
+    marginHorizontal: 4,
+  },
+});
 
-export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot };
+

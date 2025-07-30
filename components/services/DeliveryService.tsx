@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState } from 'react';
+import { Alert } from 'react-native';
 
 // Delivery-related types
 export interface DeliveryAddress {
@@ -241,14 +241,14 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setAddresses(prev => [...prev, newAddress]);
     }
     
-    toast.success('تم إضافة العنوان بنجاح');
+    Alert.alert('نجاح', 'تم إضافة العنوان بنجاح');
   };
 
   const updateAddress = (id: string, updates: Partial<DeliveryAddress>) => {
     setAddresses(prev => prev.map(addr => 
       addr.id === id ? { ...addr, ...updates } : addr
     ));
-    toast.success('تم تحديث العنوان بنجاح');
+    Alert.alert('نجاح', 'تم تحديث العنوان بنجاح');
   };
 
   const deleteAddress = (id: string) => {
@@ -265,7 +265,7 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } else {
       setAddresses(prev => prev.filter(addr => addr.id !== id));
     }
-    toast.success('تم حذف العنوان بنجاح');
+    Alert.alert('نجاح', 'تم حذف العنوان بنجاح');
   };
 
   const setDefaultAddress = (id: string) => {
@@ -273,7 +273,7 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ...addr,
       isDefault: addr.id === id
     })));
-    toast.success('تم تحديد العنوان الافتراضي');
+    Alert.alert('نجاح', 'تم تحديد العنوان الافتراضي');
   };
 
   const selectAddress = (address: DeliveryAddress) => {
@@ -312,7 +312,7 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     setOrders(prev => [newOrder, ...prev]);
-    toast.success('تم إنشاء الطلب بنجاح');
+    Alert.alert('نجاح', 'تم إنشاء الطلب بنجاح');
     return newOrder;
   };
 
@@ -359,7 +359,7 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setOrders(prev => prev.map(order => 
       order.id === orderId ? { ...order, status: 'cancelled' } : order
     ));
-    toast.success('تم إلغاء الطلب');
+    Alert.alert('نجاح', 'تم إلغاء الطلب');
   };
 
   const estimateDeliveryFee = (address: DeliveryAddress, option: DeliveryOption) => {

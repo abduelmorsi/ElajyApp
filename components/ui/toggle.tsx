@@ -1,47 +1,109 @@
-"use client";
 
 import * as React from "react";
-import * as TogglePrimitive from "@radix-ui/react-toggle";
-import { cva, type VariantProps } from "class-variance-authority";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
-import { cn } from "./utils";
+type ToggleProps = {
+  value?: boolean;
+  onValueChange?: (val: boolean) => void;
+  variant?: "default" | "outline";
+  size?: "default" | "sm" | "lg";
+  disabled?: boolean;
+  style?: any;
+  children?: React.ReactNode;
+};
 
-const toggleVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap",
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        outline:
-          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
-      },
-      size: {
-        default: "h-9 px-2 min-w-9",
-        sm: "h-8 px-1.5 min-w-8",
-        lg: "h-10 px-2.5 min-w-10",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  },
-);
-
-function Toggle({
-  className,
-  variant,
-  size,
-  ...props
-}: React.ComponentProps<typeof TogglePrimitive.Root> &
-  VariantProps<typeof toggleVariants>) {
-  return (
-    <TogglePrimitive.Root
-      data-slot="toggle"
-      className={cn(toggleVariants({ variant, size, className }))}
-      {...props}
-    />
-  );
+function getToggleStyle({ variant = "default", size = "default", active, disabled }: { variant?: "default" | "outline"; size?: "default" | "sm" | "lg"; active?: boolean; disabled?: boolean; }) {
+  return [
+    styles.toggle,
+    styles[`toggle_${variant}`],
+    styles[`toggle_${size}`],
+    active && styles.toggle_active,
+    disabled && styles.toggle_disabled,
+  ];
 }
 
-export { Toggle, toggleVariants };
+
+const Toggle = React.forwardRef<any, ToggleProps>(
+  (
+    {
+      value,
+      onValueChange,
+      variant = "default",
+      size = "default",
+      disabled = false,
+      style,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const [active, setActive] = React.useState(value ?? false);
+    const isControlled = value !== undefined;
+    const isActive = isControlled ? value : active;
+    const handlePress = () => {
+      if (disabled) return;
+      if (onValueChange) onValueChange(!isActive);
+      if (!isControlled) setActive(!isActive);
+    };
+    return (
+      <TouchableOpacity
+        ref={ref}
+        style={[getToggleStyle({ variant, size, active: isActive, disabled }), style]}
+        onPress={handlePress}
+        disabled={disabled}
+        {...props}
+      >
+        <Text style={styles.toggleText}>{children}</Text>
+      </TouchableOpacity>
+    );
+  }
+);
+
+const styles = StyleSheet.create({
+  toggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    fontSize: 15,
+    fontWeight: '500',
+    marginHorizontal: 2,
+    backgroundColor: 'transparent',
+  },
+  toggle_default: {
+    backgroundColor: 'transparent',
+    minHeight: 36,
+    minWidth: 36,
+    paddingHorizontal: 8,
+  },
+  toggle_outline: {
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    backgroundColor: 'transparent',
+    minHeight: 36,
+    minWidth: 36,
+    paddingHorizontal: 8,
+  },
+  toggle_sm: {
+    minHeight: 32,
+    minWidth: 32,
+    paddingHorizontal: 6,
+  },
+  toggle_lg: {
+    minHeight: 40,
+    minWidth: 40,
+    paddingHorizontal: 12,
+  },
+  toggle_active: {
+    backgroundColor: '#f1f5f9',
+  },
+  toggle_disabled: {
+    opacity: 0.5,
+  },
+  toggleText: {
+    color: '#111827',
+    fontSize: 15,
+  },
+});
+
+export { Toggle };

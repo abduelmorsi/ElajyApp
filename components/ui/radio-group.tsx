@@ -1,45 +1,92 @@
-"use client";
 
 import * as React from "react";
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-import { CircleIcon } from "lucide-react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { cn } from "./utils";
+// Emoji for selected indicator
+const CircleIcon = (): React.ReactElement => <View style={styles.selectedDot} />;
 
-function RadioGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
+type RadioGroupProps = {
+  value: string;
+  onValueChange: (val: string) => void;
+  children: React.ReactNode;
+  style?: any;
+};
+
+function RadioGroup({ value, onValueChange, children, style }: RadioGroupProps): React.ReactElement {
+  // Clone children to inject checked and onPress
   return (
-    <RadioGroupPrimitive.Root
-      data-slot="radio-group"
-      className={cn("grid gap-3", className)}
-      {...props}
-    />
+    <View style={[styles.group, style]}>
+      {React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) return child;
+        const typedChild = child as React.ReactElement<RadioGroupItemProps>;
+        return React.cloneElement(typedChild, {
+          checked: typedChild.props.value === value,
+          onPress: () => onValueChange(typedChild.props.value),
+        });
+      })}
+    </View>
   );
 }
 
-function RadioGroupItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
+type RadioGroupItemProps = {
+  value: string;
+  checked?: boolean;
+  onPress?: () => void;
+  style?: any;
+  children?: React.ReactNode;
+};
+
+function RadioGroupItem({ checked, onPress, style, children }: RadioGroupItemProps): React.ReactElement {
   return (
-    <RadioGroupPrimitive.Item
-      data-slot="radio-group-item"
-      className={cn(
-        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
-      {...props}
+    <TouchableOpacity
+      style={[styles.item, checked && styles.itemChecked, style]}
+      onPress={onPress}
+      accessibilityRole="radio"
+      accessibilityState={checked ? { selected: true } : undefined}
     >
-      <RadioGroupPrimitive.Indicator
-        data-slot="radio-group-indicator"
-        className="relative flex items-center justify-center"
-      >
-        <CircleIcon className="fill-primary absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
+      <View style={[styles.circle, checked && styles.circleChecked]}>
+        {checked ? <CircleIcon /> : null}
+      </View>
+      {children}
+    </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  group: {
+    flexDirection: 'column',
+    // gap: 12, // Not supported in React Native
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 2,
+  },
+  itemChecked: {
+    backgroundColor: '#f3f4f6',
+  },
+  circle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    backgroundColor: '#fff',
+  },
+  circleChecked: {
+    borderColor: '#007AFF',
+    backgroundColor: '#e5f0ff',
+  },
+  selectedDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#007AFF',
+  },
+});
 
 export { RadioGroup, RadioGroupItem };

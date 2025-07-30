@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, MessageCircle, MapPin, Clock, CheckCircle, Package, Truck, Star, User } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
-import { Progress } from './ui/progress';
-import { Avatar, AvatarFallback } from './ui/avatar';
-import { useDelivery, DeliveryOrder } from './services/DeliveryService';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { DeliveryOrder, useDelivery } from './services/DeliveryService';
 import { useLocalization, useRTL } from './services/LocalizationService';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface DeliveryTrackingProps {
   orderId: string;
@@ -55,12 +50,10 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
 
   if (!order) {
     return (
-      <div className="h-full flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Package size={48} className="mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-500">{language === 'ar' ? 'لم يتم العثور على الطلب' : 'Order not found'}</p>
-        </div>
-      </div>
+      <View style={[styles.centered, { flex: 1 }]}> 
+        <Text style={styles.emptyIcon}>📦</Text>
+        <Text style={styles.emptyText}>{language === 'ar' ? 'لم يتم العثور على الطلب' : 'Order not found'}</Text>
+      </View>
     );
   }
 
@@ -69,7 +62,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       pending: {
         ar: 'في انتظار التأكيد',
         en: 'Pending Confirmation',
-        icon: Clock,
+        icon: '⏰',
         color: 'text-orange-600',
         bgColor: 'bg-orange-100',
         progress: 10
@@ -77,7 +70,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       confirmed: {
         ar: 'تم تأكيد الطلب',
         en: 'Order Confirmed',
-        icon: CheckCircle,
+        icon: '✔️',
         color: 'text-blue-600',
         bgColor: 'bg-blue-100',
         progress: 25
@@ -85,7 +78,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       preparing: {
         ar: 'جاري التحضير',
         en: 'Preparing Order',
-        icon: Package,
+        icon: '📦',
         color: 'text-purple-600',
         bgColor: 'bg-purple-100',
         progress: 45
@@ -93,7 +86,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       ready: {
         ar: 'جاهز للتوصيل',
         en: 'Ready for Delivery',
-        icon: CheckCircle,
+        icon: '✔️',
         color: 'text-green-600',
         bgColor: 'bg-green-100',
         progress: 65
@@ -101,7 +94,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       dispatched: {
         ar: 'تم الإرسال',
         en: 'Dispatched',
-        icon: Truck,
+        icon: '🚚',
         color: 'text-blue-600',
         bgColor: 'bg-blue-100',
         progress: 80
@@ -109,7 +102,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       in_transit: {
         ar: 'في الطريق',
         en: 'In Transit',
-        icon: Truck,
+        icon: '🚚',
         color: 'text-primary',
         bgColor: 'bg-primary/10',
         progress: 90
@@ -117,7 +110,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       delivered: {
         ar: 'تم التوصيل',
         en: 'Delivered',
-        icon: CheckCircle,
+        icon: '✔️',
         color: 'text-green-600',
         bgColor: 'bg-green-100',
         progress: 100
@@ -125,7 +118,7 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
       cancelled: {
         ar: 'تم الإلغاء',
         en: 'Cancelled',
-        icon: Clock,
+        icon: '⏰',
         color: 'text-red-600',
         bgColor: 'bg-red-100',
         progress: 0
@@ -135,7 +128,6 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
   };
 
   const statusInfo = getStatusInfo(order.status);
-  const StatusIcon = statusInfo.icon;
 
   const trackingSteps = [
     {
@@ -165,217 +157,171 @@ export default function DeliveryTracking({ orderId, navigateTo }: DeliveryTracki
   ];
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateTo('order-history')}
-              className="text-gray-500"
-            >
-              <ArrowLeft size={18} />
-            </Button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                {language === 'ar' ? 'تتبع الطلب' : 'Track Order'}
-              </h1>
-              <p className="text-sm text-gray-500">{order.trackingId}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-6 space-y-6">
-        {/* Status Overview */}
-        <Card className="bg-white border border-gray-100">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className={`w-12 h-12 rounded-xl ${statusInfo.bgColor} flex items-center justify-center`}>
-                <StatusIcon size={24} className={statusInfo.color} />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {language === 'ar' ? statusInfo.ar : statusInfo.en}
-                </h3>
-                {order.status === 'in_transit' && estimatedArrival && (
-                  <p className="text-sm text-gray-600">
-                    {language === 'ar' ? 'الوصول المتوقع:' : 'Estimated arrival:'} {estimatedArrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                )}
-              </div>
-            </div>
-            <Progress value={statusInfo.progress} className="h-2" />
-          </CardContent>
-        </Card>
-
-        {/* Delivery Address */}
-        <Card className="bg-white border border-gray-100">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-gray-900 mb-3">
-              {language === 'ar' ? 'عنوان التوصيل' : 'Delivery Address'}
-            </h4>
-            <div className="flex items-start space-x-3">
-              <MapPin size={18} className="text-gray-400 mt-1" />
-              <div>
-                <p className="font-medium text-gray-900">
-                  {language === 'ar' ? order.deliveryAddress.title : order.deliveryAddress.titleEn}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {language === 'ar' ? order.deliveryAddress.street : order.deliveryAddress.streetEn}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {order.deliveryAddress.phone}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Driver Info (when assigned) */}
-        {(order.status === 'dispatched' || order.status === 'in_transit') && (
-          <Card className="bg-white border border-gray-100">
-            <CardContent className="p-4">
-              <h4 className="font-semibold text-gray-900 mb-3">
-                {language === 'ar' ? 'معلومات السائق' : 'Driver Information'}
-              </h4>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="w-12 h-12">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      <User size={20} />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium text-gray-900">محمد أحمد</p>
-                    <div className="flex items-center space-x-1">
-                      <Star size={14} className="text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600">4.8</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button size="sm" variant="outline" className="border-gray-200">
-                    <MessageCircle size={16} />
-                  </Button>
-                  <Button size="sm" variant="outline" className="border-gray-200">
-                    <Phone size={16} />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Order Timeline */}
-        <Card className="bg-white border border-gray-100">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-gray-900 mb-4">
-              {language === 'ar' ? 'تتبع الطلب' : 'Order Timeline'}
-            </h4>
-            <div className="space-y-4">
-              {trackingSteps.map((step, index) => (
-                <div key={step.id} className="flex items-start space-x-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                    step.completed 
-                      ? 'bg-primary border-primary' 
-                      : 'bg-white border-gray-200'
-                  }`}>
-                    {step.completed ? (
-                      <CheckCircle size={16} className="text-white" />
-                    ) : (
-                      <div className="w-3 h-3 bg-gray-200 rounded-full" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className={`font-medium ${step.completed ? 'text-gray-900' : 'text-gray-400'}`}>
-                      {step.title}
-                    </p>
-                    {step.time && (
-                      <p className="text-sm text-gray-500">{step.time}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Order Items */}
-        <Card className="bg-white border border-gray-100">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-gray-900 mb-4">
-              {language === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}
-            </h4>
-            <div className="space-y-3">
-              {order.items.map((item, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
-                    <ImageWithFallback
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">
-                      {language === 'ar' ? item.name : item.nameEn}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {language === 'ar' ? `الكمية: ${item.quantity}` : `Qty: ${item.quantity}`}
-                    </p>
-                  </div>
-                  <p className="font-semibold text-gray-900 arabic-numbers">
-                    {item.price * item.quantity} {language === 'ar' ? 'ج.س' : 'SDG'}
-                  </p>
-                </div>
-              ))}
-            </div>
-            
-            <div className="border-t border-gray-100 mt-4 pt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
-                <span className="arabic-numbers">{order.total - order.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{language === 'ar' ? 'رسوم التوصيل' : 'Delivery Fee'}</span>
-                <span className="arabic-numbers">{order.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</span>
-              </div>
-              <div className="flex justify-between font-semibold text-lg border-t border-gray-100 pt-2">
-                <span>{language === 'ar' ? 'الإجمالي' : 'Total'}</span>
-                <span className="arabic-numbers">{order.total} {language === 'ar' ? 'ج.س' : 'SDG'}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        {order.status !== 'delivered' && order.status !== 'cancelled' && (
-          <div className="space-y-3">
-            {order.status === 'pending' && (
-              <Button 
-                variant="outline" 
-                className="w-full border-red-200 text-red-600 hover:bg-red-50"
-                onClick={() => {
-                  // Handle order cancellation
-                }}
-              >
-                {language === 'ar' ? 'إلغاء الطلب' : 'Cancel Order'}
-              </Button>
+      <View style={styles.headerRow}>
+        <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigateTo('order-history')}>
+          <Text style={styles.headerBackIcon}>←</Text>
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.headerTitle}>{language === 'ar' ? 'تتبع الطلب' : 'Track Order'}</Text>
+          <Text style={styles.headerSubtitle}>{order.trackingId}</Text>
+        </View>
+      </View>
+      {/* Status Overview */}
+      <View style={styles.card}>
+        <View style={styles.statusRow}>
+          <View style={[styles.statusIconBox, { backgroundColor: '#e0e7ff' }]}> {/* bgColor placeholder */}
+            <Text style={styles.statusIcon}>{statusInfo.icon}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.statusTitle}>{language === 'ar' ? statusInfo.ar : statusInfo.en}</Text>
+            {order.status === 'in_transit' && estimatedArrival && (
+              <Text style={styles.statusSubtitle}>
+                {language === 'ar' ? 'الوصول المتوقع:' : 'Estimated arrival:'} {estimatedArrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </Text>
             )}
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={() => navigateTo('consult')}
-            >
-              <MessageCircle size={16} className={getMargin('0', '2')} />
-              {language === 'ar' ? 'تواصل مع الصيدلية' : 'Contact Pharmacy'}
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+          </View>
+        </View>
+        <View style={styles.progressBar}><View style={[styles.progressFill, { width: `${statusInfo.progress}%` }]} /></View>
+      </View>
+      {/* Delivery Address */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>{language === 'ar' ? 'عنوان التوصيل' : 'Delivery Address'}</Text>
+        <View style={styles.addressRow}>
+          <Text style={styles.addressIcon}>📍</Text>
+          <View>
+            <Text style={styles.addressTitle}>{language === 'ar' ? order.deliveryAddress.title : order.deliveryAddress.titleEn}</Text>
+            <Text style={styles.addressStreet}>{language === 'ar' ? order.deliveryAddress.street : order.deliveryAddress.streetEn}</Text>
+            <Text style={styles.addressPhone}>{order.deliveryAddress.phone}</Text>
+          </View>
+        </View>
+      </View>
+      {/* Driver Info (when assigned) */}
+      {(order.status === 'dispatched' || order.status === 'in_transit') && (
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>{language === 'ar' ? 'معلومات السائق' : 'Driver Information'}</Text>
+          <View style={styles.driverRow}>
+            <View style={styles.driverAvatar}><Text style={styles.driverAvatarIcon}>👤</Text></View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.driverName}>محمد أحمد</Text>
+              <View style={styles.driverRatingRow}>
+                <Text style={styles.driverRatingIcon}>⭐</Text>
+                <Text style={styles.driverRatingText}>4.8</Text>
+              </View>
+            </View>
+            <View style={styles.driverActionRow}>
+              <TouchableOpacity style={styles.driverActionBtn}><Text style={styles.driverActionIcon}>💬</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.driverActionBtn}><Text style={styles.driverActionIcon}>📞</Text></TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+      {/* Order Timeline */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>{language === 'ar' ? 'تتبع الطلب' : 'Order Timeline'}</Text>
+        {trackingSteps.map((step, index) => (
+          <View key={step.id} style={styles.timelineRow}>
+            <View style={[styles.timelineIconBox, step.completed && styles.timelineIconBoxActive]}>
+              <Text style={styles.timelineIcon}>{step.completed ? '✔️' : '○'}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.timelineTitle, step.completed && styles.timelineTitleActive]}>{step.title}</Text>
+              {step.time && <Text style={styles.timelineTime}>{step.time}</Text>}
+            </View>
+          </View>
+        ))}
+      </View>
+      {/* Order Items */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>{language === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}</Text>
+        {order.items.map((item, index) => (
+          <View key={index} style={styles.itemRow}>
+            <Image source={{ uri: item.image }} style={styles.itemImage} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.itemName}>{language === 'ar' ? item.name : item.nameEn}</Text>
+              <Text style={styles.itemQty}>{language === 'ar' ? `الكمية: ${item.quantity}` : `Qty: ${item.quantity}`}</Text>
+            </View>
+            <Text style={styles.itemPrice}>{item.price * item.quantity} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+          </View>
+        ))}
+        <View style={styles.orderSummaryRow}><Text style={styles.orderSummaryLabel}>{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</Text><Text style={styles.orderSummaryValue}>{order.total - order.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</Text></View>
+        <View style={styles.orderSummaryRow}><Text style={styles.orderSummaryLabel}>{language === 'ar' ? 'رسوم التوصيل' : 'Delivery Fee'}</Text><Text style={styles.orderSummaryValue}>{order.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</Text></View>
+        <View style={styles.orderSummaryRow}><Text style={styles.orderSummaryTotal}>{language === 'ar' ? 'الإجمالي' : 'Total'}</Text><Text style={styles.orderSummaryTotal}>{order.total} {language === 'ar' ? 'ج.س' : 'SDG'}</Text></View>
+      </View>
+      {/* Actions */}
+      {order.status !== 'delivered' && order.status !== 'cancelled' && (
+        <View style={styles.actionRow}>
+          {order.status === 'pending' && (
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => {}}>
+              <Text style={styles.cancelBtnText}>{language === 'ar' ? 'إلغاء الطلب' : 'Cancel Order'}</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.contactBtn} onPress={() => navigateTo('consult')}>
+            <Text style={styles.contactBtnIcon}>💬</Text>
+            <Text style={styles.contactBtnText}>{language === 'ar' ? 'تواصل مع الصيدلية' : 'Contact Pharmacy'}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollContainer: { flex: 1, backgroundColor: '#f9fafb' },
+  scrollContent: { padding: 24 },
+  centered: { justifyContent: 'center', alignItems: 'center' },
+  emptyIcon: { fontSize: 48, color: '#bbb', marginBottom: 12 },
+  emptyText: { color: '#666', fontSize: 16 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
+  headerBackBtn: { marginRight: 12, padding: 6 },
+  headerBackIcon: { fontSize: 22, color: '#888' },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#222' },
+  headerSubtitle: { fontSize: 13, color: '#666' },
+  card: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', padding: 18, marginBottom: 18 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  statusIconBox: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  statusIcon: { fontSize: 24 },
+  statusTitle: { fontSize: 16, fontWeight: 'bold', color: '#222' },
+  statusSubtitle: { fontSize: 13, color: '#666' },
+  progressBar: { height: 8, backgroundColor: '#e5e7eb', borderRadius: 4, marginTop: 8, overflow: 'hidden' },
+  progressFill: { height: 8, backgroundColor: '#007bff', borderRadius: 4 },
+  sectionTitle: { fontSize: 15, fontWeight: 'bold', color: '#222', marginBottom: 8 },
+  addressRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8 },
+  addressIcon: { fontSize: 18, color: '#888', marginRight: 8 },
+  addressTitle: { fontWeight: 'bold', color: '#222', fontSize: 14 },
+  addressStreet: { color: '#444', fontSize: 13 },
+  addressPhone: { color: '#888', fontSize: 12 },
+  driverRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  driverAvatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#e0e7ff', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  driverAvatarIcon: { fontSize: 24, color: '#888' },
+  driverName: { fontWeight: 'bold', color: '#222', fontSize: 15 },
+  driverRatingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  driverRatingIcon: { fontSize: 14, color: '#FFD700', marginRight: 2 },
+  driverRatingText: { fontSize: 13, color: '#666' },
+  driverActionRow: { flexDirection: 'row', alignItems: 'center' },
+  driverActionBtn: { marginLeft: 8, padding: 6 },
+  driverActionIcon: { fontSize: 18 },
+  timelineRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
+  timelineIconBox: { width: 32, height: 32, borderRadius: 16, borderWidth: 2, borderColor: '#eee', alignItems: 'center', justifyContent: 'center', marginRight: 10, backgroundColor: '#fff' },
+  timelineIconBoxActive: { backgroundColor: '#007bff', borderColor: '#007bff' },
+  timelineIcon: { fontSize: 16, color: '#fff' },
+  timelineTitle: { fontSize: 14, color: '#888', fontWeight: 'bold' },
+  timelineTitleActive: { color: '#222' },
+  timelineTime: { fontSize: 12, color: '#888' },
+  itemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  itemImage: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#f3f3f3', marginRight: 12 },
+  itemName: { fontWeight: 'bold', color: '#222', fontSize: 14 },
+  itemQty: { color: '#888', fontSize: 12 },
+  itemPrice: { fontWeight: 'bold', color: '#007bff', fontSize: 14 },
+  orderSummaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
+  orderSummaryLabel: { color: '#666', fontSize: 13 },
+  orderSummaryValue: { color: '#222', fontWeight: 'bold', fontSize: 13 },
+  orderSummaryTotal: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+  actionRow: { marginTop: 12 },
+  cancelBtn: { backgroundColor: '#fff0f0', borderRadius: 8, alignItems: 'center', paddingVertical: 14, marginBottom: 8 },
+  cancelBtnText: { color: '#e00', fontWeight: 'bold', fontSize: 15 },
+  contactBtn: { backgroundColor: '#f3f3f3', borderRadius: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingVertical: 14 },
+  contactBtnIcon: { fontSize: 18, marginRight: 6 },
+  contactBtnText: { color: '#007bff', fontWeight: 'bold', fontSize: 15 },
+});

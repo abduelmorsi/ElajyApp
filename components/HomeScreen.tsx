@@ -1,23 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Bell, MapPin, ShoppingBag, Calendar, Heart, Upload, MessageCircle, Star, TrendingUp, Package, Users, Clock, Navigation, ChevronRight, Plus, Sparkles } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Input } from './ui/input';
-import { useLocalization, useRTL } from './services/LocalizationService';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
-export default function HomeScreen({ navigateTo, userData }) {
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useLocalization, useRTL } from './services/LocalizationService';
+
+// Emoji icon replacements for lucide-react icons
+export default function HomeScreen({ navigateTo, userData }: { navigateTo: (screen: string, data?: any) => void; userData?: any }) {
+  const icons = {
+    Search: '🔍',
+    Bell: '🔔',
+    MapPin: '📍',
+    ShoppingBag: '🛍️',
+    Calendar: '📅',
+    Heart: '❤️',
+    Upload: '⬆️',
+    MessageCircle: '💬',
+    Star: '⭐',
+    TrendingUp: '📈',
+    Package: '📦',
+    Users: '👥',
+    Clock: '⏰',
+    Navigation: '🧭',
+    ChevronRight: '➡️',
+    Plus: '➕',
+    Sparkles: '✨',
+  };
+
   const { t, language } = useLocalization();
-  const { isRTL, getMargin } = useRTL();
+  const { isRTL } = useRTL();
   const [greeting, setGreeting] = useState('');
   const [currentTime, setCurrentTime] = useState('');
 
-  // Set dynamic greeting based on time
   useEffect(() => {
     const hour = new Date().getHours();
     const now = new Date();
-    
     let greetingText = '';
     if (hour < 12) {
       greetingText = language === 'ar' ? 'صباح الخير' : 'Good Morning';
@@ -26,22 +41,20 @@ export default function HomeScreen({ navigateTo, userData }) {
     } else {
       greetingText = language === 'ar' ? 'مساء الخير' : 'Good Evening';
     }
-    
     setGreeting(greetingText);
-    setCurrentTime(now.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    setCurrentTime(now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: false 
+      hour12: false
     }));
   }, [language]);
 
-  // Compact quick actions with proper text boundaries and black titles
   const quickActions = [
     {
       id: 'prescription',
       title: language === 'ar' ? 'رفع وصفة' : 'Upload Prescription',
       subtitle: language === 'ar' ? 'ارفع صورة الوصفة' : 'Upload prescription image',
-      icon: Upload,
+      icon: 'Upload',
       color: 'bg-blue-50',
       iconColor: 'text-blue-600'
     },
@@ -49,7 +62,7 @@ export default function HomeScreen({ navigateTo, userData }) {
       id: 'donations',
       title: language === 'ar' ? 'تبرعات' : 'Donations',
       subtitle: language === 'ar' ? 'ساعد المحتاجين' : 'Help those in need',
-      icon: Heart,
+      icon: 'Heart',
       color: 'bg-green-50',
       iconColor: 'text-green-600'
     },
@@ -57,7 +70,7 @@ export default function HomeScreen({ navigateTo, userData }) {
       id: 'consult',
       title: language === 'ar' ? 'استشارة فورية' : 'Quick Consultation',
       subtitle: language === 'ar' ? 'تحدث مع صيدلي' : 'Chat with pharmacist',
-      icon: MessageCircle,
+      icon: 'MessageCircle',
       color: 'bg-purple-50',
       iconColor: 'text-purple-600'
     },
@@ -65,13 +78,12 @@ export default function HomeScreen({ navigateTo, userData }) {
       id: 'order-history',
       title: language === 'ar' ? 'الطلبات السابقة' : 'Order History',
       subtitle: language === 'ar' ? 'تصفح طلباتك' : 'Browse your orders',
-      icon: Package,
+      icon: 'Package',
       color: 'bg-orange-50',
       iconColor: 'text-orange-600'
     }
   ];
 
-  // Featured medicines with compact design
   const featuredMedicines = [
     {
       id: 1,
@@ -114,7 +126,6 @@ export default function HomeScreen({ navigateTo, userData }) {
     }
   ];
 
-  // Nearby pharmacies
   const nearbyPharmacies = [
     {
       id: 1,
@@ -142,303 +153,546 @@ export default function HomeScreen({ navigateTo, userData }) {
     }
   ];
 
-  const handleQuickAction = (actionId) => {
+  const handleQuickAction = (actionId: string) => {
     navigateTo(actionId);
   };
 
-  const handleMedicineClick = (medicine) => {
+  const handleMedicineClick = (medicine: any) => {
     navigateTo('product-detail', medicine);
   };
 
-  const handlePharmacyClick = (pharmacy) => {
+  const handlePharmacyClick = (pharmacy: any) => {
     navigateTo('search');
   };
 
+  const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  header: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderColor: '#f3f4f6',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  headerInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  greeting: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationText: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginHorizontal: 2,
+  },
+  dot: {
+    color: '#9ca3af',
+    marginHorizontal: 4,
+  },
+  timeText: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginLeft: 2,
+  },
+  bellButton: {
+    padding: 8,
+    borderRadius: 16,
+    backgroundColor: '#f3f4f6',
+    marginLeft: 8,
+    position: 'relative',
+  },
+  bellDot: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    backgroundColor: '#ef4444',
+    borderRadius: 4,
+  },
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    marginTop: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  searchIcon: {
+    fontSize: 18,
+    color: '#9ca3af',
+    marginRight: 6,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: '#111827',
+    backgroundColor: 'transparent',
+    paddingVertical: 4,
+    paddingHorizontal: 0,
+  },
+  body: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  section: {
+    marginBottom: 18,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  sectionAction: {
+    fontSize: 13,
+    color: '#2563eb',
+    fontWeight: '500',
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  quickActionCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#f3f4f6',
+    padding: 12,
+    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 1,
+  },
+  quickActionIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: '#e0e7ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  quickActionIcon: {
+    fontSize: 22,
+  },
+  quickActionTextContainer: {
+    alignItems: 'center',
+  },
+  quickActionTitle: {
+    color: '#111827',
+    fontWeight: '700',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  quickActionSubtitle: {
+    color: '#6b7280',
+    fontSize: 11,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 18,
+    gap: 8,
+  },
+  statsCard: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#f3f4f6',
+    alignItems: 'center',
+    padding: 12,
+    elevation: 1,
+  },
+  statsIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  statsIconText: {
+    fontSize: 16,
+  },
+  statsValue: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#111827',
+    marginBottom: 2,
+  },
+  statsLabel: {
+    fontSize: 11,
+    color: '#6b7280',
+  },
+  featuredGrid: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  featuredCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#f3f4f6',
+    padding: 12,
+    marginBottom: 12,
+    elevation: 1,
+  },
+  featuredCardInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  featuredImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+    marginRight: 10,
+  },
+  featuredInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  featuredHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  featuredBadges: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  badgePopular: {
+    backgroundColor: '#fee2e2',
+    color: '#b91c1c',
+    fontSize: 10,
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 4,
+  },
+  badgeDiscount: {
+    backgroundColor: '#bbf7d0',
+    color: '#166534',
+    fontSize: 10,
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  featuredTitle: {
+    fontWeight: '500',
+    color: '#111827',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+  featuredBrand: {
+    color: '#6b7280',
+    fontSize: 11,
+    marginBottom: 2,
+  },
+  featuredPriceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  featuredPrice: {
+    fontWeight: 'bold',
+    color: '#2563eb',
+    fontSize: 12,
+    marginRight: 4,
+  },
+  featuredOriginalPrice: {
+    color: '#9ca3af',
+    fontSize: 11,
+    textDecorationLine: 'line-through',
+    marginRight: 4,
+  },
+  featuredRating: {
+    color: '#facc15',
+    fontSize: 11,
+    marginLeft: 4,
+  },
+  featuredAddButton: {
+    backgroundColor: '#2563eb',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginLeft: 8,
+  },
+  featuredAddButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  nearbyList: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  nearbyCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#f3f4f6',
+    padding: 12,
+    marginBottom: 12,
+    elevation: 1,
+  },
+  nearbyCardInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  nearbyInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  nearbyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 2,
+  },
+  nearbyTitle: {
+    fontWeight: '500',
+    color: '#111827',
+    fontSize: 12,
+    marginRight: 4,
+  },
+  badgeNearby: {
+    backgroundColor: '#bbf7d0',
+    color: '#166534',
+    fontSize: 10,
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  nearbyDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 2,
+  },
+  nearbyDetailText: {
+    color: '#6b7280',
+    fontSize: 11,
+    marginRight: 4,
+  },
+  nearbyStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  nearbyStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 4,
+  },
+  icon: {
+    fontSize: 13,
+    marginRight: 2,
+  },
+  });
+
   return (
-    <div className="h-full overflow-y-auto bg-background clean-pattern">
+    <ScrollView style={styles.container}>
       {/* Compact Header */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex-1">
-              <h1 className="text-base font-semibold text-gray-900 mb-1">
-                {greeting}, {userData?.name || (language === 'ar' ? 'أحمد' : 'Ahmed')}
-              </h1>
-              <p className="text-xs text-gray-600 flex items-center">
-                <MapPin size={12} className={`${getMargin('0', '1')} text-gray-400`} />
-                {userData?.location || (language === 'ar' ? 'الخرطوم' : 'Khartoum')}
-                <span className="mx-2 text-gray-400">•</span>
-                <Clock size={12} className="text-gray-400 mr-1" />
-                {currentTime}
-              </p>
-            </div>
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="relative p-2"
-                onClick={() => navigateTo('profile')}
-              >
-                <Bell size={16} className="text-gray-600" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-              </Button>
-            </div>
-          </div>
+      <View style={styles.header}>
+        <View style={styles.headerInner}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.greeting}>
+              {greeting}, {userData?.name || (language === 'ar' ? 'أحمد' : 'Ahmed')}
+            </Text>
+            <View style={styles.locationRow}>
+              <Text style={styles.icon}>{icons.MapPin}</Text>
+              <Text style={styles.locationText}>{userData?.location || (language === 'ar' ? 'الخرطوم' : 'Khartoum')}</Text>
+              <Text style={styles.dot}>•</Text>
+              <Text style={styles.icon}>{icons.Clock}</Text>
+              <Text style={styles.timeText}>{currentTime}</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.bellButton} onPress={() => navigateTo('profile')}>
+            <Text style={styles.icon}>{icons.Bell}</Text>
+            <View style={styles.bellDot} />
+          </TouchableOpacity>
+        </View>
+        {/* Compact Search Bar */}
+        <View style={styles.searchBarContainer}>
+          <Text style={styles.searchIcon}>{icons.Search}</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder={language === 'ar' ? 'ابحث عن دواء أو صيدلية...' : 'Search for medicine or pharmacy...'}
+            placeholderTextColor="#9ca3af"
+            onFocus={() => navigateTo('search')}
+            editable={false}
+          />
+        </View>
+      </View>
 
-          {/* Compact Search Bar */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input
-              type="text"
-              placeholder={language === 'ar' ? 'ابحث عن دواء أو صيدلية...' : 'Search for medicine or pharmacy...'}
-              className="pl-9 pr-4 py-2 bg-gray-50 border-gray-200 focus:bg-white rounded-lg text-sm"
-              onClick={() => navigateTo('search')}
-              readOnly
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 py-3 space-y-4">
+      <View style={styles.body}>
         {/* Compact Quick Actions with fixed text boundaries and black titles */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900">
-              {language === 'ar' ? 'الخدمات السريعة' : 'Quick Actions'}
-            </h2>
-            <Sparkles size={14} className="text-primary" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <Card
-                  key={action.id}
-                  className="cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-primary/20"
-                  onClick={() => handleQuickAction(action.id)}
-                >
-                  <CardContent className="p-3">
-                    {/* Compact layout with proper text boundaries */}
-                    <div className="text-center space-y-2">
-                      {/* Icon container - compact size */}
-                      <div className="flex justify-center mb-2">
-                        <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center`}>
-                          <Icon size={20} className={action.iconColor} />
-                        </div>
-                      </div>
-                      
-                      {/* Text with proper boundaries - BLACK titles as requested */}
-                      <div className="space-y-1 px-1">
-                        <h3 className="text-gray-900 font-semibold text-xs leading-tight">
-                          {action.title}
-                        </h3>
-                        <p className="text-gray-600 text-xs leading-tight">
-                          {action.subtitle}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'الخدمات السريعة' : 'Quick Actions'}</Text>
+            <Text style={styles.icon}>{icons.Sparkles}</Text>
+          </View>
+          <View style={styles.quickActionsGrid}>
+            {quickActions.map((action) => (
+              <TouchableOpacity
+                key={action.id}
+                style={styles.quickActionCard}
+                onPress={() => handleQuickAction(action.id)}
+              >
+                <View style={styles.quickActionIconContainer}>
+                  <Text style={styles.quickActionIcon}>{icons[action.icon]}</Text>
+                </View>
+                <View style={styles.quickActionTextContainer}>
+                  <Text style={styles.quickActionTitle}>{action.title}</Text>
+                  <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
 
         {/* Compact Statistics Cards */}
         {userData && (
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="bg-white border border-gray-100">
-              <CardContent className="p-3 text-center">
-                <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <ShoppingBag size={14} className="text-blue-600" />
-                </div>
-                <div className="font-bold text-sm text-gray-900 arabic-numbers mb-0.5">
-                  {userData.orderCount || 23}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {language === 'ar' ? 'طلب' : 'Orders'}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white border border-gray-100">
-              <CardContent className="p-3 text-center">
-                <div className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <TrendingUp size={14} className="text-green-600" />
-                </div>
-                <div className="font-bold text-sm text-gray-900 arabic-numbers mb-0.5">
-                  {userData.savedMoney || 145}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {language === 'ar' ? 'ج.س موفرة' : 'SDG Saved'}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white border border-gray-100">
-              <CardContent className="p-3 text-center">
-                <div className="w-7 h-7 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <Star size={14} className="text-yellow-600" />
-                </div>
-                <div className="font-bold text-sm text-gray-900 arabic-numbers mb-0.5">
-                  {userData.points || 1250}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {language === 'ar' ? 'نقطة' : 'Points'}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <View style={styles.statsGrid}>
+            <View style={styles.statsCard}>
+              <View style={[styles.statsIcon, { backgroundColor: '#dbeafe' }]}> 
+                <Text style={styles.statsIconText}>{icons.ShoppingBag}</Text>
+              </View>
+              <Text style={styles.statsValue}>{userData.orderCount || 23}</Text>
+              <Text style={styles.statsLabel}>{language === 'ar' ? 'طلب' : 'Orders'}</Text>
+            </View>
+            <View style={styles.statsCard}>
+              <View style={[styles.statsIcon, { backgroundColor: '#bbf7d0' }]}> 
+                <Text style={styles.statsIconText}>{icons.TrendingUp}</Text>
+              </View>
+              <Text style={styles.statsValue}>{userData.savedMoney || 145}</Text>
+              <Text style={styles.statsLabel}>{language === 'ar' ? 'ج.س موفرة' : 'SDG Saved'}</Text>
+            </View>
+            <View style={styles.statsCard}>
+              <View style={[styles.statsIcon, { backgroundColor: '#fef9c3' }]}> 
+                <Text style={styles.statsIconText}>{icons.Star}</Text>
+              </View>
+              <Text style={styles.statsValue}>{userData.points || 1250}</Text>
+              <Text style={styles.statsLabel}>{language === 'ar' ? 'نقطة' : 'Points'}</Text>
+            </View>
+          </View>
         )}
 
         {/* Compact Featured Medicines */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900">
-              {language === 'ar' ? 'أدوية مميزة' : 'Featured Medicines'}
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateTo('search')}
-              className="text-primary hover:text-primary/80 text-xs px-2"
-            >
-              {language === 'ar' ? 'عرض الكل' : 'View All'}
-              <ChevronRight size={12} className="ml-1" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 gap-3">
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'أدوية مميزة' : 'Featured Medicines'}</Text>
+            <TouchableOpacity onPress={() => navigateTo('search')}>
+              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض الكل' : 'View All'} {icons.ChevronRight}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.featuredGrid}>
             {featuredMedicines.map((medicine) => (
-              <Card
+              <TouchableOpacity
                 key={medicine.id}
-                className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200 border border-gray-100"
-                onClick={() => handleMedicineClick(medicine)}
+                style={styles.featuredCard}
+                onPress={() => handleMedicineClick(medicine)}
               >
-                <CardContent className="p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                      <ImageWithFallback
-                        src={medicine.image}
-                        alt={medicine.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            {medicine.isPopular && (
-                              <Badge className="bg-red-100 text-red-700 text-xs px-2 py-0.5">
-                                {language === 'ar' ? 'الأكثر طلباً' : 'Popular'}
-                              </Badge>
-                            )}
-                            {medicine.discount > 0 && (
-                              <Badge className="bg-green-100 text-green-700 text-xs px-2 py-0.5">
-                                {medicine.discount}% {language === 'ar' ? 'خصم' : 'OFF'}
-                              </Badge>
-                            )}
-                          </div>
-                          <h3 className="font-medium text-gray-900 text-xs leading-tight">
-                            {language === 'ar' ? medicine.name : medicine.nameEn}
-                          </h3>
-                          <p className="text-xs text-gray-600">
-                            {language === 'ar' ? medicine.brand : medicine.brandEn}
-                          </p>
-                          <div className="flex items-center space-x-3">
-                            <div className="flex items-center space-x-1">
-                              <span className="font-bold text-primary arabic-numbers text-xs">
-                                {medicine.price} {language === 'ar' ? 'ج.س' : 'SDG'}
-                              </span>
-                              {medicine.originalPrice > medicine.price && (
-                                <span className="text-xs text-gray-500 line-through arabic-numbers">
-                                  {medicine.originalPrice}
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center space-x-0.5">
-                              <Star size={10} className="text-yellow-400 fill-current" />
-                              <span className="text-xs text-gray-600 arabic-numbers">{medicine.rating}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <Button size="sm" className="bg-primary text-white px-2 py-1 flex-shrink-0 ml-3">
-                          <Plus size={12} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                <View style={styles.featuredCardInner}>
+                  <Image source={{ uri: medicine.image }} style={styles.featuredImage} />
+                  <View style={styles.featuredInfo}>
+                    <View style={styles.featuredHeader}>
+                      <View style={styles.featuredBadges}>
+                        {medicine.isPopular && (
+                          <Text style={styles.badgePopular}>{language === 'ar' ? 'الأكثر طلباً' : 'Popular'}</Text>
+                        )}
+                        {medicine.discount > 0 && (
+                          <Text style={styles.badgeDiscount}>{medicine.discount}% {language === 'ar' ? 'خصم' : 'OFF'}</Text>
+                        )}
+                      </View>
+                      <TouchableOpacity style={styles.featuredAddButton}>
+                        <Text style={styles.featuredAddButtonText}>{icons.Plus}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={styles.featuredTitle}>{language === 'ar' ? medicine.name : medicine.nameEn}</Text>
+                    <Text style={styles.featuredBrand}>{language === 'ar' ? medicine.brand : medicine.brandEn}</Text>
+                    <View style={styles.featuredPriceRow}>
+                      <Text style={styles.featuredPrice}>{medicine.price} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+                      {medicine.originalPrice > medicine.price && (
+                        <Text style={styles.featuredOriginalPrice}>{medicine.originalPrice}</Text>
+                      )}
+                      <Text style={styles.featuredRating}>{icons.Star} {medicine.rating}</Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
             ))}
-          </div>
-        </div>
+          </View>
+        </View>
 
         {/* Compact Nearby Pharmacies */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900">
-              {language === 'ar' ? 'الصيدليات القريبة' : 'Nearby Pharmacies'}
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateTo('search')}
-              className="text-primary hover:text-primary/80 text-xs px-2"
-            >
-              {language === 'ar' ? 'عرض على الخريطة' : 'View on Map'}
-              <Navigation size={12} className="ml-1" />
-            </Button>
-          </div>
-          <div className="space-y-3">
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'الصيدليات القريبة' : 'Nearby Pharmacies'}</Text>
+            <TouchableOpacity onPress={() => navigateTo('search')}>
+              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض على الخريطة' : 'View on Map'} {icons.Navigation}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.nearbyList}>
             {nearbyPharmacies.map((pharmacy) => (
-              <Card
+              <TouchableOpacity
                 key={pharmacy.id}
-                className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200 border border-gray-100"
-                onClick={() => handlePharmacyClick(pharmacy)}
+                style={styles.nearbyCard}
+                onPress={() => handlePharmacyClick(pharmacy)}
               >
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-medium text-gray-900 text-xs">
-                          {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
-                        </h3>
-                        <Badge className="bg-green-100 text-green-700 text-xs px-2 py-0.5">
-                          {pharmacy.specialOffer}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center space-x-4 text-xs text-gray-600">
-                        <div className="flex items-center">
-                          <MapPin size={10} className="text-gray-400 mr-1" />
-                          <span className="arabic-numbers">
-                            {language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <Clock size={10} className="text-gray-400 mr-1" />
-                          <span>
-                            {language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <Star size={10} className="text-yellow-400 fill-current mr-1" />
-                          <span className="arabic-numbers">{pharmacy.rating}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className={`w-2 h-2 rounded-full ${
-                        pharmacy.isOpen ? 'bg-green-500' : 'bg-red-500'
-                      }`}></div>
-                      <ChevronRight size={12} className="text-gray-400" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                <View style={styles.nearbyCardInner}>
+                  <View style={styles.nearbyInfo}>
+                    <View style={styles.nearbyHeader}>
+                      <Text style={styles.nearbyTitle}>{language === 'ar' ? pharmacy.name : pharmacy.nameEn}</Text>
+                      <Text style={styles.badgeNearby}>{pharmacy.specialOffer}</Text>
+                    </View>
+                    <View style={styles.nearbyDetails}>
+                      <Text style={styles.icon}>{icons.MapPin}</Text>
+                      <Text style={styles.nearbyDetailText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
+                      <Text style={styles.icon}>{icons.Clock}</Text>
+                      <Text style={styles.nearbyDetailText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
+                      <Text style={styles.icon}>{icons.Star}</Text>
+                      <Text style={styles.nearbyDetailText}>{pharmacy.rating}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.nearbyStatusRow}>
+                    <View style={[styles.nearbyStatusDot, { backgroundColor: pharmacy.isOpen ? '#22c55e' : '#ef4444' }]} />
+                    <Text style={styles.icon}>{icons.ChevronRight}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
             ))}
-          </div>
-        </div>
-      </div>
-    </div>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
   );
 }

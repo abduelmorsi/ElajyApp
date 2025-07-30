@@ -1,12 +1,114 @@
+// Add styles for the error UI
 import React from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9fafb',
+    padding: 24,
+  },
+  errorCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eee',
+    padding: 24,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  errorIconBox: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#ffe5e5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  errorIcon: {
+    fontSize: 36,
+    color: '#e00',
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#e00',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  errorDesc: {
+    fontSize: 15,
+    color: '#444',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  recoveryBox: {
+    backgroundColor: '#f3f3f3',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    width: '100%',
+    alignItems: 'center',
+  },
+  recoveryText: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  recoveryBarBg: {
+    width: '100%',
+    height: 8,
+    backgroundColor: '#e5e7eb',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  recoveryBarFill: {
+    width: '60%',
+    height: 8,
+    backgroundColor: '#007bff',
+    borderRadius: 4,
+  },
+  tryAgainBtn: {
+    backgroundColor: '#f3f3f3',
+    borderRadius: 8,
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    marginTop: 8,
+    marginBottom: 8,
+    width: '100%',
+  },
+  tryAgainBtnText: {
+    color: '#007bff',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  helpBox: {
+    marginTop: 10,
+    backgroundColor: '#f9fafb',
+    borderRadius: 8,
+    padding: 10,
+    width: '100%',
+  },
+  helpText: {
+    color: '#888',
+    fontSize: 13,
+    textAlign: 'center',
+  },
+});
 
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
-  errorInfo: React.ErrorInfo | null;
   errorCount: number;
   lastErrorTime: number;
 }
@@ -17,7 +119,7 @@ interface ErrorBoundaryProps {
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  private resetTimeoutId: number | null = null;
+  private resetTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(props: ErrorBoundaryProps) {
     super(props);
@@ -25,7 +127,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null,
       errorCount: 0,
       lastErrorTime: 0
     };
@@ -40,45 +141,14 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error) {
     // Log error details
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    // Special handling for DOM manipulation errors
-    const isDOMError = error.message.includes('removeChild') || 
-                      error.message.includes('Node') || 
-                      error.message.includes('DOM') ||
-                      error.message.includes('appendChild') ||
-                      error.message.includes('insertBefore');
-    
-    if (isDOMError) {
-      console.warn('DOM manipulation error detected, attempting recovery...');
-      
-      // For DOM errors, try immediate recovery if it's the first occurrence
-      if (this.state.errorCount === 0) {
-        this.scheduleAutoRecovery(1000); // Quick recovery for DOM errors
-      } else if (this.state.errorCount < 2) {
-        this.scheduleAutoRecovery(3000); // Slower recovery for repeated errors
-      }
-    }
-
+    console.error('ErrorBoundary caught an error:', error);
     this.setState({
       error,
-      errorInfo,
       errorCount: this.state.errorCount + 1
     });
-
-    // Report error to monitoring service if available
-    if (typeof window !== 'undefined' && (window as any).errorReporting) {
-      (window as any).errorReporting.captureException(error, {
-        extra: errorInfo,
-        tags: {
-          section: 'ErrorBoundary',
-          errorType: this.categorizeError(error),
-          isDOMError: isDOMError
-        }
-      });
-    }
+    // You can add custom error reporting here for React Native (e.g., Sentry, Bugsnag)
   }
 
   componentWillUnmount() {
@@ -89,10 +159,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   categorizeError = (error: Error): string => {
     const message = error.message.toLowerCase();
-    
-    if (message.includes('removechild') || message.includes('node') || message.includes('dom')) {
-      return 'dom-manipulation';
-    }
     if (message.includes('network') || message.includes('fetch')) {
       return 'network';
     }
@@ -105,14 +171,13 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     if (message.includes('tab') || message.includes('radix')) {
       return 'ui-component';
     }
-    
     return 'unknown';
   };
 
   scheduleAutoRecovery = (delay: number = 2000) => {
-    // Only auto-recover certain types of errors and limit attempts
+    // Only auto-recover and limit attempts
     if (this.state.errorCount < 3) {
-      this.resetTimeoutId = window.setTimeout(() => {
+      this.resetTimeoutId = setTimeout(() => {
         console.log('Attempting auto-recovery from error...');
         this.handleReset();
       }, delay);
@@ -124,30 +189,14 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       clearTimeout(this.resetTimeoutId);
       this.resetTimeoutId = null;
     }
-
     this.setState({
       hasError: false,
-      error: null,
-      errorInfo: null
+      error: null
       // Keep errorCount to track repeated issues
     });
   };
 
-  handleForceRefresh = () => {
-    // Clear all state and force full refresh
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null,
-      errorCount: 0,
-      lastErrorTime: 0
-    });
-    
-    // Force re-render with a key change
-    if (typeof window !== 'undefined') {
-      window.location.reload();
-    }
-  };
+  // handleForceRefresh removed for React Native (no window.location.reload)
 
   render() {
     if (this.state.hasError) {
@@ -159,111 +208,41 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
       // Default error UI
       const errorType = this.state.error ? this.categorizeError(this.state.error) : 'unknown';
-      const isDOMError = errorType === 'dom-manipulation';
       const isUIError = errorType === 'ui-component';
-      const isRecoverable = isDOMError || isUIError;
+      const isRecoverable = isUIError;
 
       return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <Card className="max-w-lg w-full bg-white border border-gray-200">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle size={32} className="text-red-600" />
-              </div>
-              <CardTitle className="text-xl text-gray-900">
-                {isRecoverable ? 'Display Issue Detected' : 'Something went wrong'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center">
-                <p className="text-gray-600 mb-4">
-                  {isRecoverable 
-                    ? 'We encountered a temporary display issue. This usually resolves automatically.'
-                    : 'An unexpected error occurred. Please try refreshing the page.'
-                  }
-                </p>
-                
-                {isRecoverable && this.state.errorCount < 3 && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-blue-700">
-                      Auto-recovery in progress... (Attempt {this.state.errorCount + 1}/3)
-                    </p>
-                    <div className="w-full bg-blue-200 rounded-full h-1 mt-2">
-                      <div className="bg-blue-600 h-1 rounded-full animate-pulse" style={{ width: '60%' }}></div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-3">
-                  <Button 
-                    onClick={this.handleReset}
-                    className="w-full bg-primary text-white"
-                  >
-                    <RefreshCw size={16} className="mr-2" />
-                    Try Again
-                  </Button>
-                  
-                  {this.state.errorCount > 1 && (
-                    <Button 
-                      variant="outline"
-                      onClick={this.handleForceRefresh}
-                      className="w-full"
-                    >
-                      <Home size={16} className="mr-2" />
-                      Restart App
-                    </Button>
-                  )}
-                  
-                  <Button 
-                    variant="outline"
-                    onClick={() => window.location.reload()}
-                    className="w-full"
-                  >
-                    Refresh Page
-                  </Button>
-                </div>
-              </div>
-
-              {/* Error Information for Development */}
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <summary className="cursor-pointer text-sm font-medium text-gray-700 mb-2">
-                    Error Details (Development)
-                  </summary>
-                  <div className="text-xs text-gray-600 space-y-2">
-                    <div>
-                      <strong>Error:</strong> {this.state.error.message}
-                    </div>
-                    <div>
-                      <strong>Type:</strong> {errorType}
-                    </div>
-                    <div>
-                      <strong>Count:</strong> {this.state.errorCount}
-                    </div>
-                    <div>
-                      <strong>Recoverable:</strong> {isRecoverable ? 'Yes' : 'No'}
-                    </div>
-                    {this.state.error.stack && (
-                      <div>
-                        <strong>Stack:</strong>
-                        <pre className="mt-1 text-xs overflow-auto max-h-32 bg-white p-2 rounded border">
-                          {this.state.error.stack}
-                        </pre>
-                      </div>
-                    )}
-                  </div>
-                </details>
-              )}
-
-              {/* Help Text */}
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <p className="text-xs text-gray-500">
-                  If this issue persists, please contact support or try refreshing your browser.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <View style={styles.centeredContainer}>
+          <View style={styles.errorCard}>
+            <View style={styles.errorIconBox}>
+              <Text style={styles.errorIcon}>⚠️</Text>
+            </View>
+            <Text style={styles.errorTitle}>{isRecoverable ? 'Display Issue Detected' : 'Something went wrong'}</Text>
+            <Text style={styles.errorDesc}>
+              {isRecoverable
+                ? 'We encountered a temporary display issue. This usually resolves automatically.'
+                : 'An unexpected error occurred. Please try restarting the app.'}
+            </Text>
+            {isRecoverable && this.state.errorCount < 3 && (
+              <View style={styles.recoveryBox}>
+                <Text style={styles.recoveryText}>
+                  Auto-recovery in progress... (Attempt {this.state.errorCount + 1}/3)
+                </Text>
+                <View style={styles.recoveryBarBg}>
+                  <View style={styles.recoveryBarFill} />
+                </View>
+              </View>
+            )}
+            <TouchableOpacity style={styles.tryAgainBtn} onPress={this.handleReset}>
+              <Text style={styles.tryAgainBtnText}>🔄 Try Again</Text>
+            </TouchableOpacity>
+            <View style={styles.helpBox}>
+              <Text style={styles.helpText}>
+                If this issue persists, please contact support or try restarting the app.
+              </Text>
+            </View>
+          </View>
+        </View>
       );
     }
 

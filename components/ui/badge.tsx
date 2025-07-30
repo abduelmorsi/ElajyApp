@@ -1,46 +1,97 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import React from "react";
+import { StyleSheet, Text, View, ViewProps } from "react-native";
 
-import { cn } from "./utils";
+type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
 
-const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
+type BadgeProps = {
+  variant?: BadgeVariant;
+  children?: React.ReactNode;
+  style?: any;
+  textStyle?: any;
+} & ViewProps;
 
-function Badge({
-  className,
-  variant,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : "span";
+const getBadgeStyles = (variant: BadgeVariant = "default") => {
+  switch (variant) {
+    case "secondary":
+      return {
+        container: [styles.badge, styles.secondary],
+        text: [styles.badgeText, styles.secondaryText],
+      };
+    case "destructive":
+      return {
+        container: [styles.badge, styles.destructive],
+        text: [styles.badgeText, styles.destructiveText],
+      };
+    case "outline":
+      return {
+        container: [styles.badge, styles.outline],
+        text: [styles.badgeText, styles.outlineText],
+      };
+    case "default":
+    default:
+      return {
+        container: [styles.badge, styles.default],
+        text: [styles.badgeText, styles.defaultText],
+      };
+  }
+};
 
+function Badge({ variant = "default", children, style, textStyle, ...props }: BadgeProps) {
+  const badgeStyles = getBadgeStyles(variant);
   return (
-    <Comp
-      data-slot="badge"
-      className={cn(badgeVariants({ variant }), className)}
-      {...props}
-    />
+    <View style={[badgeStyles.container, style]} {...props}>
+      <Text style={[badgeStyles.text, textStyle]}>{children}</Text>
+    </View>
   );
 }
 
-export { Badge, badgeVariants };
+const styles = StyleSheet.create({
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 6,
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    minWidth: 24,
+    alignSelf: "flex-start",
+    overflow: "hidden",
+    gap: 4,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: "500",
+    flexShrink: 1,
+  },
+  default: {
+    backgroundColor: "#007bff", // primary
+    borderColor: "transparent",
+  },
+  defaultText: {
+    color: "#fff",
+  },
+  secondary: {
+    backgroundColor: "#e0e0e0",
+    borderColor: "transparent",
+  },
+  secondaryText: {
+    color: "#333",
+  },
+  destructive: {
+    backgroundColor: "#e53935",
+    borderColor: "transparent",
+  },
+  destructiveText: {
+    color: "#fff",
+  },
+  outline: {
+    backgroundColor: "transparent",
+    borderColor: "#333",
+  },
+  outlineText: {
+    color: "#333",
+  },
+});
+
+export { Badge };

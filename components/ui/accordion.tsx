@@ -1,66 +1,91 @@
-"use client";
+import React, { useState } from 'react';
+import { LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
 
-import * as React from "react";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDownIcon } from "lucide-react";
-
-import { cn } from "./utils";
-
-function Accordion({
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-function AccordionItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+interface AccordionProps {
+  children: React.ReactNode;
+  multiple?: boolean;
+}
+
+interface AccordionItemProps {
+  title: React.ReactNode;
+  children: React.ReactNode;
+  expanded?: boolean;
+  onPress?: () => void;
+}
+
+const Accordion: React.FC<AccordionProps> = ({ children }) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // Clone children to inject expanded/onPress
   return (
-    <AccordionPrimitive.Item
-      data-slot="accordion-item"
-      className={cn("border-b last:border-b-0", className)}
-      {...props}
-    />
+    <View>
+      {React.Children.map(children, (child, idx) => {
+        if (!React.isValidElement(child)) return child;
+        // Only inject props if child is AccordionItem
+        if ((child.type as any).displayName === 'AccordionItem' || child.type === AccordionItem) {
+          return React.cloneElement(child as React.ReactElement<AccordionItemProps>, {
+            expanded: openIndex === idx,
+            onPress: () => {
+              LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+              setOpenIndex(openIndex === idx ? null : idx);
+            },
+          });
+        }
+        return child;
+      })}
+    </View>
+  );
+};
+
+
+function AccordionItem({ title, children, expanded = false, onPress }: AccordionItemProps) {
+  return (
+    <View style={styles.item}>
+      <TouchableOpacity style={styles.trigger} onPress={onPress} activeOpacity={0.8}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.chevron, expanded && styles.chevronOpen]}>▼</Text>
+      </TouchableOpacity>
+      {expanded && <View style={styles.content}>{children}</View>}
+    </View>
   );
 }
+AccordionItem.displayName = 'AccordionItem';
 
-function AccordionTrigger({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
-  return (
-    <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
-        className={cn(
-          "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
-      </AccordionPrimitive.Trigger>
-    </AccordionPrimitive.Header>
-  );
-}
+export { Accordion, AccordionItem };
 
-function AccordionContent({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
-  return (
-    <AccordionPrimitive.Content
-      data-slot="accordion-content"
-      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
-      {...props}
-    >
-      <div className={cn("pt-0 pb-4", className)}>{children}</div>
-    </AccordionPrimitive.Content>
-  );
-}
-
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+const styles = StyleSheet.create({
+  item: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  trigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 4,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#222',
+    flex: 1,
+  },
+  chevron: {
+    fontSize: 16,
+    color: '#888',
+    marginLeft: 8,
+    transform: [{ rotate: '0deg' }],
+  },
+  chevronOpen: {
+    transform: [{ rotate: '180deg' }],
+  },
+  content: {
+    paddingBottom: 16,
+    paddingHorizontal: 4,
+  },
+});

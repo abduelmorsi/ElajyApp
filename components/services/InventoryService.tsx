@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { Alert } from 'react-native';
 
 interface InventoryItem {
   id: string;
@@ -78,7 +78,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
   const [pharmacyLocations, setPharmacyLocations] = useState<PharmacyLocation[]>([]);
   const [stockMovements, setStockMovements] = useState<StockMovement[]>([]);
   const [currentPharmacy, setCurrentPharmacy] = useState<PharmacyLocation | null>(null);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(true); // Assume online by default in React Native
   const [syncQueue, setSyncQueue] = useState<any[]>([]);
 
   // Mock pharmacy locations
@@ -182,23 +182,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
     setInventory(generateInventory());
   }, [pharmacyLocations]);
 
-  // Monitor online status
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      syncInventory(); // Sync when back online
-    };
-    
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  // Online/offline status monitoring is not needed in React Native
 
   // Real-time inventory updates simulation
   useEffect(() => {
@@ -231,9 +215,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
 
           // Check for low stock alerts
           if (newStock <= randomItem.minStock) {
-            toast.warning('Low Stock Alert', {
-              description: `${randomItem.name} at ${pharmacyLocations.find(p => p.id === randomItem.pharmacyId)?.name} is running low (${newStock} remaining)`
-            });
+            Alert.alert('Low Stock Alert', `${randomItem.name} at ${pharmacyLocations.find(p => p.id === randomItem.pharmacyId)?.name} is running low (${newStock} remaining)`);
           }
         }
 
@@ -310,9 +292,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
 
     setStockMovements(prev => [inMovement, outMovement, ...prev]);
     
-    toast.success('Stock Transfer', {
-      description: `Transferred ${quantity} units from ${pharmacyLocations.find(p => p.id === fromPharmacy)?.name} to ${pharmacyLocations.find(p => p.id === toPharmacy)?.name}`
-    });
+    Alert.alert('Stock Transfer', `Transferred ${quantity} units from ${pharmacyLocations.find(p => p.id === fromPharmacy)?.name} to ${pharmacyLocations.find(p => p.id === toPharmacy)?.name}`);
   };
 
   const addStockMovement = (movement: Omit<StockMovement, 'id' | 'timestamp'>) => {
@@ -342,7 +322,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
 
   const syncInventory = async (): Promise<void> => {
     if (!isOnline) {
-      toast.error('Cannot sync', { description: 'No internet connection' });
+      Alert.alert('Cannot sync', 'No internet connection');
       return;
     }
 
@@ -353,13 +333,9 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
       // Process sync queue
       setSyncQueue([]);
       
-      toast.success('Inventory synced', { 
-        description: 'All locations updated successfully' 
-      });
+      Alert.alert('Inventory synced', 'All locations updated successfully');
     } catch (error) {
-      toast.error('Sync failed', { 
-        description: 'Failed to sync inventory. Changes saved locally.' 
-      });
+      Alert.alert('Sync failed', 'Failed to sync inventory. Changes saved locally.');
     }
   };
 

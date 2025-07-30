@@ -1,11 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Package, Users, TrendingUp, AlertTriangle, Clock, Star, Heart, MessageCircle, Upload, BarChart3, Search, Plus, ChevronRight, Sparkles, MapPin, Calendar, DollarSign } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalization, useRTL } from '../services/LocalizationService';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
+const ICONS = {
+  package: '📦',
+  users: '👥',
+  trendingUp: '📈',
+  alert: '⚠️',
+  clock: '⏰',
+  star: '⭐',
+  heart: '❤️',
+  message: '💬',
+  upload: '⬆️',
+  barChart: '📊',
+  search: '🔍',
+  plus: '➕',
+  chevronRight: '›',
+  sparkles: '✨',
+  mapPin: '📍',
+  calendar: '📅',
+  dollar: '💵',
+};
 
 // Define the interface for PharmacistDashboard's props
 interface PharmacistDashboardProps {
@@ -57,36 +71,36 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       id: 'pharmacist-orders',
       title: language === 'ar' ? 'الطلبات الجديدة' : 'New Orders',
       subtitle: language === 'ar' ? 'مراجعة الطلبات' : 'Review orders',
-      icon: Package,
-      color: 'bg-blue-50',
-      iconColor: 'text-blue-600',
+      icon: ICONS.package,
+      color: '#e0e7ff',
+      iconColor: '#2563eb',
       count: 12
     },
     {
       id: 'donations',
       title: language === 'ar' ? 'إدارة التبرعات' : 'Donation Management',
       subtitle: language === 'ar' ? 'توزيع الأدوية' : 'Distribute medicines',
-      icon: Heart,
-      color: 'bg-green-50',
-      iconColor: 'text-green-600',
+      icon: ICONS.heart,
+      color: '#dcfce7',
+      iconColor: '#22c55e',
       count: 5
     },
     {
       id: 'pharmacist-consultations',
       title: language === 'ar' ? 'الاستشارات' : 'Consultations',
       subtitle: language === 'ar' ? 'استفسارات المرضى' : 'Patient inquiries',
-      icon: MessageCircle,
-      color: 'bg-purple-50',
-      iconColor: 'text-purple-600',
+      icon: ICONS.message,
+      color: '#ede9fe',
+      iconColor: '#a21caf',
       count: 8
     },
     {
       id: 'pharmacist-inventory',
       title: language === 'ar' ? 'المخزون' : 'Inventory',
       subtitle: language === 'ar' ? 'إدارة المنتجات' : 'Manage products',
-      icon: Upload,
-      color: 'bg-orange-50',
-      iconColor: 'text-orange-600',
+      icon: ICONS.upload,
+      color: '#fef3c7',
+      iconColor: '#ea580c',
       count: 3
     }
   ];
@@ -98,36 +112,36 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       value: 24,
       change: +12,
       changeType: 'increase',
-      icon: Package,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      icon: ICONS.package,
+      color: '#2563eb',
+      bgColor: '#e0e7ff'
     },
     {
       title: language === 'ar' ? 'الإيرادات' : 'Revenue',
       value: `${language === 'ar' ? '12,450 ج.س' : '12,450 SDG'}`,
       change: +8.5,
       changeType: 'increase',
-      icon: DollarSign,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
+      icon: ICONS.dollar,
+      color: '#22c55e',
+      bgColor: '#dcfce7'
     },
     {
       title: language === 'ar' ? 'العملاء الجدد' : 'New Customers',
       value: 7,
       change: +3,
       changeType: 'increase',
-      icon: Users,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      icon: ICONS.users,
+      color: '#a21caf',
+      bgColor: '#ede9fe'
     },
     {
       title: language === 'ar' ? 'التبرعات' : 'Donations',
       value: 5,
       change: +2,
       changeType: 'increase',
-      icon: Heart,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50'
+      icon: ICONS.heart,
+      color: '#e11d48',
+      bgColor: '#fee2e2'
     }
   ];
 
@@ -217,348 +231,270 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-700';
+        return { backgroundColor: '#fef9c3', color: '#b45309' };
       case 'preparing':
-        return 'bg-blue-100 text-blue-700';
+        return { backgroundColor: '#e0e7ff', color: '#2563eb' };
       case 'ready':
-        return 'bg-green-100 text-green-700';
       case 'assigned':
-        return 'bg-green-100 text-green-700';
+        return { backgroundColor: '#dcfce7', color: '#22c55e' };
       case 'pending_assignment':
-        return 'bg-orange-100 text-orange-700';
+        return { backgroundColor: '#fef3c7', color: '#ea580c' };
       default:
-        return 'bg-gray-100 text-gray-700';
+        return { backgroundColor: '#f3f4f6', color: '#374151' };
     }
   };
 
   const getUrgencyColor = (urgency) => {
     switch (urgency) {
       case 'high':
-        return 'bg-red-100 text-red-700';
+        return { backgroundColor: '#fee2e2', color: '#b91c1c' };
       case 'medium':
-        return 'bg-yellow-100 text-yellow-700';
+        return { backgroundColor: '#fef9c3', color: '#b45309' };
       case 'low':
-        return 'bg-green-100 text-green-700';
+        return { backgroundColor: '#dcfce7', color: '#166534' };
       default:
-        return 'bg-gray-100 text-gray-700';
+        return { backgroundColor: '#f3f4f6', color: '#374151' };
     }
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-background clean-pattern">
-      {/* Compact Header */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex-1">
-              {/* Added a null check for userData.name before split */}
-              <h1 className="text-base font-semibold text-gray-900 mb-1">
-                {greeting}, {userData?.name?.split(' ')[1] || (language === 'ar' ? 'د. فاطمة' : 'Dr. Fatima')}
-              </h1>
-              <div className="flex items-center space-x-3 text-xs text-gray-600">
-                <div className="flex items-center">
-                  <MapPin size={10} className={`${getMargin('0', '1')} text-gray-400`} />
-                  {/* Added a null check for userData.pharmacy.name */}
-                  {userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}
-                </div>
-                <span className="text-gray-400">•</span>
-                <div className="flex items-center">
-                  <Clock size={10} className="text-gray-400 mr-1" />
-                  {currentTime}
-                </div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center space-x-1 mb-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-xs font-medium text-green-700">
-                  {language === 'ar' ? 'مفتوح' : 'Open'}
-                </span>
-              </div>
-              <div className="text-xs text-gray-600">
-                {language === 'ar' ? 'يغلق الساعة 22:00' : 'Closes at 10:00 PM'}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      {/* Header */}
+      <View style={styles.headerBox}>
+        <View style={styles.headerRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.headerGreeting}>
+              {greeting}, {userData?.name?.split(' ')[1] || (language === 'ar' ? 'د. فاطمة' : 'Dr. Fatima')}
+            </Text>
+            <View style={styles.headerMetaRow}>
+              <View style={styles.headerMetaItem}>
+                <Text style={styles.headerMetaIcon}>{ICONS.mapPin}</Text>
+                <Text style={styles.headerMetaText}>{userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}</Text>
+              </View>
+              <Text style={styles.headerMetaDot}>•</Text>
+              <View style={styles.headerMetaItem}>
+                <Text style={styles.headerMetaIcon}>{ICONS.clock}</Text>
+                <Text style={styles.headerMetaText}>{currentTime}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.headerStatusBox}>
+            <View style={styles.headerStatusDot} />
+            <Text style={styles.headerStatusText}>{language === 'ar' ? 'مفتوح' : 'Open'}</Text>
+            <Text style={styles.headerStatusSub}>{language === 'ar' ? 'يغلق الساعة 22:00' : 'Closes at 10:00 PM'}</Text>
+          </View>
+        </View>
+      </View>
 
-      <div className="px-4 py-3 space-y-4">
-        {/* Compact Quick Actions with fixed text boundaries and black titles */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900">
-              {language === 'ar' ? 'الإجراءات السريعة' : 'Quick Actions'}
-            </h2>
-            <Sparkles size={14} className="text-primary" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <Card
-                  key={action.id}
-                  className="cursor-pointer hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-primary/20"
-                  onClick={() => handleQuickAction(action.id)}
-                >
-                  <CardContent className="p-3">
-                    {/* Compact layout with proper text boundaries */}
-                    <div className="space-y-2">
-                      {/* Icon and badge row */}
-                      <div className="flex items-center justify-between">
-                        <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center`}>
-                          <Icon size={20} className={action.iconColor} />
-                        </div>
-                        {action.count && (
-                          <Badge className="bg-red-500 text-white text-xs px-2 py-0.5">
-                            {action.count}
-                          </Badge>
-                        )}
-                      </div>
+      {/* Quick Actions */}
+      <View style={styles.sectionBox}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>{language === 'ar' ? 'الإجراءات السريعة' : 'Quick Actions'}</Text>
+          <Text style={styles.sectionIcon}>{ICONS.sparkles}</Text>
+        </View>
+        <View style={styles.quickActionsGrid}>
+          {quickActions.map((action) => (
+            <TouchableOpacity key={action.id} style={styles.quickActionCard} onPress={() => handleQuickAction(action.id)}>
+              <View style={styles.quickActionIconBox}>
+                <Text style={[styles.quickActionIcon, { backgroundColor: action.color, color: action.iconColor }]}>{action.icon}</Text>
+              </View>
+              {action.count ? (
+                <View style={styles.quickActionBadge}><Text style={styles.quickActionBadgeText}>{action.count}</Text></View>
+              ) : null}
+              <Text style={styles.quickActionTitle}>{action.title}</Text>
+              <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
 
-                      {/* Text with proper boundaries - BLACK titles as requested */}
-                      <div className="space-y-1 px-1">
-                        <h3 className="text-gray-900 font-semibold text-xs leading-tight">
-                          {action.title}
-                        </h3>
-                        <p className="text-gray-600 text-xs leading-tight">
-                          {action.subtitle}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+      {/* Today's Metrics */}
+      <View style={styles.sectionBox}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>{language === 'ar' ? 'مقاييس اليوم' : "Today's Metrics"}</Text>
+          <TouchableOpacity onPress={() => navigateTo('pharmacist-analytics')}>
+            <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض التفاصيل' : 'View Details'} {ICONS.barChart}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.metricsGrid}>
+          {todayMetrics.map((metric, index) => (
+            <View key={index} style={styles.metricCard}>
+              <View style={styles.metricCardRow}>
+                <Text style={[styles.metricIcon, { backgroundColor: metric.bgColor, color: metric.color }]}>{metric.icon}</Text>
+                <View style={[styles.metricChangeBox, { backgroundColor: '#dcfce7' }]}> {/* Always green for increase */}
+                  <Text style={styles.metricChangeIcon}>{ICONS.trendingUp}</Text>
+                  <Text style={styles.metricChangeText}>+{metric.change}%</Text>
+                </View>
+              </View>
+              <Text style={styles.metricValue}>{metric.value}</Text>
+              <Text style={styles.metricLabel}>{metric.title}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
 
-        {/* Compact Metrics */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900">
-              {language === 'ar' ? 'مقاييس اليوم' : "Today's Metrics"}
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateTo('pharmacist-analytics')}
-              className="text-primary hover:text-primary/80 text-xs px-2"
-            >
-              {language === 'ar' ? 'عرض التفاصيل' : 'View Details'}
-              <BarChart3 size={12} className="ml-1" />
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {todayMetrics.map((metric, index) => {
-              const Icon = metric.icon;
-              return (
-                <Card key={index} className="bg-white border border-gray-100">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className={`w-7 h-7 ${metric.bgColor} rounded-lg flex items-center justify-center`}>
-                        <Icon size={14} className={metric.color} />
-                      </div>
-                      <div className={`flex items-center text-xs px-2 py-0.5 rounded-full ${
-                        metric.changeType === 'increase' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
-                        <TrendingUp size={10} className="mr-1" />
-                        +{metric.change}%
-                      </div>
-                    </div>
-                    <div className="space-y-0.5">
-                      <div className="font-bold text-sm text-gray-900 arabic-numbers">
-                        {metric.value}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        {metric.title}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+      {/* Donation Management */}
+      <View style={styles.sectionBox}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>{ICONS.heart} {language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}</Text>
+          <TouchableOpacity onPress={() => navigateTo('donations')}>
+            <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} {ICONS.chevronRight}</Text>
+          </TouchableOpacity>
+        </View>
+        {pendingDonations.slice(0, 3).map((donation) => (
+          <TouchableOpacity key={donation.id} style={styles.donationCard} onPress={() => handleDonationAssignment(donation.id)}>
+            <View style={styles.donationHeaderRow}>
+              <Text style={styles.donationTitle}>{language === 'ar' ? donation.medicine : donation.medicineEn}</Text>
+              <View style={[styles.donationBadge, getUrgencyColor(donation.urgency)]}>
+                <Text style={styles.donationBadgeText}>
+                  {donation.urgency === 'high' ? (language === 'ar' ? 'عاجل' : 'Urgent') :
+                    donation.urgency === 'medium' ? (language === 'ar' ? 'متوسط' : 'Medium') :
+                    (language === 'ar' ? 'عادي' : 'Normal')}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.donationDetailsRow}>
+              <Text style={styles.donationDetailLabel}>{language === 'ar' ? 'الكمية:' : 'Quantity:'}</Text>
+              <Text style={styles.donationDetailValue}>{donation.quantity}</Text>
+              <Text style={styles.donationDetailLabel}>{language === 'ar' ? 'المتبرع:' : 'Donor:'}</Text>
+              <Text style={styles.donationDetailValue}>{language === 'ar' ? donation.donor : donation.donorEn}</Text>
+            </View>
+            <View style={styles.donationStatusRow}>
+              <View style={[styles.donationBadge, getStatusColor(donation.status)]}>
+                <Text style={styles.donationBadgeText}>
+                  {donation.status === 'pending_assignment'
+                    ? (language === 'ar' ? 'في انتظار التوزيع' : 'Pending Assignment')
+                    : (language === 'ar' ? 'تم التوزيع' : 'Assigned')}
+                </Text>
+              </View>
+              <Text style={styles.donationDate}>{new Date(donation.donatedAt).toLocaleDateString()}</Text>
+            </View>
+            {donation.status === 'assigned' && donation.assignedTo && (
+              <View style={styles.donationAssignedBox}>
+                <Text style={styles.donationAssignedText}>
+                  {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'} {language === 'ar' ? donation.assignedTo : donation.assignedToEn}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
 
-        {/* Compact Donation Management with consistent layout */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900 flex items-center">
-              <Heart size={14} className="text-red-500 mr-2" />
-              {language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateTo('donations')}
-              className="text-primary hover:text-primary/80 text-xs px-2"
-            >
-              {language === 'ar' ? 'عرض الكل' : 'View All'}
-              <ChevronRight size={12} className="ml-1" />
-            </Button>
-          </div>
-          <div className="space-y-3">
-            {pendingDonations.slice(0, 3).map((donation) => (
-              <Card
-                key={donation.id}
-                className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200 border border-gray-100"
-                onClick={() => handleDonationAssignment(donation.id)}
-              >
-                <CardContent className="p-3">
-                  {/* Fixed grid layout for consistent alignment */}
-                  <div className="space-y-2">
-                    {/* Header row with proper alignment */}
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-gray-900 text-xs">
-                        {language === 'ar' ? donation.medicine : donation.medicineEn}
-                      </h3>
-                      <Badge className={`text-xs px-2 py-0.5 ${getUrgencyColor(donation.urgency)}`}>
-                        {donation.urgency === 'high' ? (language === 'ar' ? 'عاجل' : 'Urgent') :
-                          donation.urgency === 'medium' ? (language === 'ar' ? 'متوسط' : 'Medium') :
-                          (language === 'ar' ? 'عادي' : 'Normal')}
-                      </Badge>
-                    </div>
+      {/* Recent Orders */}
+      <View style={styles.sectionBox}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>{language === 'ar' ? 'الطلبات الحديثة' : 'Recent Orders'}</Text>
+          <TouchableOpacity onPress={() => navigateTo('pharmacist-orders')}>
+            <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} {ICONS.chevronRight}</Text>
+          </TouchableOpacity>
+        </View>
+        {recentOrders.map((order) => (
+          <TouchableOpacity key={order.id} style={styles.orderCard} onPress={() => navigateTo('pharmacist-orders', { orderId: order.id })}>
+            <View style={styles.orderHeaderRow}>
+              <Text style={styles.orderTitle}>#{order.id}</Text>
+              <View style={[styles.orderBadge, getStatusColor(order.status)]}>
+                <Text style={styles.orderBadgeText}>
+                  {order.status === 'pending' ? (language === 'ar' ? 'في الانتظار' : 'Pending') :
+                    order.status === 'preparing' ? (language === 'ar' ? 'قيد التحضير' : 'Preparing') :
+                    (language === 'ar' ? 'جاهز' : 'Ready')}
+                </Text>
+              </View>
+              {order.priority === 'urgent' && (
+                <View style={[styles.orderBadge, { backgroundColor: '#fee2e2' }]}> 
+                  <Text style={[styles.orderBadgeText, { color: '#b91c1c' }]}>{language === 'ar' ? 'عاجل' : 'Urgent'}</Text>
+                </View>
+              )}
+              <Text style={styles.orderTime}>{order.time}</Text>
+            </View>
+            <View style={styles.orderDetailsRow}>
+              <Text style={styles.orderDetailLabel}>{language === 'ar' ? 'العميل:' : 'Customer:'}</Text>
+              <Text style={styles.orderDetailValue}>{language === 'ar' ? order.customer : order.customerEn}</Text>
+              <Text style={styles.orderDetailLabel}>{language === 'ar' ? 'المبلغ:' : 'Total:'}</Text>
+              <Text style={styles.orderDetailValue}>{order.total} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-                    {/* Details grid with consistent spacing */}
-                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'الكمية:' : 'Quantity:'}</span>
-                        <span className="font-medium arabic-numbers">{donation.quantity}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'المتبرع:' : 'Donor:'}</span>
-                        <span className="font-medium truncate ml-1">
-                          {language === 'ar' ? donation.donor : donation.donorEn}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Status row with consistent alignment */}
-                    <div className="flex items-center justify-between">
-                      <Badge className={`text-xs px-2 py-0.5 ${getStatusColor(donation.status)}`}>
-                        {donation.status === 'pending_assignment'
-                          ? (language === 'ar' ? 'في انتظار التوزيع' : 'Pending Assignment')
-                          : (language === 'ar' ? 'تم التوزيع' : 'Assigned')
-                        }
-                      </Badge>
-                      <div className="text-xs text-gray-500">
-                        {new Date(donation.donatedAt).toLocaleDateString()}
-                      </div>
-                    </div>
-
-                    {/* Assignment info with consistent styling */}
-                    {donation.status === 'assigned' && donation.assignedTo && (
-                      <div className="p-2 bg-green-50 rounded-lg">
-                        <div className="text-xs text-green-700">
-                          {language === 'ar' ? 'تم التوزيع على:' : 'Assigned to:'}
-                          <span className="font-medium ml-1">
-                            {language === 'ar' ? donation.assignedTo : donation.assignedToEn}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Compact Recent Orders */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-900">
-              {language === 'ar' ? 'الطلبات الحديثة' : 'Recent Orders'}
-            </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateTo('pharmacist-orders')}
-              className="text-primary hover:text-primary/80 text-xs px-2"
-            >
-              {language === 'ar' ? 'عرض الكل' : 'View All'}
-              <ChevronRight size={12} className="ml-1" />
-            </Button>
-          </div>
-          <div className="space-y-3">
-            {recentOrders.map((order) => (
-              <Card
-                key={order.id}
-                className="cursor-pointer hover:shadow-md hover:border-primary/20 transition-all duration-200 border border-gray-100"
-                onClick={() => navigateTo('pharmacist-orders', { orderId: order.id })}
-              >
-                <CardContent className="p-3">
-                  <div className="space-y-2">
-                    {/* Header with consistent alignment */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-medium text-gray-900 text-xs">
-                          #{order.id}
-                        </h3>
-                        <Badge className={`text-xs px-2 py-0.5 ${getStatusColor(order.status)}`}>
-                          {order.status === 'pending' ? (language === 'ar' ? 'في الانتظار' : 'Pending') :
-                            order.status === 'preparing' ? (language === 'ar' ? 'قيد التحضير' : 'Preparing') :
-                            (language === 'ar' ? 'جاهز' : 'Ready')}
-                        </Badge>
-                        {order.priority === 'urgent' && (
-                          <Badge className="bg-red-100 text-red-700 text-xs px-2 py-0.5">
-                            {language === 'ar' ? 'عاجل' : 'Urgent'}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {order.time}
-                      </div>
-                    </div>
-
-                    {/* Details grid */}
-                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'العميل:' : 'Customer:'}</span>
-                        <span className="font-medium truncate ml-1">
-                          {language === 'ar' ? order.customer : order.customerEn}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500">{language === 'ar' ? 'المبلغ:' : 'Total:'}</span>
-                        <span className="font-medium arabic-numbers">
-                          {order.total} {language === 'ar' ? 'ج.س' : 'SDG'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Compact Quick Search */}
-        <Card className="bg-gradient-to-r from-primary/5 to-blue-50 border border-primary/20">
-          <CardContent className="p-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Search size={18} className="text-primary" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <h3 className="font-medium text-gray-900 text-sm">
-                  {language === 'ar' ? 'البحث السريع' : 'Quick Search'}
-                </h3>
-                <p className="text-xs text-gray-600">
-                  {language === 'ar' ? 'ابحث عن الأدوية والمنتجات' : 'Search for medicines and products'}
-                </p>
-                <Button
-                  onClick={() => navigateTo('search')}
-                  className="bg-primary text-white text-xs px-3 py-1.5"
-                >
-                  {language === 'ar' ? 'البحث الآن' : 'Search Now'}
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+      {/* Quick Search */}
+      <View style={styles.sectionBox}>
+        <View style={styles.quickSearchRow}>
+          <Text style={styles.quickSearchIcon}>{ICONS.search}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.quickSearchTitle}>{language === 'ar' ? 'البحث السريع' : 'Quick Search'}</Text>
+            <Text style={styles.quickSearchDesc}>{language === 'ar' ? 'ابحث عن الأدوية والمنتجات' : 'Search for medicines and products'}</Text>
+            <TouchableOpacity style={styles.quickSearchBtn} onPress={() => navigateTo('search')}>
+              <Text style={styles.quickSearchBtnText}>{language === 'ar' ? 'البحث الآن' : 'Search Now'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  contentContainer: { padding: 0, paddingBottom: 32 },
+  headerBox: { backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16 },
+  headerGreeting: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 2 },
+  headerMetaRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 2 },
+  headerMetaItem: { flexDirection: 'row', alignItems: 'center', marginRight: 8 },
+  headerMetaIcon: { fontSize: 13, color: '#888', marginRight: 2 },
+  headerMetaText: { fontSize: 12, color: '#555' },
+  headerMetaDot: { color: '#bbb', fontSize: 14, marginHorizontal: 4 },
+  headerStatusBox: { alignItems: 'flex-end', minWidth: 70 },
+  headerStatusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#22c55e', marginBottom: 2 },
+  headerStatusText: { fontSize: 12, color: '#22c55e', fontWeight: 'bold', marginBottom: 2 },
+  headerStatusSub: { fontSize: 11, color: '#888' },
+  sectionBox: { backgroundColor: '#fff', borderRadius: 12, margin: 12, marginBottom: 0, padding: 14, elevation: 1 },
+  sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
+  sectionTitle: { fontSize: 15, fontWeight: 'bold', color: '#222' },
+  sectionIcon: { fontSize: 16, color: '#007bff' },
+  sectionLink: { color: '#007bff', fontSize: 13, fontWeight: 'bold' },
+  quickActionsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  quickActionCard: { width: '48%', backgroundColor: '#f9fafb', borderRadius: 10, padding: 12, marginBottom: 12, alignItems: 'center', elevation: 1 },
+  quickActionIconBox: { marginBottom: 6 },
+  quickActionIcon: { fontSize: 24, borderRadius: 8, padding: 8, overflow: 'hidden', textAlign: 'center' },
+  quickActionBadge: { position: 'absolute', top: 8, right: 12, backgroundColor: '#e11d48', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
+  quickActionBadgeText: { color: '#fff', fontSize: 11, fontWeight: 'bold' },
+  quickActionTitle: { fontSize: 13, fontWeight: 'bold', color: '#222', marginTop: 2 },
+  quickActionSubtitle: { fontSize: 12, color: '#555', marginTop: 1 },
+  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  metricCard: { width: '48%', backgroundColor: '#f9fafb', borderRadius: 10, padding: 12, marginBottom: 12, elevation: 1 },
+  metricCardRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
+  metricIcon: { fontSize: 18, borderRadius: 8, padding: 8, overflow: 'hidden', textAlign: 'center' },
+  metricChangeBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 8 },
+  metricChangeIcon: { fontSize: 13, color: '#22c55e', marginRight: 2 },
+  metricChangeText: { fontSize: 12, color: '#22c55e', fontWeight: 'bold' },
+  metricValue: { fontSize: 16, fontWeight: 'bold', color: '#222', marginBottom: 2 },
+  metricLabel: { fontSize: 12, color: '#555' },
+  donationCard: { backgroundColor: '#f9fafb', borderRadius: 10, padding: 12, marginBottom: 10, elevation: 1 },
+  donationHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
+  donationTitle: { fontSize: 13, fontWeight: 'bold', color: '#222' },
+  donationBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 4, alignItems: 'center', justifyContent: 'center' },
+  donationBadgeText: { fontSize: 12, fontWeight: 'bold' },
+  donationDetailsRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  donationDetailLabel: { fontSize: 12, color: '#555', marginRight: 2 },
+  donationDetailValue: { fontSize: 12, color: '#222', fontWeight: 'bold', marginRight: 8 },
+  donationStatusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
+  donationDate: { fontSize: 12, color: '#888' },
+  donationAssignedBox: { backgroundColor: '#dcfce7', borderRadius: 8, padding: 8, marginTop: 4 },
+  donationAssignedText: { fontSize: 12, color: '#166534' },
+  orderCard: { backgroundColor: '#f9fafb', borderRadius: 10, padding: 12, marginBottom: 10, elevation: 1 },
+  orderHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  orderTitle: { fontSize: 13, fontWeight: 'bold', color: '#222', marginRight: 8 },
+  orderBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, marginLeft: 4, alignItems: 'center', justifyContent: 'center' },
+  orderBadgeText: { fontSize: 12, fontWeight: 'bold' },
+  orderTime: { fontSize: 12, color: '#888', marginLeft: 'auto' },
+  orderDetailsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  orderDetailLabel: { fontSize: 12, color: '#555', marginRight: 2 },
+  orderDetailValue: { fontSize: 12, color: '#222', fontWeight: 'bold', marginRight: 8 },
+  quickSearchRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#e0e7ff', borderRadius: 10, padding: 12, marginTop: 12 },
+  quickSearchIcon: { fontSize: 22, color: '#2563eb', marginRight: 10 },
+  quickSearchTitle: { fontSize: 14, fontWeight: 'bold', color: '#222' },
+  quickSearchDesc: { fontSize: 12, color: '#555', marginBottom: 6 },
+  quickSearchBtn: { backgroundColor: '#2563eb', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center', marginTop: 4 },
+  quickSearchBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
+});
