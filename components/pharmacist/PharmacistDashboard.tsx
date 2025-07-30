@@ -203,12 +203,12 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
               </Text>
               <View style={styles.headerMetaRow}>
                 <View style={styles.headerMetaItem}>
-                <Icon name="location-on" size={16} color="#6b7280" />
+                  <Icon name="location-on" size={16} color="#6b7280" />
                   <Text style={styles.headerMetaText}>{userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}</Text>
                 </View>
                 <Text style={styles.headerMetaDot}>•</Text>
                 <View style={styles.headerMetaItem}>
-                <Icon name="schedule" size={16} color="#6b7280" />
+                  <Icon name="schedule" size={16} color="#6b7280" />
                   <Text style={styles.headerMetaText}>{currentTime}</Text>
                 </View>
               </View>
@@ -227,15 +227,15 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
         <View style={styles.sectionBox}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>{language === 'ar' ? 'الإجراءات السريعة' : 'Quick Actions'}</Text>
-              <Icon name="auto-awesome" size={20} color="#6b7280" />
+            <Icon name="auto-awesome" size={20} color="#6b7280" />
           </View>
           <View style={styles.quickActionsGrid}>
             {quickActions.map((action) => (
               <TouchableOpacity key={action.id} style={styles.quickActionCard} onPress={() => handleQuickAction(action.id)}>
                 <View style={styles.quickActionIconBox}>
-                    <View style={[styles.quickActionIcon, { backgroundColor: action.color }]}>
-                      <Icon name={action.icon} size={24} color={action.iconColor} />
-                    </View>
+                  <View style={[styles.quickActionIcon, { backgroundColor: action.color }]}>
+                    <Icon name={action.icon} size={24} color={action.iconColor} />
+                  </View>
                 </View>
                 {action.count ? (
                   <View style={styles.quickActionBadge}><Text style={styles.quickActionBadgeText}>{action.count}</Text></View>
@@ -259,11 +259,11 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
             {todayMetrics.map((metric, index) => (
               <View key={index} style={styles.metricCard}>
                 <View style={styles.metricCardRow}>
-                    <View style={[styles.metricIcon, { backgroundColor: metric.bgColor }]}>
-                      <Icon name={metric.icon} size={20} color={metric.color} />
-                    </View>
+                  <View style={[styles.metricIcon, { backgroundColor: metric.bgColor }]}>
+                    <Icon name={metric.icon} size={20} color={metric.color} />
+                  </View>
                   <View style={[styles.metricChangeBox, { backgroundColor: '#dcfce7' }]}> {/* Always green for increase */}
-                      <Icon name="trending-up" size={12} color="#22c55e" />
+                    <Icon name="trending-up" size={12} color="#22c55e" />
                     <Text style={styles.metricChangeText}>+{metric.change}%</Text>
                   </View>
                 </View>
@@ -277,9 +277,10 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
         {/* Donation Management */}
         <View style={styles.sectionBox}>
           <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>{language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}</Text>
-            <TouchableOpacity onPress={() => navigateTo('donations')}>
-                <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'} <Icon name="chevron-right" size={16} color="#6b7280" /></Text>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'إدارة التبرعات' : 'Donation Management'}</Text>
+            <TouchableOpacity onPress={() => navigateTo('donations')} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.sectionLink}>{language === 'ar' ? 'عرض الكل' : 'View All'}</Text>
+              <Icon name="chevron-right" size={16} color="#6b7280" />
             </TouchableOpacity>
           </View>
           {pendingDonations.slice(0, 3).map((donation) => (
@@ -295,18 +296,18 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
                 </View>
               </View>
               <View style={styles.donationDetailsRow}>
-                  <View style={styles.donationDetailItem}>
-                    <Icon name="inventory" size={14} color="#6b7280" />
-                    <Text style={styles.donationDetailText}>{donation.quantity}</Text>
-              </View>
-                  <View style={styles.donationDetailItem}>
-                    <Icon name="person" size={14} color="#6b7280" />
-                    <Text style={styles.donationDetailText}>{donation.patient}</Text>
-                  </View>
-                  <View style={styles.donationDetailItem}>
-                    <Icon name="schedule" size={14} color="#6b7280" />
-                    <Text style={styles.donationDetailText}>{donation.timeAgo}</Text>
-              </View>
+                <View style={styles.donationDetailItem}>
+                  <Icon name="inventory" size={14} color="#6b7280" />
+                  <Text style={styles.donationDetailText}>{donation.quantity}</Text>
+                </View>
+                <View style={styles.donationDetailItem}>
+                  <Icon name="person" size={14} color="#6b7280" />
+                  <Text style={styles.donationDetailText}>{donation.patient}</Text>
+                </View>
+                <View style={styles.donationDetailItem}>
+                  <Icon name="schedule" size={14} color="#6b7280" />
+                  <Text style={styles.donationDetailText}>{donation.timeAgo}</Text>
+                </View>
               </View>
             </TouchableOpacity>
           ))}

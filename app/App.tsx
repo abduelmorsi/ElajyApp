@@ -227,8 +227,8 @@ function AppContent() {
   const pharmacistTabs: TabType[] = [
     { id: 'pharmacist-dashboard', icon: 'home', label: language === 'ar' ? 'الرئيسية' : 'Dashboard' },
     { id: 'pharmacist-consultations', icon: 'message-circle', label: language === 'ar' ? 'استشارات' : 'Consult' },
-    { id: 'search', icon: 'search', label: language === 'ar' ? 'البحث' : 'Search' },
-    { id: 'pharmacist-orders', icon: 'package', label: language === 'ar' ? 'الطلبات' : 'Orders' },
+    { id: 'pharmacist-inventory', icon: 'package', label: language === 'ar' ? 'المخزون' : 'Inventory' },
+    { id: 'pharmacist-orders', icon: 'shopping-cart', label: language === 'ar' ? 'الطلبات' : 'Orders' },
     { id: 'pharmacist-profile', icon: 'user', label: language === 'ar' ? 'الملف' : 'Profile' },
   ];
 
@@ -305,12 +305,10 @@ function AppContent() {
       switch (currentScreen) {
         case 'pharmacist-dashboard':
           return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
-        case 'search':
-          return <SearchScreen navigateTo={navigateTo} addToCart={addToCart} goBack={goBack} navigationData={navigationData} />;
-        case 'pharmacist-orders':
-          return <PharmacistOrders navigateTo={navigateTo} userData={userData || {}} />;
         case 'pharmacist-inventory':
           return <PharmacistInventory navigateTo={navigateTo} userData={userData || {}} />;
+        case 'pharmacist-orders':
+          return <PharmacistOrders navigateTo={navigateTo} userData={userData || {}} />;
         case 'pharmacist-drug-upload':
           return <PharmacistDrugUpload navigateTo={navigateTo} />;
         case 'pharmacist-prescriptions':
