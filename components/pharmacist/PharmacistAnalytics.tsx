@@ -241,7 +241,7 @@ export default function PharmacistAnalytics({ navigateTo, goBack, userData }: Ph
                   </View>
                 </View>
                 <View style={styles.metricIconBox}>
-                  <Icon name="inventory" size={18} color="#007bff" />
+                  <Icon name="inventory" size={18} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -258,7 +258,7 @@ export default function PharmacistAnalytics({ navigateTo, goBack, userData }: Ph
                   </View>
                 </View>
                 <View style={styles.metricIconBox}>
-                  <Icon name="attach-money" size={18} color="#007bff" />
+                  <Icon name="attach-money" size={18} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -275,7 +275,7 @@ export default function PharmacistAnalytics({ navigateTo, goBack, userData }: Ph
                   </View>
                 </View>
                 <View style={styles.metricIconBox}>
-                  <Icon name="people" size={18} color="#007bff" />
+                  <Icon name="people" size={18} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -292,7 +292,7 @@ export default function PharmacistAnalytics({ navigateTo, goBack, userData }: Ph
                   </View>
                 </View>
                 <View style={styles.metricIconBox}>
-                  <Icon name="description" size={18} color="#007bff" />
+                  <Icon name="description" size={18} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   periodBtnActive: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   periodBtnText: {
     color: '#222',
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 8,
-    backgroundColor: '#e0e7ff',
+    backgroundColor: '#e6f7f5',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 8,
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
   },
   tabBtnActive: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   tabBtnText: {
     color: '#222',
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#007bff',
+    color: '#49C5B8',
     marginBottom: 8,
   },
   chartPlaceholder: {
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#e0e7ff',
+    backgroundColor: '#e6f7f5',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
   productRank: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#007bff',
+    color: '#49C5B8',
   },
   productName: {
     fontSize: 15,

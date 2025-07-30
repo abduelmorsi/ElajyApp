@@ -104,24 +104,24 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       value: language === 'ar' ? '12,500 ج.س' : '12,500 SDG',
       change: 8,
       icon: 'attach-money',
-      bgColor: '#dcfce7',
-      color: '#22c55e'
+      bgColor: '#e6f7f5',
+      color: '#49C5B8'
     },
     {
       title: language === 'ar' ? 'المرضى' : 'Patients',
       value: '156',
       change: 15,
       icon: 'people',
-      bgColor: '#ede9fe',
-      color: '#a21caf'
+      bgColor: '#e6f7f5',
+      color: '#49C5B8'
     },
     {
       title: language === 'ar' ? 'التقييم' : 'Rating',
       value: '4.8',
       change: 2,
       icon: 'star',
-      bgColor: '#fef3c7',
-      color: '#ea580c'
+      bgColor: '#e6f7f5',
+      color: '#49C5B8'
     }
   ];
 
@@ -169,7 +169,7 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       case 'pending':
         return { backgroundColor: '#fef9c3', color: '#b45309' };
       case 'processing':
-        return { backgroundColor: '#e0e7ff', color: '#2563eb' };
+        return { backgroundColor: '#e6f7f5', color: '#49C5B8' };
       case 'completed':
         return { backgroundColor: '#dcfce7', color: '#22c55e' };
       case 'cancelled':
@@ -262,7 +262,7 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
                   <View style={[styles.metricIcon, { backgroundColor: metric.bgColor }]}>
                     <Icon name={metric.icon} size={20} color={metric.color} />
                   </View>
-                  <View style={[styles.metricChangeBox, { backgroundColor: '#dcfce7' }]}> {/* Always green for increase */}
+                  <View style={[styles.metricChangeBox, { backgroundColor: '#e6f7f5' }]}> {/* Always green for increase */}
                     <Icon name="trending-up" size={12} color="#22c55e" />
                     <Text style={styles.metricChangeText}>+{metric.change}%</Text>
                   </View>
@@ -413,10 +413,10 @@ const styles = StyleSheet.create({
   },
   sectionIcon: {
     fontSize: 16,
-    color: '#007bff',
+    color: '#49C5B8',
   },
   sectionLink: {
-    color: '#007bff',
+    color: '#49C5B8',
     fontSize: 13,
     fontWeight: 'bold',
   },
@@ -646,14 +646,14 @@ const styles = StyleSheet.create({
   quickSearchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e0e7ff',
+    backgroundColor: '#e6f7f5',
     borderRadius: 10,
     padding: 12,
     marginTop: 12,
   },
   quickSearchIcon: {
     fontSize: 22,
-    color: '#2563eb',
+    color: '#49C5B8',
     marginRight: 10,
   },
   quickSearchTitle: {
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   quickSearchBtn: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,

@@ -350,7 +350,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
            </Text>
          </View>
          <TouchableOpacity onPress={handleAddNewMedicine} style={styles.addButton}>
-           <Icon name="add" size={24} color="#007bff" />
+           <Icon name="add" size={24} color="#49C5B8" />
          </TouchableOpacity>
        </View>
 
@@ -365,7 +365,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
                   <Text style={styles.summaryValue}>{inventoryItems.length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
-                  <Icon name="inventory" size={24} color="#007bff" />
+                  <Icon name="inventory" size={24} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -377,7 +377,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
                   <Text style={styles.summaryValue}>{inventoryItems.filter(item => item.status === 'low').length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
-                  <Icon name="warning" size={24} color="#f59e0b" />
+                  <Icon name="warning" size={24} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -389,7 +389,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
                   <Text style={styles.summaryValue}>{inventoryItems.filter(item => item.status === 'critical').length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
-                  <Icon name="error" size={24} color="#ef4444" />
+                  <Icon name="error" size={24} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -401,7 +401,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
                   <Text style={styles.summaryValue}>{inventoryItems.filter(item => new Date(item.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)).length}</Text>
                 </View>
                 <View style={styles.summaryIconBox}>
-                  <Icon name="schedule" size={24} color="#8b5cf6" />
+                  <Icon name="schedule" size={24} color="#49C5B8" />
                 </View>
               </View>
             </View>
@@ -485,7 +485,7 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
 
                 <View style={styles.inventoryActions}>
                   <TouchableOpacity style={styles.actionButton} onPress={() => handleEditItem(item)}>
-                    <Icon name="edit" size={16} color="#007bff" />
+                    <Icon name="edit" size={16} color="#49C5B8" />
                     <Text style={styles.actionButtonText}>{t('pharmacist.inventory.edit')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionButton} onPress={() => handleAddStock(item)}>
@@ -851,7 +851,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#e0e7ff',
+            backgroundColor: '#e6f7f5',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 8,
@@ -871,7 +871,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
   },
   activeFilterTab: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   filterTabText: {
     color: '#222',
@@ -1026,7 +1026,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   cancelButtonText: {
     color: '#374151',

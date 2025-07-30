@@ -89,7 +89,7 @@ const orders = [
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return { backgroundColor: '#FEF3C7', color: '#92400E' };
-      case 'processing': return { backgroundColor: '#DBEAFE', color: '#1E40AF' };
+      case 'processing': return { backgroundColor: '#e6f7f5', color: '#49C5B8' };
       case 'ready': return { backgroundColor: '#DCFCE7', color: '#166534' };
       case 'completed': return { backgroundColor: '#F3F4F6', color: '#374151' };
       case 'cancelled': return { backgroundColor: '#FECACA', color: '#991B1B' };
@@ -267,8 +267,8 @@ const orders = [
               </TouchableOpacity>
             )}
             <TouchableOpacity style={[styles.button, styles.outlineButton]} onPress={() => Alert.alert(t('action.call'), selectedOrder.phone)}>
-                <Icon name="phone" size={16} color="#007bff" />
-                <Text style={[styles.buttonText, { color: '#007bff' }]}> {t('action.call')}</Text>
+                <Icon name="phone" size={16} color="#49C5B8" />
+                <Text style={[styles.buttonText, { color: '#49C5B8' }]}> {t('action.call')}</Text>
             </TouchableOpacity>
             </View>
           </View>
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   activeTab: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     marginHorizontal: 2,
   },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   orderId: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#49C5B8',
   },
   orderTime: {
     fontSize: 12,
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   total: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#49C5B8',
   },
   actionRow: {
     flexDirection: 'row',
@@ -620,7 +620,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   button: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#49C5B8',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
   outlineButton: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#007bff',
+    borderColor: '#49C5B8',
   },
   buttonText: {
     color: '#fff',

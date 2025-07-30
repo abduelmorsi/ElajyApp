@@ -127,10 +127,10 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
         {/* Professional Stats */}
         <View style={styles.statsGrid}>
           {[
-            { icon: 'inventory', label: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders', value: pharmacistData.totalOrders, color: '#1976d2' },
-            { icon: 'people', label: language === 'ar' ? 'العملاء' : 'Customers', value: pharmacistData.totalCustomers, color: '#388e3c' },
-            { icon: 'star', label: language === 'ar' ? 'التقييم' : 'Rating', value: pharmacistData.rating, color: '#fbc02d' },
-            { icon: 'trending-up', label: language === 'ar' ? 'الخبرة' : 'Experience', value: language === 'ar' ? pharmacistData.experience : pharmacistData.experienceEn, color: '#0288d1' },
+                         { icon: 'inventory', label: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders', value: pharmacistData.totalOrders, color: '#49C5B8' },
+                         { icon: 'people', label: language === 'ar' ? 'العملاء' : 'Customers', value: pharmacistData.totalCustomers, color: '#49C5B8' },
+                         { icon: 'star', label: language === 'ar' ? 'التقييم' : 'Rating', value: pharmacistData.rating, color: '#49C5B8' },
+                         { icon: 'trending-up', label: language === 'ar' ? 'الخبرة' : 'Experience', value: language === 'ar' ? pharmacistData.experience : pharmacistData.experienceEn, color: '#49C5B8' },
           ].map((stat, idx) => (
             <View key={idx} style={styles.statCard}>
               <View style={[styles.statIconBox, { backgroundColor: stat.color + '22' }]}> 
@@ -205,7 +205,12 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
               <Text style={styles.settingLabel}>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'تنبيهات الطلبات والوصفات' : 'Order and prescription alerts'}</Text>
             </View>
-            <Switch value={notifications} onValueChange={setNotifications} />
+                         <Switch 
+               value={notifications} 
+               onValueChange={setNotifications}
+               trackColor={{ false: '#e5e7eb', true: '#49C5B8' }}
+               thumbColor={notifications ? '#fff' : '#f3f4f6'}
+             />
           </View>
           <View style={styles.separator} />
           {/* Dark Mode */}
@@ -215,7 +220,12 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
               <Text style={styles.settingLabel}>{language === 'ar' ? 'الوضع الليلي' : 'Dark Mode'}</Text>
               <Text style={styles.settingValue}>{language === 'ar' ? 'تغيير مظهر التطبيق' : 'Change app appearance'}</Text>
             </View>
-            <Switch value={darkMode} onValueChange={setDarkMode} />
+                         <Switch 
+               value={darkMode} 
+               onValueChange={setDarkMode}
+               trackColor={{ false: '#e5e7eb', true: '#49C5B8' }}
+               thumbColor={darkMode ? '#fff' : '#f3f4f6'}
+             />
           </View>
         </View>
       </View>
@@ -378,7 +388,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
                   onPress={() => handlePharmacySelection(pharmacy)}
                 >
                   <View style={styles.pharmacyOptionContent}>
-                    <Icon name="local-pharmacy" size={24} color="#1976d2" />
+                    <Icon name="local-pharmacy" size={24} color="#49C5B8" />
                     <View style={styles.pharmacyOptionText}>
                       <Text style={styles.pharmacyOptionName}>
                         {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
@@ -388,7 +398,7 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
                       </Text>
                     </View>
                     {selectedPharmacy === pharmacy.id && (
-                      <Icon name="check-circle" size={20} color="#1976d2" />
+                      <Icon name="check-circle" size={20} color="#49C5B8" />
                     )}
                   </View>
                 </TouchableOpacity>
@@ -412,10 +422,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9fafb',
   },
-  headerBg: {
-    padding: 24,
-    paddingBottom: 32,
-    backgroundColor: '#e6f0fa',
+     headerBg: {
+     padding: 24,
+     paddingBottom: 32,
+     backgroundColor: '#e6f7f5',
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     marginBottom: 8,
@@ -436,13 +446,13 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     borderWidth: 3,
-    borderColor: '#b3d4fc',
+         borderColor: '#a5d8d3',
   },
   avatarBadge: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#1976d2',
+         backgroundColor: '#49C5B8',
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -466,7 +476,7 @@ const styles = StyleSheet.create({
   headerName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1976d2',
+    color: '#49C5B8',
     marginBottom: 4,
   },
   headerSpecialization: {
@@ -558,7 +568,7 @@ const styles = StyleSheet.create({
   sectionTitleText: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#1976d2',
+    color: '#49C5B8',
     marginBottom: 12,
   },
   card: {
@@ -659,7 +669,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   langBtnText: {
-    color: '#1976d2',
+    color: '#49C5B8',
     fontWeight: 'bold',
     fontSize: 13,
   },
@@ -816,7 +826,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#49C5B8',
   },
   cancelButtonText: {
     color: '#374151',
@@ -838,7 +848,7 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
   },
   selectedPharmacyOption: {
-    borderColor: '#1976d2',
+    borderColor: '#49C5B8',
     backgroundColor: '#f0f8ff',
   },
   pharmacyOptionContent: {

@@ -175,7 +175,12 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
                 <Text style={styles.settingLabel}>{language === 'ar' ? 'الإشعارات' : 'Notifications'}</Text>
                 <Text style={styles.settingValue}>{language === 'ar' ? 'تنبيهات الطلبات والوصفات' : 'Order and prescription alerts'}</Text>
               </View>
-              <Switch value={notifications} onValueChange={setNotifications} />
+              <Switch 
+               value={notifications} 
+               onValueChange={setNotifications}
+               trackColor={{ false: '#e5e7eb', true: '#49C5B8' }}
+               thumbColor={notifications ? '#fff' : '#f3f4f6'}
+             />
             </View>
             <View style={styles.separator} />
             {/* Dark Mode */}
@@ -185,7 +190,12 @@ export default function ProfileScreen({ navigateTo, onSignOut, onLanguageToggle,
                 <Text style={styles.settingLabel}>{language === 'ar' ? 'الوضع الليلي' : 'Dark Mode'}</Text>
                 <Text style={styles.settingValue}>{language === 'ar' ? 'تغيير مظهر التطبيق' : 'Change app appearance'}</Text>
               </View>
-              <Switch value={darkMode} onValueChange={setDarkMode} />
+              <Switch 
+               value={darkMode} 
+               onValueChange={setDarkMode}
+               trackColor={{ false: '#e5e7eb', true: '#49C5B8' }}
+               thumbColor={darkMode ? '#fff' : '#f3f4f6'}
+             />
             </View>
           </View>
         </View>

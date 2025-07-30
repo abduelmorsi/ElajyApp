@@ -158,10 +158,10 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.actionButton}>
-              <Icon name="call" size={20} color="#007bff" />
+              <Icon name="call" size={20} color="#49C5B8" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton}>
-              <Icon name="videocam" size={20} color="#007bff" />
+              <Icon name="videocam" size={20} color="#49C5B8" />
             </TouchableOpacity>
           </View>
         </View>
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   pharmacistBubble: {
-    backgroundColor: '#2d7d6b',
+    backgroundColor: '#49C5B8',
   },
   patientBubble: {
     backgroundColor: '#e5e7eb',
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
   },
   sendButton: {
-    backgroundColor: '#2d7d6b',
+    backgroundColor: '#49C5B8',
     borderRadius: 8,
     padding: 10,
   },
