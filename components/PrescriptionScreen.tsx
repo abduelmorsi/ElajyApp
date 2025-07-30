@@ -281,7 +281,7 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
       <View style={[styles.header, { paddingTop: insets.top }]}>
         {goBack && (
           <TouchableOpacity onPress={goBack} style={styles.backButton}>
-            <Text style={{ fontSize: 20 }}>←</Text>
+            <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
         )}
         <Text style={styles.headerTitle}>
@@ -303,14 +303,14 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
             
             <View style={styles.uploadButtons}>
               <TouchableOpacity style={styles.uploadButton} onPress={takePhoto}>
-                <Text style={styles.uploadButtonIcon}>📷</Text>
+                <Icon name="camera-alt" size={24} color="#374151" style={styles.uploadButtonIcon} />
                 <Text style={styles.uploadButtonText}>
                   {language === 'ar' ? 'التقط صورة' : 'Take Photo'}
                 </Text>
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-                <Text style={styles.uploadButtonIcon}>🖼️</Text>
+                <Icon name="photo-library" size={24} color="#374151" style={styles.uploadButtonIcon} />
                 <Text style={styles.uploadButtonText}>
                   {language === 'ar' ? 'اختر من المعرض' : 'Choose from Gallery'}
                 </Text>
@@ -525,13 +525,13 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb'
   },
   uploadButtonIcon: {
-    fontSize: 24,
     marginBottom: 8
   },
   uploadButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151'
+    color: '#374151',
+    textAlign: 'center'
   },
   prescriptionsSection: {
     marginBottom: 20
