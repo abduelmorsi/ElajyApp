@@ -85,23 +85,23 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({
   useEffect(() => {
     const locations: PharmacyLocation[] = [
       {
-        id: 'central-pharmacy',
-        name: 'Central Pharmacy',
-        address: '123 Main St, New York, NY',
+        id: 'id6793',
+        name: 'صيدلية امدرمان',
+        address: 'شارع الوادي, امدرمان, الخرطوم',
         coordinates: { lat: 40.7484, lng: -73.9857 },
         isMainLocation: true
       },
       {
-        id: 'healthfirst-pharmacy',
-        name: 'HealthFirst Pharmacy',
-        address: '456 Broadway, New York, NY',
+        id: 'id57447',
+        name: 'صيدلية مستشفى رويال كير',
+        address: 'بري, الخرطوم',
         coordinates: { lat: 40.7505, lng: -73.9934 },
         isMainLocation: false
       },
       {
-        id: 'wellcare-drugs',
-        name: 'WellCare Drugs',
-        address: '789 5th Ave, New York, NY',
+        id: 'id83626',
+        name: 'صيدلية الرحمة',
+        address: 'الحاج يوسف, شرق النيل, الخرطوم',
         coordinates: { lat: 40.7614, lng: -73.9776 },
         isMainLocation: false
       }
