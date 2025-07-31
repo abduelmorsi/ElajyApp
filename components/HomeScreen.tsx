@@ -312,28 +312,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     backgroundColor: '#ef4444',
     borderRadius: 4,
   },
-  searchBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    marginTop: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  searchIcon: {
-    fontSize: 18,
-    color: '#9ca3af',
-    marginRight: 6,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 14,
-    color: '#111827',
-    backgroundColor: 'transparent',
-    paddingVertical: 4,
-    paddingHorizontal: 0,
-  },
+
   body: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -666,17 +645,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
             <View style={styles.bellDot} />
           </TouchableOpacity>
         </View>
-        {/* Compact Search Bar */}
-        <View style={styles.searchBarContainer}>
-          {renderIcon('Search', 20)}
-          <TextInput
-            style={styles.searchInput}
-            placeholder={language === 'ar' ? 'ابحث عن دواء أو صيدلية...' : 'Search for medicine or pharmacy...'}
-            placeholderTextColor="#9ca3af"
-            onFocus={() => navigateTo('search')}
-            editable={false}
-          />
-        </View>
+
       </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 0 }}>
