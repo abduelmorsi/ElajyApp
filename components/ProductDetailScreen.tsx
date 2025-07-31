@@ -14,6 +14,7 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
   const [quantity, setQuantity] = useState(1);
   const [selectedPharmacy, setSelectedPharmacy] = useState(0);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [deliveryOption, setDeliveryOption] = useState('delivery'); // 'delivery' or 'pickup'
 
   const availablePharmacies = createAvailablePharmacies(product?.price || 15);
   const specifications = createProductSpecifications(product, language);
@@ -36,7 +37,7 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
     setIsAddingToCart(true);
 
     try {
-      const productWithDetails = createEnhancedProduct(product, selectedPharmacyData, quantity);
+      const productWithDetails = createEnhancedProduct(product, selectedPharmacyData, quantity, deliveryOption);
       await addToCart(productWithDetails, quantity);
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -51,6 +52,15 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
     if (newQuantity >= 1 && newQuantity <= 10) {
       setQuantity(newQuantity);
     }
+  };
+
+  const handleNavigateToMap = (pharmacy) => {
+    // Navigate to search screen with map view and pharmacy data
+    navigateTo('search', { 
+      viewMode: 'map',
+      selectedPharmacy: pharmacy,
+      showMapView: true
+    });
   };
 
   if (!product) {
@@ -69,7 +79,8 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
   }
 
   const selectedPharmacyData = availablePharmacies[selectedPharmacy];
-  const totalAmount = calculateTotal(selectedPharmacyData.price, quantity, selectedPharmacyData.deliveryFee);
+  const deliveryFee = deliveryOption === 'delivery' ? selectedPharmacyData.deliveryFee : 0;
+  const totalAmount = calculateTotal(selectedPharmacyData.price, quantity, deliveryFee);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
@@ -109,6 +120,7 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
             isSelected={selectedPharmacy === index}
             onSelect={() => setSelectedPharmacy(index)}
             onCall={handlePhoneCall}
+            onNavigate={handleNavigateToMap}
           />
         ))}
       </View>
@@ -148,16 +160,76 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
           </TouchableOpacity>
         </View>
 
+        {/* Delivery Option Selector */}
+        <Text style={styles.sectionLabel}>{language === 'ar' ? 'طريقة الاستلام' : 'Delivery Option'}</Text>
+        <View style={styles.deliveryOptionsRow}>
+          <TouchableOpacity
+            style={[
+              styles.deliveryOptionButton,
+              deliveryOption === 'delivery' && styles.deliveryOptionSelected
+            ]}
+            onPress={() => setDeliveryOption('delivery')}
+          >
+            <View style={styles.deliveryOptionContent}>
+              <Icon 
+                name="local-shipping" 
+                size={20} 
+                color={deliveryOption === 'delivery' ? '#49C5B8' : '#6b7280'} 
+              />
+              <View style={styles.deliveryOptionTextContainer}>
+                <Text style={[
+                  styles.deliveryOptionText,
+                  deliveryOption === 'delivery' && styles.deliveryOptionTextSelected
+                ]} numberOfLines={1}>
+                  {language === 'ar' ? 'توصيل' : 'Delivery'}
+                </Text>
+                <Text style={styles.deliveryOptionFee}>
+                  {selectedPharmacyData.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[
+              styles.deliveryOptionButton,
+              deliveryOption === 'pickup' && styles.deliveryOptionSelected
+            ]}
+            onPress={() => setDeliveryOption('pickup')}
+          >
+            <View style={styles.deliveryOptionContent}>
+              <Icon 
+                name="store" 
+                size={20} 
+                color={deliveryOption === 'pickup' ? '#49C5B8' : '#6b7280'} 
+              />
+              <View style={styles.deliveryOptionTextContainer}>
+                <Text style={[
+                  styles.deliveryOptionText,
+                  deliveryOption === 'pickup' && styles.deliveryOptionTextSelected
+                ]} numberOfLines={1}>
+                  {language === 'ar' ? 'استلام من الصيدلية' : 'Pickup'}
+                </Text>
+                <Text style={styles.deliveryOptionFee}>
+                  {language === 'ar' ? 'مجاناً' : 'Free'}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+
         {/* Price Summary */}
         <View style={styles.priceSummary}>
           <View style={styles.priceRow}>
             <Text style={styles.priceLabel}>{language === 'ar' ? 'سعر الوحدة:' : 'Unit Price:'}</Text>
             <Text style={styles.priceValue}>{selectedPharmacyData.price} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
           </View>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>{language === 'ar' ? 'رسوم التوصيل:' : 'Delivery Fee:'}</Text>
-            <Text style={styles.priceValue}>{selectedPharmacyData.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
-          </View>
+          {deliveryOption === 'delivery' && (
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>{language === 'ar' ? 'رسوم التوصيل:' : 'Delivery Fee:'}</Text>
+              <Text style={styles.priceValue}>{selectedPharmacyData.deliveryFee} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+            </View>
+          )}
           <View style={styles.separator} />
           <View style={styles.priceRow}>
             <Text style={styles.priceTotalLabel}>{language === 'ar' ? 'المجموع:' : 'Total:'}</Text>
@@ -396,5 +468,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 8,
+  },
+  deliveryOptionsRow: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  deliveryOptionButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    backgroundColor: '#fff',
+    marginHorizontal: 2,
+  },
+  deliveryOptionSelected: {
+    borderColor: '#49C5B8',
+    backgroundColor: '#e6f7f5',
+  },
+  deliveryOptionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deliveryOptionTextContainer: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  deliveryOptionText: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 2,
+  },
+  deliveryOptionTextSelected: {
+    color: '#49C5B8',
+    fontWeight: 'bold',
+  },
+  deliveryOptionFee: {
+    fontSize: 12,
+    color: '#6b7280',
+    fontWeight: 'bold',
   },
 });

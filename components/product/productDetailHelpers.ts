@@ -1,4 +1,5 @@
 // Helper functions for ProductDetailScreen
+import { Linking, Alert } from 'react-native';
 
 export const validateAddToCart = (product: any, quantity: number, pharmacy: any, language: string) => {
   if (!product || !product.id) {
@@ -23,11 +24,13 @@ export const validateAddToCart = (product: any, quantity: number, pharmacy: any,
   return { isValid: true };
 };
 
-export const createEnhancedProduct = (product: any, pharmacy: any, quantity: number) => ({
+export const createEnhancedProduct = (product: any, pharmacy: any, quantity: number, deliveryOption: string = 'delivery') => ({
   ...product,
   price: pharmacy.price,
   pharmacy: pharmacy,
-  selectedQuantity: quantity
+  selectedQuantity: quantity,
+  deliveryOption: deliveryOption,
+  deliveryFee: deliveryOption === 'delivery' ? pharmacy.deliveryFee : 0
 });
 
 export const calculateTotal = (price: number, quantity: number, deliveryFee: number) => {
@@ -35,5 +38,13 @@ export const calculateTotal = (price: number, quantity: number, deliveryFee: num
 };
 
 export const handlePhoneCall = (phone: string) => {
-  window.location.href = `tel:${phone}`;
+  const phoneNumber = phone.replace(/\s+/g, '');
+  const url = `tel:${phoneNumber}`;
+  Linking.openURL(url).catch(err => {
+    console.error('Error opening phone app:', err);
+    Alert.alert(
+      'Error',
+      'Cannot open phone app'
+    );
+  });
 };

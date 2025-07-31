@@ -9,9 +9,10 @@ interface PharmacyCardProps {
   isSelected: boolean;
   onSelect: () => void;
   onCall: (phone: string) => void;
+  onNavigate?: (pharmacy: any) => void;
 }
 
-function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall }: PharmacyCardProps) {
+function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall, onNavigate }: PharmacyCardProps) {
   const { language } = useLocalization();
 
   return (
@@ -57,16 +58,30 @@ function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall }: Pharmac
           {pharmacy.inStock && (
             <Text style={styles.stockText}>{pharmacy.stockCount} {language === 'ar' ? 'متوفر' : 'available'}</Text>
           )}
-          <TouchableOpacity
-            style={styles.callButton}
-            onPress={(e) => {
-              e.stopPropagation && e.stopPropagation();
-              onCall(pharmacy.phone);
-            }}
-            activeOpacity={0.7}
-          >
-            <Icon name="phone" size={16} color="#49C5B8" />
-          </TouchableOpacity>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={(e) => {
+                e.stopPropagation && e.stopPropagation();
+                onCall(pharmacy.phone);
+              }}
+              activeOpacity={0.7}
+            >
+              <Icon name="phone" size={16} color="#49C5B8" />
+            </TouchableOpacity>
+            {onNavigate && (
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={(e) => {
+                  e.stopPropagation && e.stopPropagation();
+                  onNavigate(pharmacy);
+                }}
+                activeOpacity={0.7}
+              >
+                <Icon name="navigation" size={16} color="#49C5B8" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -161,6 +176,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginBottom: 4,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 4,
+    marginTop: 6,
+  },
+  actionButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    backgroundColor: '#fff',
+    alignItems: 'center',
   },
   callButton: {
     marginTop: 6,

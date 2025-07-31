@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { Alert, Image, Linking, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from './services/LocalizationService';
@@ -136,32 +136,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     }
   ];
 
-  const nearbyPharmacies = [
-    {
-      id: 1,
-      name: 'صيدلية النيل الأزرق',
-      nameEn: 'Blue Nile Pharmacy',
-      distance: '0.8 كم',
-      distanceEn: '0.8 km',
-      rating: 4.8,
-      deliveryTime: '25-35 دقيقة',
-      deliveryTimeEn: '25-35 min',
-      isOpen: true,
-      specialOffer: language === 'ar' ? 'توصيل مجاني' : 'Free Delivery'
-    },
-    {
-      id: 2,
-      name: 'صيدلية الصحة المتكاملة',
-      nameEn: 'Integrated Health Pharmacy',
-      distance: '1.2 كم',
-      distanceEn: '1.2 km',
-      rating: 4.9,
-      deliveryTime: '30-40 دقيقة',
-      deliveryTimeEn: '30-40 min',
-      isOpen: true,
-      specialOffer: language === 'ar' ? 'خصم 15%' : '15% Off'
-    }
-  ];
+  
 
   const emergencyPharmacies = [
     {
@@ -216,13 +191,9 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     navigateTo('product-detail', medicine);
   };
 
-  const handlePharmacyClick = (pharmacy: any) => {
-    navigateTo('search');
-  };
+  
 
   const handleEmergencyPharmacyClick = (pharmacy: any) => {
-    // For emergency pharmacies, we could navigate to a specific emergency pharmacy detail
-    // or show contact information
     Alert.alert(
       language === 'ar' ? 'صيدلية الطوارئ' : 'Emergency Pharmacy',
       language === 'ar' 
@@ -230,7 +201,29 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
         : `Call ${pharmacy.nameEn}\nPhone: ${pharmacy.phone}`,
       [
         { text: language === 'ar' ? 'إلغاء' : 'Cancel', style: 'cancel' },
-        { text: language === 'ar' ? 'اتصال' : 'Call', onPress: () => console.log('Call pharmacy') }
+        { 
+          text: language === 'ar' ? 'الخريطة' : 'Map', 
+          onPress: () => navigateTo('search', { 
+            showEmergencyPharmacies: true, 
+            selectedPharmacy: pharmacy,
+            viewMode: 'map'
+          })
+        },
+        { 
+          text: language === 'ar' ? 'اتصال' : 'Call', 
+          onPress: () => {
+            // Use Linking to make phone call
+            const phoneNumber = pharmacy.phone.replace(/\s+/g, '');
+            const url = `tel:${phoneNumber}`;
+            Linking.openURL(url).catch(err => {
+              console.error('Error opening phone app:', err);
+              Alert.alert(
+                language === 'ar' ? 'خطأ' : 'Error',
+                language === 'ar' ? 'لا يمكن فتح تطبيق الهاتف' : 'Cannot open phone app'
+              );
+            });
+          }
+        }
       ]
     );
   };
@@ -545,71 +538,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     color: '#fff',
     fontSize: 14,
   },
-  nearbyList: {
-    flexDirection: 'column',
-    gap: 12,
-  },
-  nearbyCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#f3f4f6',
-    padding: 12,
-    marginBottom: 12,
-    elevation: 1,
-  },
-  nearbyCardInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  nearbyInfo: {
-    flex: 1,
-    minWidth: 0,
-  },
-  nearbyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 2,
-  },
-  nearbyTitle: {
-    fontWeight: '500',
-    color: '#111827',
-    fontSize: 12,
-    marginRight: 4,
-  },
-  badgeNearby: {
-    backgroundColor: '#bbf7d0',
-    color: '#166534',
-    fontSize: 10,
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  nearbyDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 2,
-  },
-  nearbyDetailText: {
-    color: '#6b7280',
-    fontSize: 11,
-    marginRight: 4,
-  },
-  nearbyStatusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  nearbyStatusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 4,
-  },
+  
   icon: {
     fontSize: 13,
     marginRight: 2,
@@ -633,72 +562,72 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
   },
   emergencyCardInner: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: 12,
   },
   emergencyInfo: {
     flex: 1,
+    marginRight: 16,
   },
   emergencyHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   emergencyTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#222',
     flex: 1,
-    marginRight: 8,
+    marginRight: 12,
+    lineHeight: 22,
   },
-  emergencyBadges: {
+
+
+  emergencyBadgeContainer: {
     flexDirection: 'row',
-    gap: 4,
-  },
-  emergencyBadge: {
-    backgroundColor: '#ef4444',
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    alignItems: 'center',
+    gap: 6,
   },
   badge24h: {
     backgroundColor: '#49C5B8',
     color: '#fff',
     fontSize: 10,
     fontWeight: 'bold',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    textAlign: 'center',
   },
   emergencyDetails: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
+    flexWrap: 'wrap',
+    marginBottom: 6,
   },
   emergencyDetailText: {
     fontSize: 12,
     color: '#666',
-    marginRight: 12,
+    marginRight: 16,
+    marginBottom: 2,
   },
-  emergencyContact: {
-    flexDirection: 'row',
+
+  emergencyActions: {
+    flexDirection: 'column',
     alignItems: 'center',
-    gap: 4,
+    gap: 8,
+    flexShrink: 0,
+    marginLeft: 12,
   },
-  emergencyContactText: {
-    fontSize: 12,
-    color: '#49C5B8',
-    fontWeight: 'bold',
-  },
-  emergencyStatusRow: {
-    flexDirection: 'row',
+  emergencyActionButton: {
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
   },
   emergencyStatusDot: {
     width: 8,
@@ -809,8 +738,11 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{language === 'ar' ? 'صيدليات الطوارئ 24/7' : '24/7 Emergency Pharmacies'}</Text>
-            <TouchableOpacity onPress={() => navigateTo('search', { showEmergencyPharmacies: true })}>
-              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض الكل' : 'View All'} {renderIcon('ChevronRight', 16)}</Text>
+            <TouchableOpacity onPress={() => navigateTo('search', { 
+              showEmergencyPharmacies: true,
+              viewMode: 'map'
+            })}>
+              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض على الخريطة' : 'View on Map'} {renderIcon('Navigation', 16)}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.emergencyList}>
@@ -820,33 +752,53 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
                 style={styles.emergencyCard}
                 onPress={() => handleEmergencyPharmacyClick(pharmacy)}
               >
-                <View style={styles.emergencyCardInner}>
-                  <View style={styles.emergencyInfo}>
-                    <View style={styles.emergencyHeader}>
-                      <Text style={styles.emergencyTitle}>{language === 'ar' ? pharmacy.name : pharmacy.nameEn}</Text>
-                      <View style={styles.emergencyBadges}>
-                        <Text style={styles.emergencyBadge}>{pharmacy.emergencyBadge}</Text>
-                        <Text style={styles.badge24h}>{pharmacy.specialOffer}</Text>
-                      </View>
-                    </View>
-                    <View style={styles.emergencyDetails}>
-                      {renderIcon('MapPin')}
-                      <Text style={styles.emergencyDetailText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
-                      {renderIcon('Clock')}
-                      <Text style={styles.emergencyDetailText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
-                      {renderIcon('Star')}
-                      <Text style={styles.emergencyDetailText}>{pharmacy.rating}</Text>
-                    </View>
-                    <View style={styles.emergencyContact}>
-                      {renderIcon('Phone', 16, '#49C5B8')}
-                      <Text style={styles.emergencyContactText}>{pharmacy.phone}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.emergencyStatusRow}>
-                    <View style={[styles.emergencyStatusDot, { backgroundColor: pharmacy.isOpen ? '#22c55e' : '#ef4444' }]} />
-                    {renderIcon('ChevronRight')}
-                  </View>
-                </View>
+                                 <View style={styles.emergencyCardInner}>
+                   <View style={styles.emergencyInfo}>
+                     <View style={styles.emergencyHeader}>
+                       <Text style={styles.emergencyTitle}>{language === 'ar' ? pharmacy.name : pharmacy.nameEn}</Text>
+                       <View style={styles.emergencyBadgeContainer}>
+                         <Text style={styles.badge24h}>{pharmacy.specialOffer}</Text>
+                         <View style={[styles.emergencyStatusDot, { backgroundColor: pharmacy.isOpen ? '#22c55e' : '#ef4444' }]} />
+                       </View>
+                     </View>
+                     <View style={styles.emergencyDetails}>
+                       {renderIcon('MapPin')}
+                       <Text style={styles.emergencyDetailText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
+                       {renderIcon('Clock')}
+                       <Text style={styles.emergencyDetailText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
+                       {renderIcon('Star')}
+                       <Text style={styles.emergencyDetailText}>{pharmacy.rating}</Text>
+                     </View>
+                   </View>
+                   <View style={styles.emergencyActions}>
+                     <TouchableOpacity 
+                       style={styles.emergencyActionButton}
+                       onPress={() => {
+                         const phoneNumber = pharmacy.phone.replace(/\s+/g, '');
+                         const url = `tel:${phoneNumber}`;
+                         Linking.openURL(url).catch(err => {
+                           console.error('Error opening phone app:', err);
+                           Alert.alert(
+                             language === 'ar' ? 'خطأ' : 'Error',
+                             language === 'ar' ? 'لا يمكن فتح تطبيق الهاتف' : 'Cannot open phone app'
+                           );
+                         });
+                       }}
+                     >
+                       {renderIcon('Phone', 16, '#49C5B8')}
+                     </TouchableOpacity>
+                     <TouchableOpacity 
+                       style={styles.emergencyActionButton}
+                       onPress={() => navigateTo('search', { 
+                         showEmergencyPharmacies: true, 
+                         selectedPharmacy: pharmacy,
+                         viewMode: 'map'
+                       })}
+                     >
+                       {renderIcon('Navigation', 16, '#49C5B8')}
+                     </TouchableOpacity>
+                   </View>
+                 </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -902,45 +854,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
           </View>
         </View>
 
-        {/* Compact Nearby Pharmacies */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{language === 'ar' ? 'الصيدليات القريبة' : 'Nearby Pharmacies'}</Text>
-            <TouchableOpacity onPress={() => navigateTo('search')}>
-              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض على الخريطة' : 'View on Map'} {renderIcon('Navigation', 16)}</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.nearbyList}>
-            {nearbyPharmacies.map((pharmacy) => (
-              <TouchableOpacity
-                key={pharmacy.id}
-                style={styles.nearbyCard}
-                onPress={() => handlePharmacyClick(pharmacy)}
-              >
-                <View style={styles.nearbyCardInner}>
-                  <View style={styles.nearbyInfo}>
-                    <View style={styles.nearbyHeader}>
-                      <Text style={styles.nearbyTitle}>{language === 'ar' ? pharmacy.name : pharmacy.nameEn}</Text>
-                      <Text style={styles.badgeNearby}>{pharmacy.specialOffer}</Text>
-                    </View>
-                    <View style={styles.nearbyDetails}>
-                      {renderIcon('MapPin')}
-                      <Text style={styles.nearbyDetailText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
-                      {renderIcon('Clock')}
-                      <Text style={styles.nearbyDetailText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
-                      {renderIcon('Star')}
-                      <Text style={styles.nearbyDetailText}>{pharmacy.rating}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.nearbyStatusRow}>
-                    <View style={[styles.nearbyStatusDot, { backgroundColor: pharmacy.isOpen ? '#22c55e' : '#ef4444' }]} />
-                    {renderIcon('ChevronRight')}
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+        
       </View>
     </ScrollView>
     </SafeAreaView>
