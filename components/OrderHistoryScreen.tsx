@@ -11,10 +11,21 @@ const orders = [
     status: "delivered",
     total: 45.97,
     items: [
-      { name: "Paracetamol 500mg", quantity: 2, price: 12.99 },
-      { name: "Vitamin D3 1000IU", quantity: 1, price: 24.99 }
+      { 
+        name: "Paracetamol 500mg", 
+        nameAr: "باراسيتامول 500 مجم",
+        quantity: 2, 
+        price: 12.99 
+      },
+      { 
+        name: "Vitamin D3 1000IU", 
+        nameAr: "فيتامين د3 1000 وحدة دولية",
+        quantity: 1, 
+        price: 24.99 
+      }
     ],
-    deliveryAddress: "123 Main St, New York, NY 10001",
+    deliveryAddress: "Al-Mek Nimir Street, Khartoum, Sudan",
+    deliveryAddressAr: "شارع المك نمر، الخرطوم، السودان",
     trackingNumber: "TRK123456789"
   },
   {
@@ -23,10 +34,21 @@ const orders = [
     status: "shipped",
     total: 67.50,
     items: [
-      { name: "Omega-3 Fish Oil", quantity: 1, price: 29.99 },
-      { name: "Ibuprofen 400mg", quantity: 2, price: 18.99 }
+      { 
+        name: "Omega-3 Fish Oil", 
+        nameAr: "زيت السمك أوميغا 3",
+        quantity: 1, 
+        price: 29.99 
+      },
+      { 
+        name: "Ibuprofen 400mg", 
+        nameAr: "إيبوبروفين 400 مجم",
+        quantity: 2, 
+        price: 18.99 
+      }
     ],
-    deliveryAddress: "123 Main St, New York, NY 10001",
+    deliveryAddress: "Al-Zubeir Pasha Street, Omdurman, Sudan",
+    deliveryAddressAr: "شارع الزبير باشا، أم درمان، السودان",
     trackingNumber: "TRK987654321",
     estimatedDelivery: "2024-01-17"
   },
@@ -36,9 +58,15 @@ const orders = [
     status: "processing",
     total: 25.99,
     items: [
-      { name: "Amoxicillin 250mg", quantity: 1, price: 25.99 }
+      { 
+        name: "Amoxicillin 250mg", 
+        nameAr: "أموكسيسيلين 250 مجم",
+        quantity: 1, 
+        price: 25.99 
+      }
     ],
-    deliveryAddress: "123 Main St, New York, NY 10001"
+    deliveryAddress: "Al-Gamhoria Street, Khartoum North, Sudan",
+    deliveryAddressAr: "شارع الجمهورية، الخرطوم بحري، السودان"
   }
 ];
 
@@ -81,7 +109,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
               <Icon name={getStatusIcon(order.status)} size={20} color="#49C5B8" style={[styles.statusIcon, isRTL && styles.statusIconRTL]} />
               <Text style={[styles.orderId, isRTL && styles.orderIdRTL]}>{t('order.number')} #{order.id}</Text>
             </View>
-            <Text style={[styles.orderDate, isRTL && styles.orderDateRTL]}>{new Date(order.date).toLocaleDateString()}</Text>
+            <Text style={[styles.orderDate, isRTL && styles.orderDateRTL]}>{new Date(order.date).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}</Text>
           </View>
           <View style={[styles.statusBadge, { backgroundColor: statusColor.backgroundColor }, isRTL && styles.statusBadgeRTL]}> 
             <Text style={[{ color: statusColor.color, fontWeight: 'bold', fontSize: 12 }, isRTL && styles.statusTextRTL]}>{t(`order.${order.status}`)}</Text>
@@ -91,7 +119,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
           <Text style={[styles.itemsLabel, isRTL && styles.itemsLabelRTL]}>{order.items.length} {t('order.items')}:</Text>
           {order.items.slice(0, 2).map((item, index) => (
             <Text key={index} style={[styles.itemText, isRTL && styles.itemTextRTL]}>
-              {item.name} x{item.quantity}
+              {language === 'ar' ? item.nameAr : item.name} x{item.quantity}
             </Text>
           ))}
           {order.items.length > 2 && (
@@ -99,10 +127,10 @@ export default function OrderHistoryScreen({ navigateTo }) {
           )}
         </View>
         <View style={[styles.cardFooter, isRTL && styles.cardFooterRTL]}>
-          <Text style={[styles.totalText, isRTL && styles.totalTextRTL]}>{t('order.total')}: ${order.total.toFixed(2)}</Text>
+          <Text style={[styles.totalText, isRTL && styles.totalTextRTL]}>{t('order.total')}: {language === 'ar' ? `${order.total.toFixed(2)} ج.س` : `$${order.total.toFixed(2)}`}</Text>
           {order.status === 'shipped' && order.estimatedDelivery && (
             <Text style={[styles.estimatedDeliveryText, isRTL && styles.estimatedDeliveryTextRTL]}>
-              {t('order.estimatedDelivery')}: {new Date(order.estimatedDelivery).toLocaleDateString()}
+              {t('order.estimatedDelivery')}: {new Date(order.estimatedDelivery).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
             </Text>
           )}
         </View>
@@ -131,7 +159,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
               <View>
                 <Text style={[styles.detailOrderId, isRTL && styles.detailOrderIdRTL]}>{t('order.number')} #{selectedOrder.id}</Text>
                 <Text style={[styles.detailOrderDate, isRTL && styles.detailOrderDateRTL]}>
-                  {t('order.placedOn')} {new Date(selectedOrder.date).toLocaleDateString()}
+                  {t('order.placedOn')} {new Date(selectedOrder.date).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
                 </Text>
               </View>
               <View style={[styles.statusBadge, { backgroundColor: statusColor.backgroundColor }, isRTL && styles.statusBadgeRTL]}> 
@@ -152,16 +180,16 @@ export default function OrderHistoryScreen({ navigateTo }) {
             {selectedOrder.items.map((item, index) => (
               <View key={index} style={[styles.itemRow, isRTL && styles.itemRowRTL]}>
                 <View>
-                  <Text style={[styles.itemText, isRTL && styles.itemTextRTL]}>{item.name}</Text>
+                  <Text style={[styles.itemText, isRTL && styles.itemTextRTL]}>{language === 'ar' ? item.nameAr : item.name}</Text>
                   <Text style={[styles.itemQty, isRTL && styles.itemQtyRTL]}>{t('order.quantity')}: {item.quantity}</Text>
                 </View>
-                <Text style={[styles.itemPrice, isRTL && styles.itemPriceRTL]}>${(item.price * item.quantity).toFixed(2)}</Text>
+                <Text style={[styles.itemPrice, isRTL && styles.itemPriceRTL]}>{language === 'ar' ? `${(item.price * item.quantity).toFixed(2)} ج.س` : `$${(item.price * item.quantity).toFixed(2)}`}</Text>
               </View>
             ))}
             <View style={styles.separator} />
             <View style={[styles.totalRow, isRTL && styles.totalRowRTL]}>
               <Text style={[styles.totalLabel, isRTL && styles.totalLabelRTL]}>{t('order.total')}</Text>
-              <Text style={[styles.totalValue, isRTL && styles.totalValueRTL]}>${selectedOrder.total.toFixed(2)}</Text>
+              <Text style={[styles.totalValue, isRTL && styles.totalValueRTL]}>{language === 'ar' ? `${selectedOrder.total.toFixed(2)} ج.س` : `$${selectedOrder.total.toFixed(2)}`}</Text>
             </View>
           </View>
 
@@ -171,7 +199,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
               <Icon name="location-on" size={20} color="#49C5B8" style={[styles.addressIcon, isRTL && styles.addressIconRTL]} />
               <View>
                 <Text style={[styles.addressTitle, isRTL && styles.addressTitleRTL]}>{t('order.deliveryAddress')}</Text>
-                <Text style={[styles.addressText, isRTL && styles.addressTextRTL]}>{selectedOrder.deliveryAddress}</Text>
+                <Text style={[styles.addressText, isRTL && styles.addressTextRTL]}>{language === 'ar' ? selectedOrder.deliveryAddressAr : selectedOrder.deliveryAddress}</Text>
               </View>
             </View>
           </View>

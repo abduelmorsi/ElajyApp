@@ -1065,6 +1065,22 @@ const translations = {
     'order.noPastOrders': 'No Past Orders',
     'order.noPastOrdersDesc': 'Your completed orders will appear here',
     'order.browseMedicines': 'Browse Medicines',
+
+    // Profile
+    'profile.title': 'Profile',
+    'profile.personalInfo': 'Personal Information',
+    'profile.medicalInfo': 'Medical Information',
+    'profile.preferences': 'Preferences',
+    'profile.language': 'Language',
+    'profile.notifications': 'Notifications',
+    'profile.privacy': 'Privacy',
+    'profile.support': 'Support',
+    'profile.about': 'About',
+    'profile.logout': 'Logout',
+    'profile.editProfile': 'Edit Profile',
+    'profile.changePassword': 'Change Password',
+    'profile.orderHistory': 'Order History',
+    'profile.prescriptionHistory': 'Prescription History',
   
   }
 };
