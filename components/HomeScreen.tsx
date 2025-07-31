@@ -31,6 +31,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     ChevronRight: 'chevron-right',
     Plus: 'add',
     Sparkles: 'auto-awesome',
+    Phone: 'phone',
   };
 
   const { t, language } = useLocalization();
@@ -162,6 +163,51 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     }
   ];
 
+  const emergencyPharmacies = [
+    {
+      id: 1,
+      name: 'صيدلية الطوارئ المركزية',
+      nameEn: 'Central Emergency Pharmacy',
+      distance: '1.5 كم',
+      distanceEn: '1.5 km',
+      rating: 4.7,
+      deliveryTime: '15-25 دقيقة',
+      deliveryTimeEn: '15-25 min',
+      isOpen: true,
+      phone: '+249 123 456 789',
+      specialOffer: language === 'ar' ? 'خدمة 24/7' : '24/7 Service',
+      emergencyBadge: language === 'ar' ? 'طوارئ' : 'Emergency'
+    },
+    {
+      id: 2,
+      name: 'صيدلية الحياة السريعة',
+      nameEn: 'Quick Life Pharmacy',
+      distance: '2.1 كم',
+      distanceEn: '2.1 km',
+      rating: 4.6,
+      deliveryTime: '20-30 دقيقة',
+      deliveryTimeEn: '20-30 min',
+      isOpen: true,
+      phone: '+249 987 654 321',
+      specialOffer: language === 'ar' ? 'خدمة 24/7' : '24/7 Service',
+      emergencyBadge: language === 'ar' ? 'طوارئ' : 'Emergency'
+    },
+    {
+      id: 3,
+      name: 'صيدلية الإسعاف',
+      nameEn: 'Ambulance Pharmacy',
+      distance: '3.2 كم',
+      distanceEn: '3.2 km',
+      rating: 4.8,
+      deliveryTime: '25-35 دقيقة',
+      deliveryTimeEn: '25-35 min',
+      isOpen: true,
+      phone: '+249 555 123 456',
+      specialOffer: language === 'ar' ? 'خدمة 24/7' : '24/7 Service',
+      emergencyBadge: language === 'ar' ? 'طوارئ' : 'Emergency'
+    }
+  ];
+
   const handleQuickAction = (actionId: string) => {
     navigateTo(actionId);
   };
@@ -172,6 +218,21 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
 
   const handlePharmacyClick = (pharmacy: any) => {
     navigateTo('search');
+  };
+
+  const handleEmergencyPharmacyClick = (pharmacy: any) => {
+    // For emergency pharmacies, we could navigate to a specific emergency pharmacy detail
+    // or show contact information
+    Alert.alert(
+      language === 'ar' ? 'صيدلية الطوارئ' : 'Emergency Pharmacy',
+      language === 'ar' 
+        ? `اتصل بـ ${pharmacy.name}\nالهاتف: ${pharmacy.phone}`
+        : `Call ${pharmacy.nameEn}\nPhone: ${pharmacy.phone}`,
+      [
+        { text: language === 'ar' ? 'إلغاء' : 'Cancel', style: 'cancel' },
+        { text: language === 'ar' ? 'اتصال' : 'Call', onPress: () => console.log('Call pharmacy') }
+      ]
+    );
   };
 
   const handleAddToCart = (medicine: any, event?: any) => {
@@ -553,6 +614,97 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
     fontSize: 13,
     marginRight: 2,
   },
+  
+  // Emergency Pharmacy Styles
+  emergencyList: {
+    gap: 8,
+  },
+  emergencyCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    marginBottom: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  emergencyCardInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+  },
+  emergencyInfo: {
+    flex: 1,
+  },
+  emergencyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  emergencyTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#222',
+    flex: 1,
+    marginRight: 8,
+  },
+  emergencyBadges: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  emergencyBadge: {
+    backgroundColor: '#ef4444',
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  badge24h: {
+    backgroundColor: '#49C5B8',
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  emergencyDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  emergencyDetailText: {
+    fontSize: 12,
+    color: '#666',
+    marginRight: 12,
+  },
+  emergencyContact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  emergencyContactText: {
+    fontSize: 12,
+    color: '#49C5B8',
+    fontWeight: 'bold',
+  },
+  emergencyStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  emergencyStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
   });
 
   // Render back button if goBack is provided and not the main home page
@@ -652,6 +804,53 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
             </View>
           </View>
         )}
+
+        {/* Emergency 24/7 Pharmacies */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>{language === 'ar' ? 'صيدليات الطوارئ 24/7' : '24/7 Emergency Pharmacies'}</Text>
+            <TouchableOpacity onPress={() => navigateTo('search', { showEmergencyPharmacies: true })}>
+              <Text style={styles.sectionAction}>{language === 'ar' ? 'عرض الكل' : 'View All'} {renderIcon('ChevronRight', 16)}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.emergencyList}>
+            {emergencyPharmacies.map((pharmacy) => (
+              <TouchableOpacity
+                key={pharmacy.id}
+                style={styles.emergencyCard}
+                onPress={() => handleEmergencyPharmacyClick(pharmacy)}
+              >
+                <View style={styles.emergencyCardInner}>
+                  <View style={styles.emergencyInfo}>
+                    <View style={styles.emergencyHeader}>
+                      <Text style={styles.emergencyTitle}>{language === 'ar' ? pharmacy.name : pharmacy.nameEn}</Text>
+                      <View style={styles.emergencyBadges}>
+                        <Text style={styles.emergencyBadge}>{pharmacy.emergencyBadge}</Text>
+                        <Text style={styles.badge24h}>{pharmacy.specialOffer}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.emergencyDetails}>
+                      {renderIcon('MapPin')}
+                      <Text style={styles.emergencyDetailText}>{language === 'ar' ? pharmacy.distance : pharmacy.distanceEn}</Text>
+                      {renderIcon('Clock')}
+                      <Text style={styles.emergencyDetailText}>{language === 'ar' ? pharmacy.deliveryTime : pharmacy.deliveryTimeEn}</Text>
+                      {renderIcon('Star')}
+                      <Text style={styles.emergencyDetailText}>{pharmacy.rating}</Text>
+                    </View>
+                    <View style={styles.emergencyContact}>
+                      {renderIcon('Phone', 16, '#49C5B8')}
+                      <Text style={styles.emergencyContactText}>{pharmacy.phone}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.emergencyStatusRow}>
+                    <View style={[styles.emergencyStatusDot, { backgroundColor: pharmacy.isOpen ? '#22c55e' : '#ef4444' }]} />
+                    {renderIcon('ChevronRight')}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
 
         {/* Compact Featured Medicines */}
         <View style={styles.section}>
