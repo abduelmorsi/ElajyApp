@@ -44,25 +44,25 @@ const consultations = [
 const chatMessages = [
   {
     id: 1,
-    sender: "مريض",
+    sender: "patient",
     message: "السلام عليكم يا دكتور, عندي استفسار عن الدواء دة",
     timestamp: "10:30 AM"
   },
   {
     id: 2,
-    sender: "صيدلي",
+    sender: "pharmacist",
     message: "و عليكم السلام, مرحب بيك والله سؤالك شنو؟",
     timestamp: "10:31 AM"
   },
   {
     id: 3,
-    sender: "مريض", 
+    sender: "patient", 
     message: "والله ياخ عندي شوية غثيان بعد ما اخدت الاموكسيسيلين, هل ده طبيعي؟",
     timestamp: "10:32 AM"
   },
   {
     id: 4,
-    sender: "صيدلي",
+    sender: "pharmacist",
     message: "الغثيان ممكن يكون من الآثار الجانبية للدواء, لكن لو استمر أو زاد, لازم تشوف طبيب.",
     timestamp: "10:34 AM"
   }
@@ -114,23 +114,23 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
 
   const ConsultationCard = ({ consultation }) => (
     <TouchableOpacity style={styles.card} onPress={() => setSelectedConsultation(consultation)}>
-      <View style={styles.cardHeader}>
-        <Image source={{ uri: consultation.avatar }} style={styles.avatar} />
-        <View style={styles.cardInfo}>
-          <View style={styles.cardHeaderRow}>
-            <Text style={styles.patientName}>{consultation.patient}</Text>
-            <View style={[styles.statusBadge, getStatusColor(consultation.status)]}>
+      <View style={[styles.cardHeader, isRTL && styles.cardHeaderRTL]}>
+        <Image source={{ uri: consultation.avatar }} style={[styles.avatar, isRTL && styles.avatarRTL]} />
+        <View style={[styles.cardInfo, isRTL && styles.cardInfoRTL]}>
+          <View style={[styles.cardHeaderRow, isRTL && styles.cardHeaderRowRTL]}>
+            <Text style={[styles.patientName, isRTL && styles.patientNameRTL]}>{consultation.patient}</Text>
+            <View style={[styles.statusBadge, getStatusColor(consultation.status), isRTL && styles.statusBadgeRTL]}>
               <Icon name={getStatusIcon(consultation.status)} size={12} color={getStatusColor(consultation.status).color} />
-              <Text style={[styles.statusText, { color: getStatusColor(consultation.status).color }]}>
+              <Text style={[styles.statusText, { color: getStatusColor(consultation.status).color }, isRTL && styles.statusTextRTL]}>
                 {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
               </Text>
             </View>
           </View>
-          <Text style={styles.topic}>{consultation.topic}</Text>
-          <Text style={styles.lastMessage}>{consultation.lastMessage}</Text>
+          <Text style={[styles.topic, isRTL && styles.topicRTL]}>{consultation.topic}</Text>
+          <Text style={[styles.lastMessage, isRTL && styles.lastMessageRTL]}>{consultation.lastMessage}</Text>
             </View>
-        <View style={styles.cardMeta}>
-          <Text style={styles.time}>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+        <View style={[styles.cardMeta, isRTL && styles.cardMetaRTL]}>
+          <Text style={[styles.time, isRTL && styles.timeRTL]}>{new Date(consultation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
           {consultation.unreadCount > 0 && (
             <View style={styles.unreadBadge}>
               <Text style={styles.unreadCount}>{consultation.unreadCount}</Text>
@@ -173,34 +173,47 @@ export default function PharmacistConsultations({ navigateTo, goBack }: Pharmaci
         >
           <View style={styles.chatContainer}>
             <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
-          {messages.map((message) => (
-                <View key={message.id} style={[
-                  styles.messageContainer,
-                  message.sender === 'pharmacist' ? styles.pharmacistMessage : styles.patientMessage
-                ]}>
-                  <View style={[
-                    styles.messageBubble,
-                    message.sender === 'pharmacist' ? styles.pharmacistBubble : styles.patientBubble
-                  ]}>
-                    <Text style={[
-                      styles.messageText,
-                      message.sender === 'pharmacist' ? styles.pharmacistText : styles.patientText
-                    ]}>
-                      {message.message}
-                    </Text>
-                    <Text style={styles.messageTime}>{message.timestamp}</Text>
-              </View>
-            </View>
-          ))}
+                     {messages.map((message) => {
+             const isPharmacist = message.sender === 'pharmacist';
+             return (
+               <View key={message.id} style={[
+                 styles.messageContainer,
+                 isPharmacist ? styles.pharmacistMessage : styles.patientMessage,
+                 isRTL && isPharmacist ? styles.pharmacistMessageRTL : null,
+                 isRTL && !isPharmacist ? styles.patientMessageRTL : null,
+               ]}>
+                 <View style={[
+                   styles.messageBubble,
+                   isPharmacist ? styles.pharmacistBubble : styles.patientBubble,
+                   isRTL && isPharmacist ? styles.pharmacistBubbleRTL : null,
+                   isRTL && !isPharmacist ? styles.patientBubbleRTL : null,
+                 ]}>
+                   <Text style={[
+                     styles.messageText,
+                     isPharmacist ? styles.pharmacistText : styles.patientText,
+                     isRTL && styles.messageTextRTL,
+                   ]}>
+                     {message.message}
+                   </Text>
+                   <Text style={[
+                     styles.messageTime,
+                     isRTL && styles.messageTimeRTL,
+                     isPharmacist ? styles.pharmacistTime : styles.patientTime,
+                   ]}>{message.timestamp}</Text>
+                 </View>
+               </View>
+             );
+           })}
         </ScrollView>
 
             <View style={styles.inputContainer}>
           <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, isRTL && styles.textInputRTL]}
             value={newMessage}
             onChangeText={setNewMessage}
                 placeholder={language === 'ar' ? 'اكتب رسالة...' : 'Type a message...'}
                 multiline
+                textAlign={isRTL ? 'right' : 'left'}
           />
               <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
                 <Icon name="send" size={20} color="#fff" />
@@ -313,6 +326,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
+  cardHeaderRTL: {
+    flexDirection: 'row-reverse',
+  },
   avatar: {
     width: 48,
     height: 48,
@@ -320,9 +336,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     marginRight: 12,
   },
+  avatarRTL: {
+    marginRight: 0,
+    marginLeft: 12,
+  },
   cardInfo: {
     flex: 1,
     marginRight: 12,
+  },
+  cardInfoRTL: {
+    marginRight: 0,
+    marginLeft: 12,
   },
   cardHeaderRow: {
     flexDirection: 'row',
@@ -330,11 +354,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 4,
   },
+  cardHeaderRowRTL: {
+    flexDirection: 'row-reverse',
+  },
   patientName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#222',
     flex: 1,
+  },
+  patientNameRTL: {
+    textAlign: 'right',
   },
   statusBadge: {
     flexDirection: 'row',
@@ -344,30 +374,50 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginLeft: 8,
   },
+  statusBadgeRTL: {
+    marginLeft: 0,
+    marginRight: 8,
+  },
   statusText: {
     fontSize: 11,
     fontWeight: '500',
     marginLeft: 4,
+  },
+  statusTextRTL: {
+    marginLeft: 0,
+    marginRight: 4,
   },
   topic: {
     fontSize: 14,
     color: '#666',
     marginBottom: 4,
   },
+  topicRTL: {
+    textAlign: 'right',
+  },
   lastMessage: {
     fontSize: 13,
     color: '#888',
     lineHeight: 18,
+  },
+  lastMessageRTL: {
+    textAlign: 'right',
   },
   cardMeta: {
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     minHeight: 48,
   },
+  cardMetaRTL: {
+    alignItems: 'flex-start',
+  },
   time: {
     fontSize: 12,
     color: '#999',
     marginBottom: 4,
+  },
+  timeRTL: {
+    textAlign: 'right',
   },
   unreadBadge: {
     backgroundColor: '#ef4444',
@@ -400,9 +450,22 @@ const styles = StyleSheet.create({
   },
   pharmacistMessage: {
     alignItems: 'flex-end',
+    marginLeft: 50,
   },
   patientMessage: {
     alignItems: 'flex-start',
+    marginRight: 50,
+  },
+  // RTL specific message positioning - pharmacist messages should stay on the right in RTL too
+  pharmacistMessageRTL: {
+    alignItems: 'flex-end',
+    marginLeft: 50,
+    marginRight: 0,
+  },
+  patientMessageRTL: {
+    alignItems: 'flex-start',
+    marginRight: 50,
+    marginLeft: 0,
   },
   messageBubble: {
     maxWidth: '80%',
@@ -412,23 +475,58 @@ const styles = StyleSheet.create({
   },
   pharmacistBubble: {
     backgroundColor: '#49C5B8',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 4,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
   patientBubble: {
-    backgroundColor: '#e5e7eb',
+    backgroundColor: '#f0f0f0',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 12,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  // RTL specific bubble styling - pharmacist bubbles should maintain right-side styling
+  pharmacistBubbleRTL: {
+    backgroundColor: '#49C5B8',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 4,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  patientBubbleRTL: {
+    backgroundColor: '#f0f0f0',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 12,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
   messageText: {
     fontSize: 14,
+  },
+  messageTextRTL: {
+    textAlign: 'right',
   },
   pharmacistText: {
     color: '#fff',
   },
   patientText: {
-    color: '#555',
+    color: '#333',
   },
   messageTime: {
     fontSize: 11,
     marginTop: 2,
     color: '#888',
+  },
+  messageTimeRTL: {
+    textAlign: 'right',
+  },
+  pharmacistTime: {
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  patientTime: {
+    color: '#999',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -447,6 +545,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginRight: 8,
     maxHeight: 100,
+  },
+  textInputRTL: {
+    marginRight: 0,
+    marginLeft: 8,
   },
   sendButton: {
     backgroundColor: '#49C5B8',
