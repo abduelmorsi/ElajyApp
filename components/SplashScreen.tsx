@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
 
   tagline: {
     fontSize: 16,
-    color: '#ffffff',
+    color: '#1c0b39',
     opacity: 0.9,
     textAlign: 'center',
     marginBottom: 48,

@@ -17,59 +17,202 @@ export default function PharmacistPrescriptions({ navigateTo, goBack }: Pharmaci
   const [tab, setTab] = useState<'pending' | 'verified' | 'rejected'>('pending');
 
   const prescriptions = [
-  {
-    id: 'RX-001',
-    patient: language === 'ar' ? 'أحمد محمد' : 'Ahmed Mohamed',
-    doctor: language === 'ar' ? 'د. فاطمة علي' : 'Dr. Fatima Ali',
-    date: '2024-01-15',
-    uploadTime: '2024-01-15T10:30:00',
-    status: 'pending',
-    medications: [
-      { 
-        name: language === 'ar' ? 'باراسيتامول 500 ملغ' : 'Paracetamol 500mg', 
-        dosage: language === 'ar' ? 'قرص واحد 3 مرات يومياً' : '1 tablet 3 times daily', 
-        duration: language === 'ar' ? '5 أيام' : '5 days' 
-      },
-      { 
-        name: language === 'ar' ? 'أموكسيسيلين 250 ملغ' : 'Amoxicillin 250mg', 
-        dosage: language === 'ar' ? 'كبسولة واحدة مرتين يومياً' : '1 capsule 2 times daily', 
-        duration: language === 'ar' ? '7 أيام' : '7 days' 
-      }
-    ],
-    notes: language === 'ar' ? 'المريض لديه حساسية من البنسلين' : 'Patient has allergy to penicillin'
-  },
-  {
-    id: 'RX-002',
-    patient: language === 'ar' ? 'فاطمة حسن' : 'Fatima Hassan',
-    doctor: language === 'ar' ? 'د. محمد أحمد' : 'Dr. Mohamed Ahmed',
-    date: '2024-01-14',
-    uploadTime: '2024-01-14T16:45:00',
-    status: 'verified',
-    medications: [
-      { 
-        name: language === 'ar' ? 'فيتامين سي 1000 ملغ' : 'Vitamin C 1000mg', 
-        dosage: language === 'ar' ? 'قرص واحد يومياً' : '1 tablet daily', 
-        duration: language === 'ar' ? '30 يوماً' : '30 days' 
-      }
-    ]
-  },
-  {
-    id: 'RX-003',
-    patient: language === 'ar' ? 'محمد علي' : 'Mohamed Ali',
-    doctor: language === 'ar' ? 'د. سارة إبراهيم' : 'Dr. Sara Ibrahim',
-    date: '2024-01-13',
-    uploadTime: '2024-01-13T09:15:00',
-    status: 'rejected',
-    medications: [
-      { 
-        name: language === 'ar' ? 'أنسولين عادي' : 'Insulin Regular', 
-        dosage: language === 'ar' ? '10 وحدات قبل الوجبات' : '10 units before meals', 
-        duration: language === 'ar' ? 'مستمر' : 'Ongoing' 
-      }
-    ],
-    notes: language === 'ar' ? 'الوصفة غير واضحة، تحتاج توضيح من الطبيب' : 'Prescription unclear, needs clarification from doctor'
-  }
-];
+    {
+      id: 'RX-001',
+      patient: language === 'ar' ? 'أحمد محمد' : 'Ahmed Mohamed',
+      doctor: language === 'ar' ? 'د. فاطمة علي' : 'Dr. Fatima Ali',
+      date: '2024-01-15',
+      uploadTime: '2024-01-15T10:30:00',
+      status: 'pending',
+      medications: [
+        { 
+          name: language === 'ar' ? 'باراسيتامول 500 ملغ' : 'Paracetamol 500mg', 
+          dosage: language === 'ar' ? 'قرص واحد 3 مرات يومياً' : '1 tablet 3 times daily', 
+          duration: language === 'ar' ? '5 أيام' : '5 days' 
+        },
+        { 
+          name: language === 'ar' ? 'أموكسيسيلين 250 ملغ' : 'Amoxicillin 250mg', 
+          dosage: language === 'ar' ? 'كبسولة واحدة مرتين يومياً' : '1 capsule 2 times daily', 
+          duration: language === 'ar' ? '7 أيام' : '7 days' 
+        }
+      ],
+      notes: language === 'ar' ? 'المريض لديه حساسية من البنسلين' : 'Patient has allergy to penicillin'
+    },
+    {
+      id: 'RX-002',
+      patient: language === 'ar' ? 'فاطمة حسن' : 'Fatima Hassan',
+      doctor: language === 'ar' ? 'د. محمد أحمد' : 'Dr. Mohamed Ahmed',
+      date: '2024-01-14',
+      uploadTime: '2024-01-14T16:45:00',
+      status: 'verified',
+      medications: [
+        { 
+          name: language === 'ar' ? 'فيتامين سي 1000 ملغ' : 'Vitamin C 1000mg', 
+          dosage: language === 'ar' ? 'قرص واحد يومياً' : '1 tablet daily', 
+          duration: language === 'ar' ? '30 يوماً' : '30 days' 
+        }
+      ]
+    },
+    {
+      id: 'RX-003',
+      patient: language === 'ar' ? 'محمد علي' : 'Mohamed Ali',
+      doctor: language === 'ar' ? 'د. سارة إبراهيم' : 'Dr. Sara Ibrahim',
+      date: '2024-01-13',
+      uploadTime: '2024-01-13T09:15:00',
+      status: 'rejected',
+      medications: [
+        { 
+          name: language === 'ar' ? 'أنسولين عادي' : 'Insulin Regular', 
+          dosage: language === 'ar' ? '10 وحدات قبل الوجبات' : '10 units before meals', 
+          duration: language === 'ar' ? 'مستمر' : 'Ongoing' 
+        }
+      ],
+      notes: language === 'ar' ? 'الوصفة غير واضحة، تحتاج توضيح من الطبيب' : 'Prescription unclear, needs clarification from doctor'
+    },
+    {
+      id: 'RX-004',
+      patient: language === 'ar' ? 'سارة أحمد' : 'Sara Ahmed',
+      doctor: language === 'ar' ? 'د. علي محمد' : 'Dr. Ali Mohamed',
+      date: '2024-01-16',
+      uploadTime: '2024-01-16T14:20:00',
+      status: 'pending',
+      medications: [
+        { 
+          name: language === 'ar' ? 'أيبوبروفين 400 ملغ' : 'Ibuprofen 400mg', 
+          dosage: language === 'ar' ? 'قرص واحد 4 مرات يومياً' : '1 tablet 4 times daily', 
+          duration: language === 'ar' ? '3 أيام' : '3 days' 
+        },
+        { 
+          name: language === 'ar' ? 'أموكسيسيلين 500 ملغ' : 'Amoxicillin 500mg', 
+          dosage: language === 'ar' ? 'كبسولة واحدة 3 مرات يومياً' : '1 capsule 3 times daily', 
+          duration: language === 'ar' ? '10 أيام' : '10 days' 
+        },
+        { 
+          name: language === 'ar' ? 'باراسيتامول 1000 ملغ' : 'Paracetamol 1000mg', 
+          dosage: language === 'ar' ? 'قرص واحد عند الحاجة' : '1 tablet as needed', 
+          duration: language === 'ar' ? '5 أيام' : '5 days' 
+        }
+      ],
+      notes: language === 'ar' ? 'تناول الدواء مع الطعام لتجنب اضطراب المعدة' : 'Take medication with food to avoid stomach upset'
+    },
+    {
+      id: 'RX-005',
+      patient: language === 'ar' ? 'علي حسن' : 'Ali Hassan',
+      doctor: language === 'ar' ? 'د. نورا محمد' : 'Dr. Nora Mohamed',
+      date: '2024-01-12',
+      uploadTime: '2024-01-12T11:45:00',
+      status: 'verified',
+      medications: [
+        { 
+          name: language === 'ar' ? 'أوميبرازول 20 ملغ' : 'Omeprazole 20mg', 
+          dosage: language === 'ar' ? 'كبسولة واحدة يومياً' : '1 capsule daily', 
+          duration: language === 'ar' ? '14 يوماً' : '14 days' 
+        },
+        { 
+          name: language === 'ar' ? 'دومبيريدون 10 ملغ' : 'Domperidone 10mg', 
+          dosage: language === 'ar' ? 'قرص واحد 3 مرات يومياً' : '1 tablet 3 times daily', 
+          duration: language === 'ar' ? '7 أيام' : '7 days' 
+        }
+      ]
+    },
+    {
+      id: 'RX-006',
+      patient: language === 'ar' ? 'مريم عبدالله' : 'Mariam Abdullah',
+      doctor: language === 'ar' ? 'د. أحمد سعيد' : 'Dr. Ahmed Saeed',
+      date: '2024-01-11',
+      uploadTime: '2024-01-11T08:30:00',
+      status: 'rejected',
+      medications: [
+        { 
+          name: language === 'ar' ? 'وارفارين 5 ملغ' : 'Warfarin 5mg', 
+          dosage: language === 'ar' ? 'قرص واحد يومياً' : '1 tablet daily', 
+          duration: language === 'ar' ? 'مستمر' : 'Ongoing' 
+        }
+      ],
+      notes: language === 'ar' ? 'الجرعة غير واضحة، تحتاج مراجعة من الطبيب المعالج' : 'Dosage unclear, needs review from treating physician'
+    },
+    {
+      id: 'RX-007',
+      patient: language === 'ar' ? 'خالد محمد' : 'Khalid Mohamed',
+      doctor: language === 'ar' ? 'د. ليلى أحمد' : 'Dr. Layla Ahmed',
+      date: '2024-01-17',
+      uploadTime: '2024-01-17T15:10:00',
+      status: 'pending',
+      medications: [
+        { 
+          name: language === 'ar' ? 'سيتريزين 10 ملغ' : 'Cetirizine 10mg', 
+          dosage: language === 'ar' ? 'قرص واحد يومياً' : '1 tablet daily', 
+          duration: language === 'ar' ? '7 أيام' : '7 days' 
+        },
+        { 
+          name: language === 'ar' ? 'مونتيلوكاست 10 ملغ' : 'Montelukast 10mg', 
+          dosage: language === 'ar' ? 'قرص واحد مساءً' : '1 tablet in the evening', 
+          duration: language === 'ar' ? '30 يوماً' : '30 days' 
+        }
+      ]
+    },
+    {
+      id: 'RX-008',
+      patient: language === 'ar' ? 'نورا علي' : 'Nora Ali',
+      doctor: language === 'ar' ? 'د. محمد حسن' : 'Dr. Mohamed Hassan',
+      date: '2024-01-10',
+      uploadTime: '2024-01-10T13:25:00',
+      status: 'verified',
+      medications: [
+        { 
+          name: language === 'ar' ? 'ميتفورمين 500 ملغ' : 'Metformin 500mg', 
+          dosage: language === 'ar' ? 'قرص واحد مرتين يومياً' : '1 tablet twice daily', 
+          duration: language === 'ar' ? 'مستمر' : 'Ongoing' 
+        },
+        { 
+          name: language === 'ar' ? 'جلوكوفاج 850 ملغ' : 'Glucophage 850mg', 
+          dosage: language === 'ar' ? 'قرص واحد مع الإفطار' : '1 tablet with breakfast', 
+          duration: language === 'ar' ? 'مستمر' : 'Ongoing' 
+        }
+      ]
+    },
+    {
+      id: 'RX-009',
+      patient: language === 'ar' ? 'يوسف أحمد' : 'Youssef Ahmed',
+      doctor: language === 'ar' ? 'د. فاطمة علي' : 'Dr. Fatima Ali',
+      date: '2024-01-09',
+      uploadTime: '2024-01-09T09:50:00',
+      status: 'rejected',
+      medications: [
+        { 
+          name: language === 'ar' ? 'أموكسيسيلين 875 ملغ' : 'Amoxicillin 875mg', 
+          dosage: language === 'ar' ? 'قرص واحد مرتين يومياً' : '1 tablet twice daily', 
+          duration: language === 'ar' ? '7 أيام' : '7 days' 
+        }
+      ],
+      notes: language === 'ar' ? 'المريض لديه تاريخ من الحساسية للبنسلين' : 'Patient has history of penicillin allergy'
+    },
+    {
+      id: 'RX-010',
+      patient: language === 'ar' ? 'زينب محمد' : 'Zeinab Mohamed',
+      doctor: language === 'ar' ? 'د. أحمد علي' : 'Dr. Ahmed Ali',
+      date: '2024-01-18',
+      uploadTime: '2024-01-18T12:15:00',
+      status: 'pending',
+      medications: [
+        { 
+          name: language === 'ar' ? 'فيتامين د3 1000 وحدة' : 'Vitamin D3 1000 IU', 
+          dosage: language === 'ar' ? 'قرص واحد يومياً' : '1 tablet daily', 
+          duration: language === 'ar' ? '90 يوماً' : '90 days' 
+        },
+        { 
+          name: language === 'ar' ? 'كالسيوم 500 ملغ' : 'Calcium 500mg', 
+          dosage: language === 'ar' ? 'قرص واحد مرتين يومياً' : '1 tablet twice daily', 
+          duration: language === 'ar' ? '90 يوماً' : '90 days' 
+        },
+        { 
+          name: language === 'ar' ? 'أوميغا 3 1000 ملغ' : 'Omega 3 1000mg', 
+          dosage: language === 'ar' ? 'كبسولة واحدة يومياً' : '1 capsule daily', 
+          duration: language === 'ar' ? '60 يوماً' : '60 days' 
+        }
+      ]
+    }
+  ];
 
   const getStatusColor = (status) => {
     switch (status) {
