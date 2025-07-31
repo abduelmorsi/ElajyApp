@@ -7,39 +7,39 @@ import { useLocalization, useRTL } from '../services/LocalizationService';
 const prescriptions = [
   {
     id: 'RX-001',
-    patient: 'Ahmed Mohamed',
-    doctor: 'Dr. Fatima Ali',
+    patient: 'احمد محمد',
+    doctor: 'د. خوجلي عبدالله',
     date: '2024-01-15',
     uploadTime: '2024-01-15T10:30:00',
-    status: 'pending',
+    status: 'قيد الانتظار',
     medications: [
-      { name: 'Paracetamol 500mg', dosage: '1 tablet 3 times daily', duration: '5 days' },
-      { name: 'Amoxicillin 250mg', dosage: '1 capsule 2 times daily', duration: '7 days' }
+      { name: 'باراسيتامول 50 مل', dosage: 'حبة مرتين يوميا', duration: '5 ايام' },
+      { name: 'اموكسيسلين 30 مل', dosage: 'حبة كل يوم', duration: 'اسبوع' }
     ],
-    notes: 'Patient has allergy to penicillin'
+    notes: 'المريض يعاني من حساسية تجاه الأسبرين'
   },
   {
     id: 'RX-002',
-    patient: 'Fatima Hassan',
-    doctor: 'Dr. Mohamed Ahmed',
+    patient: 'محاسن علي',
+    doctor: 'د. يوسف حسن',
     date: '2024-01-14',
     uploadTime: '2024-01-14T16:45:00',
-    status: 'verified',
+    status: 'تم التحقق',
     medications: [
-      { name: 'Vitamin C 1000mg', dosage: '1 tablet daily', duration: '30 days' }
+      { name: 'فيتامين سي 100 مل', dosage: 'حبة يوميا', duration: '30 يوم' }
     ]
   },
   {
     id: 'RX-003',
-    patient: 'Mohamed Ali',
-    doctor: 'Dr. Sara Ibrahim',
+    patient: 'محمد علي',
+    doctor: 'د. سارة محمد',
     date: '2024-01-13',
     uploadTime: '2024-01-13T09:15:00',
-    status: 'rejected',
+    status: 'مرفوض',
     medications: [
-      { name: 'Insulin Regular', dosage: '10 units before meals', duration: 'Ongoing' }
+      { name: 'انسولين', dosage: 'حبة قبل الفطور و حبة قبل الغداء', duration: 'اسبوع' }
     ],
-    notes: 'Prescription unclear, needs clarification from doctor'
+    notes: 'الجرعة غير صحيحة، يرجى مراجعة الطبيب'
   }
 ];
 
