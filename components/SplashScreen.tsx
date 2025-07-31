@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalization } from './services/LocalizationService';
+import { useLocalization, getLogoSource } from './services/LocalizationService';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -79,14 +79,13 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           ]}
         >
           <Image 
-            source={require('../logo.png')} 
+            source={getLogoSource(language)} 
             style={styles.logo}
             resizeMode="contain"
           />
         </Animated.View>
 
-        {/* App Name */}
-        <Text style={styles.appName}>{t('app.name')}</Text>
+
         
         {/* Tagline */}
         <Text style={styles.tagline}>
@@ -107,7 +106,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#49C5B8',
+    backgroundColor: '#f0f9f8',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoContainer: {
-    marginBottom: 24,
+    marginBottom: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -127,17 +126,11 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 270,
+    height: 270,
     borderRadius: 24,
   },
-  appName: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
+
   tagline: {
     fontSize: 16,
     color: '#ffffff',
@@ -154,7 +147,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#49C5B8',
     marginHorizontal: 4,
     opacity: 0.6,
   },

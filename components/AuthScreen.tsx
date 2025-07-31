@@ -15,7 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalization, useRTL } from './services/LocalizationService';
+import { useLocalization, useRTL, getLogoSource } from './services/LocalizationService';
 
 const { width } = Dimensions.get('window');
 
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    width: 36,
-    height: 36,
+    width: 60,
+    height: 60,
   },
   langBtn: {
     flexDirection: 'row',
@@ -67,15 +67,9 @@ const styles = StyleSheet.create({
   welcomeSection: {
     alignItems: 'center',
     marginTop: 16,
-    marginBottom: 32,
+    marginBottom: 16,
   },
-  welcomeTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1a1a1a',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
+
   welcomeDesc: {
     fontSize: 14,
     color: '#6c757d',
@@ -350,7 +344,7 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
           <View style={[styles.header, { paddingTop: insets.top }]}>
             <View style={styles.logoContainer}>
               <Image 
-                source={require('../logo.png')} 
+                source={getLogoSource(language)} 
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -376,9 +370,7 @@ export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }
             <View style={styles.content}>
             {/* Welcome Section */}
             <View style={styles.welcomeSection}>
-              <Text style={styles.welcomeTitle}>
-                {language === 'ar' ? 'مرحباً بك في علاجي' : 'Welcome to Elajy'}
-              </Text>
+
               <Text style={styles.welcomeDesc}>
                 {isLogin 
                   ? (language === 'ar' ? 'اعثر على دواءك وأنقذ حياة أحبائك' : 'Find your medicine and save the life of loved ones')

@@ -1005,7 +1005,7 @@ const translations = {
     'pharmacist.donation.assignedTo': 'Assigned to',
 
     // App Name
-    'app.name': 'Elajy'
+  
   }
 };
 
@@ -1372,4 +1372,19 @@ export const sudanesePharmaceuticalData = {
 };
 
 export { sudanesePharmaceuticalData as sudaneseData }; // For backward compatibility
+
+// Helper function to get the appropriate logo based on language
+export const getLogoSource = (language: string) => {
+  return language === 'ar'
+    ? require('../../assets/images/logo-ar-trans.png')
+    : require('../../assets/images/logo-en-trans.png');
+};
+
+// Helper function to get the appropriate app icon based on language
+export const getIconSource = (language: string) => {
+  return language === 'ar' 
+    ? require('../../assets/images/icon-ar-back.png')
+    : require('../../assets/images/icon-en-back.png');
+};
+
 export default LocalizationProvider;

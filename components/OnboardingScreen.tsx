@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useLocalization } from './services/LocalizationService';
+import { useLocalization, getIconSource } from './services/LocalizationService';
 
 const onboardingSlides = [
   {
@@ -82,8 +82,12 @@ export default function OnboardingScreen({ onNext, onSkip }) {
 
       {/* Brand */}
       <View style={styles.brandContainer}>
-        <Text style={styles.brandTitle}>{language === 'ar' ? t('app.name') : t('app.name')}</Text>
-        <Text style={styles.brandSubtitle}>{language === 'ar' ? 'دواءك دائما قريب منك' : 'YOUR MEDICINE ALWAYS NEARBY'}</Text>
+        <Image 
+          source={getIconSource(language)} 
+          style={styles.appIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.brandSubtitle}>{language === 'ar' ? 'دواءك دائما قريب منك' : 'Your Medicine Always Nearby'}</Text>
       </View>
     </SafeAreaView>
   );
@@ -184,11 +188,10 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: 'center',
   },
-  brandTitle: {
-    color: '#49C5B8',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 4,
+  appIcon: {
+    width: 48,
+    height: 48,
+    marginBottom: 8,
   },
   brandSubtitle: {
     color: '#888',

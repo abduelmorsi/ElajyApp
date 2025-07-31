@@ -395,11 +395,7 @@ export default function App() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <LocalizationProvider defaultLanguage="ar">
-          <InventoryProvider>
-            <DeliveryProvider>
-              <AppContent />
-            </DeliveryProvider>
-          </InventoryProvider>
+          <AppContent />
         </LocalizationProvider>
       </ErrorBoundary>
     </SafeAreaProvider>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Switch, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Modal, TextInput, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { sudanesePharmaceuticalData, useLocalization, useRTL } from '../services/LocalizationService';
+import { sudanesePharmaceuticalData, useLocalization, useRTL, getLogoSource } from '../services/LocalizationService';
 
 type PharmacistProfileProps = {
   navigateTo: (screen: string, data?: any) => void;
@@ -299,11 +299,10 @@ export default function PharmacistProfile({ navigateTo, onSignOut, onLanguageTog
       {/* App Info */}
       <View style={styles.appInfoSection}>
         <Image 
-          source={require('../../logo.png')} 
+          source={getLogoSource(language)} 
           style={styles.appLogo}
           resizeMode="contain"
         />
-        <Text style={styles.appInfoText}>{language === 'ar' ? 'علاجي' : 'Elajy'}</Text>
         <Text style={styles.appInfoText}>{language === 'ar' ? 'إصدار صيدلي 1.0.0' : 'Pharmacist Version 1.0.0'}</Text>
       </View>
 
@@ -747,9 +746,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   appLogo: {
-    width: 48,
-    height: 48,
-    marginBottom: 8,
+    width: 80,
+    height: 80,
+    marginBottom: 4,
   },
   appInfoText: {
     color: '#6c757d',

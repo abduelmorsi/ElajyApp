@@ -4,18 +4,25 @@
     "slug": "ElajyPharmacyApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+                    "icon": "./assets/images/icon-ar-back.png",
     "scheme": "elajypharmacyapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": {
+        "image": "./assets/images/icon-ar-back.png",
+        "prerendered": true
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/icon-ar-back.png",
+        "backgroundColor": "transparent",
+        "monochromeImage": "./assets/images/icon-ar-back.png"
       },
+      "icon": "./assets/images/icon-ar-back.png",
+      "roundIcon": "./assets/images/icon-ar-back.png",
       "edgeToEdgeEnabled": true
     },
     "web": {
