@@ -19,7 +19,7 @@ const consultations = [
   {
     id: "CONS-002", 
     patient: "تبيان خالد",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100",
     status: "في الانتظار",
     startTime: "2024-01-15T11:15:00",
     type: "محادثة نصية",
@@ -30,7 +30,7 @@ const consultations = [
   {
     id: "CONS-003",
     patient: "هديل مأمون", 
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100",
     status: "اكتملت",
     startTime: "2024-01-15T09:00:00",
     endTime: "2024-01-15T09:30:00",
