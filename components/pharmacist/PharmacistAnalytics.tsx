@@ -50,7 +50,7 @@ const generateAnalyticsData = () => {
     { name: 'الصيدلية المركزية - الخرطوم', sales: 850000, orders: 1250, growth: 12.5 },
     { name: 'صيدلية النيل - أم درمان', sales: 720000, orders: 980, growth: 8.3 },
     { name: 'صيدلية الصحة - بحري', sales: 640000, orders: 850, growth: -2.1 },
-    { name: 'صيدلية العافية - الكوبرا', sales: 580000, orders: 760, growth: 15.7 }
+    { name: 'صيدلية العافية - كوبر', sales: 580000, orders: 760, growth: 15.7 }
   ];
 
   return {
@@ -180,7 +180,7 @@ export default function PharmacistAnalytics({ navigateTo, goBack, userData }: Ph
       return `SDG ${millions.toFixed(2)}M`;
     }
     
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-SD' : 'en-US', {
+    return new Intl.NumberFormat(language === 'ar' ? 'en-US' : 'en-US', {
       style: 'currency',
       currency: 'SDG',
       minimumFractionDigits: 0,
@@ -189,7 +189,7 @@ export default function PharmacistAnalytics({ navigateTo, goBack, userData }: Ph
   };
 
   const formatNumber = (num) => {
-    return num.toLocaleString(language === 'ar' ? 'ar-SD' : 'en-US');
+    return num.toLocaleString(language === 'ar' ? 'en-US' : 'en-US');
   };
 
   // Tab state
