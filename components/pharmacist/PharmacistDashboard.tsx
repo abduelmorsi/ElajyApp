@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useLocalization, useRTL } from '../services/LocalizationService';
+import { useLocalization } from '../services/LocalizationService';
 
 // Define the interface for PharmacistDashboard's props
 interface PharmacistDashboardProps {
@@ -21,8 +21,8 @@ interface PharmacistDashboardProps {
 
 // Update the function signature to use the defined interface
 export default function PharmacistDashboard({ navigateTo, userData }: PharmacistDashboardProps) {
-  const { t, language } = useLocalization();
-  const { isRTL, getMargin } = useRTL();
+  console.log('PharmacistDashboard rendering with userData:', userData);
+  const { language } = useLocalization();
   const insets = useSafeAreaInsets();
   const [greeting, setGreeting] = useState('');
   const [currentTime, setCurrentTime] = useState('');
@@ -156,30 +156,15 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
     }
   ];
 
-  const handleQuickAction = (actionId) => {
+  const handleQuickAction = (actionId: string) => {
     navigateTo(actionId);
   };
 
-  const handleDonationAssignment = (donationId) => {
+  const handleDonationAssignment = (donationId: number) => {
     navigateTo('donations', { donationId });
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return { backgroundColor: '#fef9c3', color: '#b45309' };
-      case 'processing':
-        return { backgroundColor: '#e6f7f5', color: '#49C5B8' };
-      case 'completed':
-        return { backgroundColor: '#dcfce7', color: '#22c55e' };
-      case 'cancelled':
-        return { backgroundColor: '#fef3c7', color: '#ea580c' };
-      default:
-        return { backgroundColor: '#f3f4f6', color: '#374151' };
-    }
-  };
-
-  const getUrgencyColor = (urgency) => {
+  const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
       case 'high':
         return { backgroundColor: '#fee2e2', color: '#b91c1c' };
@@ -197,29 +182,29 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
       {/* Fixed Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <View style={styles.headerContent}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.headerGreeting}>
-                {greeting}, {userData?.name?.split(' ')[1] || (language === 'ar' ? 'د. فاطمة' : 'Dr. Fatima')}
-              </Text>
-              <View style={styles.headerMetaRow}>
-                <View style={styles.headerMetaItem}>
-                  <Icon name="location-on" size={16} color="#6b7280" />
-                  <Text style={styles.headerMetaText}>{userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}</Text>
-                </View>
-                <Text style={styles.headerMetaDot}>•</Text>
-                <View style={styles.headerMetaItem}>
-                  <Icon name="schedule" size={16} color="#6b7280" />
-                  <Text style={styles.headerMetaText}>{currentTime}</Text>
-                </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.headerGreeting}>
+              {greeting}, {userData?.name?.split(' ')[1] || (language === 'ar' ? 'د. فاطمة' : 'Dr. Fatima')}
+            </Text>
+            <View style={styles.headerMetaRow}>
+              <View style={styles.headerMetaItem}>
+                <Icon name="location-on" size={16} color="#6b7280" />
+                <Text style={styles.headerMetaText}>{userData?.pharmacy?.name || (language === 'ar' ? 'صيدلية النيل الأزرق' : 'Blue Nile Pharmacy')}</Text>
+              </View>
+              <Text style={styles.headerMetaDot}>•</Text>
+              <View style={styles.headerMetaItem}>
+                <Icon name="schedule" size={16} color="#6b7280" />
+                <Text style={styles.headerMetaText}>{currentTime}</Text>
               </View>
             </View>
-            <View style={styles.headerStatusBox}>
-              <View style={styles.headerStatusDot} />
-              <Text style={styles.headerStatusText}>{language === 'ar' ? 'مفتوح' : 'Open'}</Text>
-              <Text style={styles.headerStatusSub}>{language === 'ar' ? 'يغلق الساعة 22:00' : 'Closes at 10:00 PM'}</Text>
-            </View>
+          </View>
+          <View style={styles.headerStatusBox}>
+            <View style={styles.headerStatusDot} />
+            <Text style={styles.headerStatusText}>{language === 'ar' ? 'مفتوح' : 'Open'}</Text>
+            <Text style={styles.headerStatusSub}>{language === 'ar' ? 'يغلق الساعة 22:00' : 'Closes at 10:00 PM'}</Text>
           </View>
         </View>
+      </View>
 
       <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: 120 }}>
         <View style={styles.body}>

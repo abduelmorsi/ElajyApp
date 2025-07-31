@@ -69,8 +69,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
-    transitionProperty: 'left',
-    transitionDuration: '200ms',
+    // transitionProperty: 'left', // Not supported in React Native
+    // transitionDuration: '200ms', // Not supported in React Native
   },
   thumbChecked: {
     left: 26,

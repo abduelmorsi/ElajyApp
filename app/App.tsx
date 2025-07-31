@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, LogBox } from 'react-native';
 import { useSafeAreaInsets, SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import ErrorBoundary from '../components/ErrorBoundary';
 import { DeliveryProvider } from '../components/services/DeliveryService';
 import { InventoryProvider } from '../components/services/InventoryService';
-import LocalizationProvider, { useLocalization, useRTL } from '../components/services/LocalizationService';
+import { LocalizationProvider, useLocalization, useRTL } from '../components/services/LocalizationService';
 import { NotificationProvider } from '../components/services/NotificationService';
 
 // Import patient portal components
@@ -34,6 +34,11 @@ import PharmacistInventory from '../components/pharmacist/PharmacistInventory';
 import PharmacistOrders from '../components/pharmacist/PharmacistOrders';
 import PharmacistPrescriptions from '../components/pharmacist/PharmacistPrescriptions';
 import PharmacistProfile from '../components/pharmacist/PharmacistProfile';
+
+// Suppress specific React Native warnings that are false positives
+if (__DEV__) {
+  LogBox.ignoreLogs(['Warning: Text strings must be rendered within a <Text> component']);
+}
 
 // Enhanced user data management with pharmacy assignments
 const createUserData = (userType: string, userName = null) => {
@@ -121,7 +126,7 @@ type PharmacistData = ReturnType<typeof createUserData>;
 type UserData = PatientData | PharmacistData | null;
 
 function AppContent() {
-  const { t, language, toggleLanguage } = useLocalization();
+  const { language, toggleLanguage } = useLocalization();
   const { isRTL } = useRTL();
   const insets = useSafeAreaInsets();
   const [currentScreen, setCurrentScreen] = useState<string>('splash');
@@ -131,15 +136,21 @@ function AppContent() {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
-  const [history, setHistory] = useState<string[]>([]);
   const [navigationData, setNavigationData] = useState<any>(null);
 
   // Handle authentication
   const handleAuth = (type: UserType) => {
-    setIsAuthenticated(true);
-    setUserType(type);
-    setUserData(createUserData(type || 'patient'));
-    setCurrentScreen(type === 'patient' ? 'home' : 'pharmacist-dashboard');
+    try {
+      console.log('handleAuth called with type:', type);
+      setIsAuthenticated(true);
+      setUserType(type);
+      setUserData(createUserData(type || 'patient'));
+      const targetScreen = type === 'patient' ? 'home' : 'pharmacist-dashboard';
+      console.log('Setting screen to:', targetScreen);
+      setCurrentScreen(targetScreen);
+    } catch (error) {
+      console.error('Error in handleAuth:', error);
+    }
   };
 
   // Handle profile updates
@@ -185,7 +196,6 @@ function AppContent() {
 
   // Navigation for different screens
   const navigateTo = (screen: string, data: any = null): void => {
-    setHistory(prev => [...prev, currentScreen]);
     setNavigationData(data);
     if (screen === 'product-detail') {
       setSelectedProduct(data);
@@ -196,13 +206,12 @@ function AppContent() {
   };
 
   const goBack = () => {
-    setHistory(prev => {
-      if (prev.length === 0) return prev;
-      const newHistory = [...prev];
-      const lastScreen = newHistory.pop();
-      if (lastScreen) setCurrentScreen(lastScreen);
-      return newHistory;
-    });
+    // Simple back navigation - could be enhanced with proper history stack
+    if (userType === 'patient') {
+      setCurrentScreen('home');
+    } else {
+      setCurrentScreen('pharmacist-dashboard');
+    }
   };
 
   // Skip onboarding
@@ -302,36 +311,55 @@ function AppContent() {
 
     // Pharmacist portal screens
     if (userType === 'pharmacist') {
-      switch (currentScreen) {
-        case 'pharmacist-dashboard':
-          return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
-        case 'pharmacist-inventory':
-          return <PharmacistInventory navigateTo={navigateTo} userData={userData || {}} />;
-        case 'pharmacist-orders':
-          return <PharmacistOrders navigateTo={navigateTo} userData={userData || {}} />;
-        case 'pharmacist-drug-upload':
-          return <PharmacistDrugUpload navigateTo={navigateTo} />;
-        case 'pharmacist-prescriptions':
-          return <PharmacistPrescriptions navigateTo={navigateTo} goBack={goBack} />;
-        case 'pharmacist-consultations':
-          return <PharmacistConsultations navigateTo={navigateTo} goBack={goBack} />;
-        case 'pharmacist-analytics':
-          return <PharmacistAnalytics navigateTo={navigateTo} goBack={goBack} userData={userData || {}} />;
-        case 'donations':
-          return <DonationScreen navigateTo={navigateTo} goBack={goBack} userType={userType} userData={userData || {}} />;
-        case 'pharmacist-profile':
-          return <PharmacistProfile 
-            navigateTo={navigateTo}
-            onSignOut={handleSignOut}
-            onLanguageToggle={handleLanguageToggle}
-            currentLanguage={language}
-            userData={userData || {}}
-            updateUserProfile={updateUserProfile}
-          />;
-        case 'address-management':
-          return <AddressManagement navigateTo={navigateTo} />;
-        default:
-          return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
+      try {
+        console.log('Rendering pharmacist screen:', currentScreen);
+        switch (currentScreen) {
+          case 'pharmacist-dashboard':
+            return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
+          case 'pharmacist-inventory':
+            return <PharmacistInventory navigateTo={navigateTo} userData={userData || {}} />;
+          case 'pharmacist-orders':
+            return <PharmacistOrders navigateTo={navigateTo} userData={userData || {}} />;
+          case 'pharmacist-drug-upload':
+            return <PharmacistDrugUpload navigateTo={navigateTo} />;
+          case 'pharmacist-prescriptions':
+            return <PharmacistPrescriptions navigateTo={navigateTo} goBack={goBack} />;
+          case 'pharmacist-consultations':
+            return <PharmacistConsultations navigateTo={navigateTo} goBack={goBack} />;
+          case 'pharmacist-analytics':
+            return <PharmacistAnalytics navigateTo={navigateTo} goBack={goBack} userData={userData || {}} />;
+          case 'donations':
+            return <DonationScreen navigateTo={navigateTo} goBack={goBack} userType={userType} userData={userData || {}} />;
+          case 'pharmacist-profile':
+            return <PharmacistProfile 
+              navigateTo={navigateTo}
+              onSignOut={handleSignOut}
+              onLanguageToggle={handleLanguageToggle}
+              currentLanguage={language}
+              userData={userData || {}}
+              updateUserProfile={updateUserProfile}
+            />;
+          case 'address-management':
+            return <AddressManagement navigateTo={navigateTo} />;
+          default:
+            console.log('Default pharmacist screen, redirecting to dashboard');
+            return <PharmacistDashboard navigateTo={navigateTo} userData={userData || {}} />;
+        }
+      } catch (error) {
+        console.error('Error rendering pharmacist screen:', error);
+        return (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+            <Text style={{ fontSize: 18, color: 'red', textAlign: 'center' }}>
+              حدث خطأ في تحميل الشاشة. يرجى المحاولة مرة أخرى.
+            </Text>
+            <TouchableOpacity 
+              style={{ marginTop: 20, padding: 10, backgroundColor: '#49C5B8', borderRadius: 8 }}
+              onPress={() => setCurrentScreen('pharmacist-dashboard')}
+            >
+              <Text style={{ color: 'white' }}>العودة للرئيسية</Text>
+            </TouchableOpacity>
+          </View>
+        );
       }
     }
 

@@ -9,15 +9,12 @@ import {
   SafeAreaView, 
   KeyboardAvoidingView, 
   Platform, 
-  Image,
-  Dimensions 
+  Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalization, useRTL, getLogoSource } from './services/LocalizationService';
-
-const { width } = Dimensions.get('window');
+import { useLocalization, getLogoSource } from './services/LocalizationService';
 
 const styles = StyleSheet.create({
   container: {
@@ -297,8 +294,7 @@ const styles = StyleSheet.create({
 });
 
 export default function AuthScreen({ onAuth, onLanguageToggle, currentLanguage }) {
-  const { t, language } = useLocalization();
-  const { isRTL } = useRTL();
+  const { language } = useLocalization();
   const insets = useSafeAreaInsets();
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('patient');

@@ -1,11 +1,15 @@
 {
   "expo": {
+    "name": "Elajy Pharmacy App",
+    "slug": "elajypharmacyapp",
     "version": "1.0.0",
     "orientation": "portrait",
+    "description": "A pharmacy app for finding medicines and managing donations in Sudan",
+    "primaryColor": "#49C5B8",
     "icon": "./assets/images/icon-ar-back.png",
     "scheme": "elajypharmacyapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "icon": {
@@ -16,12 +20,14 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-ar-back.png",
-        "backgroundColor": "transparent",
+        "backgroundColor": "#ffffff",
         "monochromeImage": "./assets/images/icon-ar-back.png"
       },
       "icon": "./assets/images/icon-ar-back.png",
       "roundIcon": "./assets/images/icon-ar-back.png",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.elajy.elajyapp",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +48,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "82ea6619-ce8f-4859-bc31-119edeaf353c"
+      }
     }
   }
 }

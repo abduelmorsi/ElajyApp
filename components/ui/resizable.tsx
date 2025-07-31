@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#e5e7eb',
-    cursor: 'col-resize', // ignored in RN, for parity
+    // cursor: 'col-resize', // Not supported in React Native
   },
   handleInner: {
     backgroundColor: '#e5e7eb',
