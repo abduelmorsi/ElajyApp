@@ -312,7 +312,7 @@ function AppContent() {
         case 'pharmacist-drug-upload':
           return <PharmacistDrugUpload navigateTo={navigateTo} />;
         case 'pharmacist-prescriptions':
-          return <PharmacistPrescriptions navigateTo={navigateTo} />;
+          return <PharmacistPrescriptions navigateTo={navigateTo} goBack={goBack} />;
         case 'pharmacist-consultations':
           return <PharmacistConsultations navigateTo={navigateTo} goBack={goBack} />;
         case 'pharmacist-analytics':
