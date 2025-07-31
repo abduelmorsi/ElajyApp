@@ -79,7 +79,7 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
       isOnline: true,
       responseTime: 'خلال 10 دقائق',
       responseTimeEn: 'Within 10 minutes',
-      avatar: 'https://images.unsplash.com/photo-1594824475562-66448d74b8b6?w=150&h=150&fit=crop&crop=face',
+      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
       consultations: 145,
       services: ['الأمراض المزمنة', 'ضغط الدم', 'السكري']
     }
@@ -111,47 +111,47 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
   if (selectedPharmacist) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-                {/* Fixed Chat Header */}
-        <View style={{ 
-          flexDirection: 'row', 
-          alignItems: 'center', 
-          backgroundColor: '#fff', 
-          borderBottomWidth: 1, 
-          borderColor: '#eee', 
-          paddingVertical: 14, 
-          paddingHorizontal: 12, 
-          paddingTop: insets.top + 14,
-          zIndex: 1000,
-          elevation: 3,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-        }}>
-          <TouchableOpacity style={{ padding: 8, marginRight: 8 }} onPress={() => setSelectedPharmacist(null)}>
-            <Icon name="arrow-back" size={24} color="#222" />
-          </TouchableOpacity>
-          <Image source={{ uri: selectedPharmacist.avatar }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }} />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: selectedPharmacist.isOnline ? '#22c55e' : '#aaa', marginRight: 4 }} />
-              <Text style={{ color: '#666', fontSize: 12 }}>
-                {selectedPharmacist.isOnline
-                  ? (language === 'ar' ? 'متصل' : 'Online')
-                  : (language === 'ar' ? 'غير متصل' : 'Offline')}
-              </Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-              <Icon name="call" size={16} color="#49C5B8" />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-              <Icon name="videocam" size={16} color="#49C5B8" />
-            </TouchableOpacity>
-          </View>
-        </View>
+                                 {/* Fixed Chat Header */}
+         <View style={[{ 
+           flexDirection: 'row', 
+           alignItems: 'center', 
+           backgroundColor: '#fff', 
+           borderBottomWidth: 1, 
+           borderColor: '#eee', 
+           paddingVertical: 14, 
+           paddingHorizontal: 12, 
+           paddingTop: insets.top + 14,
+           zIndex: 1000,
+           elevation: 3,
+           shadowColor: '#000',
+           shadowOffset: { width: 0, height: 2 },
+           shadowOpacity: 0.1,
+           shadowRadius: 4,
+         }, isRTL && { flexDirection: 'row-reverse' }]}>
+           <TouchableOpacity style={[styles.chatBackButton, isRTL && styles.chatBackButtonRTL]} onPress={() => setSelectedPharmacist(null)}>
+             <Icon name="arrow-back" size={24} color="#222" />
+           </TouchableOpacity>
+           <Image source={{ uri: selectedPharmacist.avatar }} style={[styles.chatAvatar, isRTL && styles.chatAvatarRTL]} />
+           <View style={[styles.chatInfo, isRTL && styles.chatInfoRTL]}>
+             <Text style={[styles.chatName, isRTL && styles.chatNameRTL]}>{language === 'ar' ? selectedPharmacist.name : selectedPharmacist.nameEn}</Text>
+             <View style={[styles.onlineStatus, isRTL && styles.onlineStatusRTL]}>
+               <View style={[styles.statusDot, isRTL && styles.statusDotRTL]} />
+               <Text style={[styles.statusText, isRTL && styles.statusTextRTL]}>
+                 {selectedPharmacist.isOnline
+                   ? (language === 'ar' ? 'متصل' : 'Online')
+                   : (language === 'ar' ? 'غير متصل' : 'Offline')}
+               </Text>
+             </View>
+           </View>
+           <View style={[styles.chatActions, isRTL && styles.chatActionsRTL]}>
+             <TouchableOpacity style={styles.chatActionButton}>
+               <Icon name="call" size={16} color="#49C5B8" />
+             </TouchableOpacity>
+             <TouchableOpacity style={styles.chatActionButton}>
+               <Icon name="videocam" size={16} color="#49C5B8" />
+             </TouchableOpacity>
+           </View>
+         </View>
         <KeyboardAvoidingView 
           style={{ flex: 1 }} 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -159,50 +159,51 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
         >
           {/* Chat Area */}
           <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
-            {/* Welcome Message */}
-            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-              <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, padding: 12, maxWidth: '80%' }}>
-                <Text style={{ color: '#222', fontSize: 14, marginBottom: 2 }}>
-                  {language === 'ar'
-                    ? `مرحبا! أنا ${selectedPharmacist.name}. كيف يمكنني مساعدتك اليوم؟`
-                    : `Hello! I'm ${selectedPharmacist.nameEn}. How can I help you today?`}
-                </Text>
-                <Text style={{ color: '#888', fontSize: 11, textAlign: 'right' }}>{language === 'ar' ? 'الآن' : 'Now'}</Text>
-              </View>
-            </View>
-            {/* Consultation Info */}
-            <View style={{ backgroundColor: '#bae6fd', borderRadius: 10, padding: 10, flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-              <View style={{ width: 32, height: 32, backgroundColor: '#38bdf8', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                <Icon name="chat" size={16} color="#fff" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'بدء الاستشارة' : 'Consultation Started'}</Text>
-                <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar'
-                  ? 'يمكنك الآن طرح أسئلتك حول الأدوية والعلاجات'
-                  : 'You can now ask questions about medications and treatments'}</Text>
-              </View>
-            </View>
+                         {/* Welcome Message */}
+             <View style={[styles.welcomeMessageContainer, isRTL && styles.welcomeMessageContainerRTL]}>
+               <View style={[styles.welcomeMessage, isRTL && styles.welcomeMessageRTL]}>
+                 <Text style={[styles.welcomeText, isRTL && styles.welcomeTextRTL]}>
+                   {language === 'ar'
+                     ? `مرحبا! أنا ${selectedPharmacist.name}. كيف يمكنني مساعدتك اليوم؟`
+                     : `Hello! I'm ${selectedPharmacist.nameEn}. How can I help you today?`}
+                 </Text>
+                 <Text style={[styles.welcomeTime, isRTL && styles.welcomeTimeRTL]}>{language === 'ar' ? 'الآن' : 'Now'}</Text>
+               </View>
+             </View>
+             {/* Consultation Info */}
+             <View style={[styles.consultationInfo, isRTL && styles.consultationInfoRTL]}>
+               <View style={[styles.consultationIcon, isRTL && styles.consultationIconRTL]}>
+                 <Icon name="chat" size={16} color="#fff" />
+               </View>
+               <View style={styles.consultationText}>
+                 <Text style={[styles.consultationTitle, isRTL && styles.consultationTitleRTL]}>{language === 'ar' ? 'بدء الاستشارة' : 'Consultation Started'}</Text>
+                 <Text style={[styles.consultationDesc, isRTL && styles.consultationDescRTL]}>{language === 'ar'
+                   ? 'يمكنك الآن طرح أسئلتك حول الأدوية والعلاجات'
+                   : 'You can now ask questions about medications and treatments'}</Text>
+               </View>
+             </View>
           </ScrollView>
-          {/* Message Input */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderTopWidth: 1, borderColor: '#eee', padding: 10 }}>
-            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-              <Icon name="attach-file" size={16} color="#666" />
-            </TouchableOpacity>
-            <TextInput
-              style={{ flex: 1, fontSize: 15, color: '#222', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, marginHorizontal: 6 }}
-              value={message}
-              onChangeText={setMessage}
-              placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
-              onSubmitEditing={handleSendMessage}
-              placeholderTextColor="#888"
-            />
-            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#49C5B8' }} onPress={handleSendMessage}>
-              <Icon name="send" size={16} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ marginHorizontal: 4, padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' }}>
-              <Icon name="mic" size={16} color="#666" />
-            </TouchableOpacity>
-          </View>
+                     {/* Message Input */}
+           <View style={[styles.messageInputContainer, isRTL && styles.messageInputContainerRTL]}>
+             <TouchableOpacity style={styles.inputActionButton}>
+               <Icon name="attach-file" size={16} color="#666" />
+             </TouchableOpacity>
+             <TextInput
+               style={[styles.messageInput, isRTL && styles.messageInputRTL]}
+               value={message}
+               onChangeText={setMessage}
+               placeholder={language === 'ar' ? 'اكتب رسالتك...' : 'Type your message...'}
+               onSubmitEditing={handleSendMessage}
+               placeholderTextColor="#888"
+               textAlign={isRTL ? 'right' : 'left'}
+             />
+             <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+               <Icon name="send" size={16} color="#fff" />
+             </TouchableOpacity>
+             <TouchableOpacity style={styles.inputActionButton}>
+               <Icon name="mic" size={16} color="#666" />
+             </TouchableOpacity>
+           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
@@ -210,169 +211,745 @@ export default function ConsultScreen({ navigateTo, goBack }: ConsultScreenProps
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
-      {/* Fixed Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <View style={styles.headerLeft}>
-          {goBack && (
-            <TouchableOpacity onPress={() => {
-              console.log('Back button pressed in ConsultScreen');
-              goBack();
-            }} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
-            {language === 'ar' ? 'الاستشارات' : 'Consultations'}
-          </Text>
-        </View>
-        <View style={styles.headerRight}>
-          {/* Empty space to balance the layout */}
-        </View>
-      </View>
+             {/* Fixed Header */}
+       <View style={[styles.header, { paddingTop: insets.top + 16 }, isRTL && styles.headerRTL]}>
+         <View style={[styles.headerLeft, isRTL && styles.headerLeftRTL]}>
+           {goBack && (
+             <TouchableOpacity onPress={() => {
+               console.log('Back button pressed in ConsultScreen');
+               goBack();
+             }} style={[styles.backButton, isRTL && styles.backButtonRTL]}>
+               <Icon name="arrow-back" size={24} color="#222" />
+             </TouchableOpacity>
+           )}
+         </View>
+         <View style={styles.headerCenter}>
+           <Text style={[styles.headerTitle, isRTL && styles.headerTitleRTL]} numberOfLines={1} ellipsizeMode="tail">
+             {language === 'ar' ? 'الاستشارات' : 'Consultations'}
+           </Text>
+         </View>
+         <View style={[styles.headerRight, isRTL && styles.headerRightRTL]}>
+           {/* Empty space to balance the layout */}
+         </View>
+       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: 0 }}>
 
         <View style={{ paddingVertical: 12 }}>
-          {/* Service Overview */}
-          <View style={{ backgroundColor: '#e0f2fe', borderRadius: 12, borderWidth: 1, borderColor: '#bae6fd', padding: 16, marginHorizontal: 8, marginBottom: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ width: 40, height: 40, backgroundColor: '#bae6fd', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-              <Icon name="chat" size={18} color="#49C5B8" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 4 }}>
-                {language === 'ar' ? 'خدمات الاستشارة المتاحة' : 'Available Consultation Services'}
-              </Text>
-              <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'استشارات حول الأدوية والجرعات' : 'Medication and dosage consultations'}</Text>
-              <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'مراجعة التداخلات الدوائية' : 'Drug interaction reviews'}</Text>
-              <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'نصائح صحية وإرشادات' : 'Health tips and guidance'}</Text>
-              <Text style={{ color: '#666', fontSize: 13 }}>• {language === 'ar' ? 'استفسارات حول الأعراض الجانبية' : 'Side effects inquiries'}</Text>
-            </View>
-          </View>
-        </View>
+                     {/* Service Overview */}
+           <View style={[styles.serviceOverview, isRTL && styles.serviceOverviewRTL]}>
+           <View style={[styles.serviceOverviewContent, isRTL && styles.serviceOverviewContentRTL]}>
+             <View style={[styles.serviceIcon, isRTL && styles.serviceIconRTL]}>
+               <Icon name="chat" size={18} color="#49C5B8" />
+             </View>
+             <View style={styles.serviceText}>
+               <Text style={[styles.serviceTitle, isRTL && styles.serviceTitleRTL]}>
+                 {language === 'ar' ? 'خدمات الاستشارة المتاحة' : 'Available Consultation Services'}
+               </Text>
+               <Text style={[styles.serviceItem, isRTL && styles.serviceItemRTL]}>• {language === 'ar' ? 'استشارات حول الأدوية والجرعات' : 'Medication and dosage consultations'}</Text>
+               <Text style={[styles.serviceItem, isRTL && styles.serviceItemRTL]}>• {language === 'ar' ? 'مراجعة التداخلات الدوائية' : 'Drug interaction reviews'}</Text>
+               <Text style={[styles.serviceItem, isRTL && styles.serviceItemRTL]}>• {language === 'ar' ? 'نصائح صحية وإرشادات' : 'Health tips and guidance'}</Text>
+               <Text style={[styles.serviceItem, isRTL && styles.serviceItemRTL]}>• {language === 'ar' ? 'استفسارات حول الأعراض الجانبية' : 'Side effects inquiries'}</Text>
+             </View>
+           </View>
+         </View>
 
-          {/* Consultation Types */}
-          <View style={{ marginHorizontal: 8, marginBottom: 20 }}>
-            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16, marginBottom: 10 }}>
-              {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
-            </Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: '#e6f7f5', borderRadius: 10, alignItems: 'center', padding: 14, marginRight: 6 }} onPress={() => setConsultationType('chat')}>
-              <Icon name="chat" size={20} color="#49C5B8" style={{ marginBottom: 6 }} />
-              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'محادثة نصية' : 'Text Chat'}</Text>
-              <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'رسائل فورية' : 'Instant messaging'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: '#e6f7f5', borderRadius: 10, alignItems: 'center', padding: 14, marginHorizontal: 6 }} onPress={() => setConsultationType('call')}>
-              <Icon name="call" size={20} color="#49C5B8" style={{ marginBottom: 6 }} />
-              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'مكالمة صوتية' : 'Voice Call'}</Text>
-              <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'تواصل مباشر' : 'Direct communication'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: '#e6f7f5', borderRadius: 10, alignItems: 'center', padding: 14, marginLeft: 6 }} onPress={() => setConsultationType('video')}>
-              <Icon name="videocam" size={20} color="#49C5B8" style={{ marginBottom: 6 }} />
-              <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 14 }}>{language === 'ar' ? 'مكالمة مرئية' : 'Video Call'}</Text>
-              <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'تفاعل بصري' : 'Visual interaction'}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+                     {/* Consultation Types */}
+           <View style={[styles.consultationTypes, isRTL && styles.consultationTypesRTL]}>
+             <Text style={[styles.consultationTypesTitle, isRTL && styles.consultationTypesTitleRTL]}>
+               {language === 'ar' ? 'أنواع الاستشارة' : 'Consultation Types'}
+             </Text>
+             <View style={[styles.consultationTypesRow, isRTL && styles.consultationTypesRowRTL]}>
+             <TouchableOpacity style={[styles.consultationTypeCard, styles.chatCard, isRTL && styles.chatCardRTL]} onPress={() => setConsultationType('chat')}>
+               <Icon name="chat" size={20} color="#49C5B8" style={styles.consultationTypeIcon} />
+               <Text style={[styles.consultationTypeTitle, isRTL && styles.consultationTypeTitleRTL]}>{language === 'ar' ? 'محادثة نصية' : 'Text Chat'}</Text>
+               <Text style={[styles.consultationTypeDesc, isRTL && styles.consultationTypeDescRTL]}>{language === 'ar' ? 'رسائل فورية' : 'Instant messaging'}</Text>
+             </TouchableOpacity>
+             <TouchableOpacity style={[styles.consultationTypeCard, styles.callCard, isRTL && styles.callCardRTL]} onPress={() => setConsultationType('call')}>
+               <Icon name="call" size={20} color="#49C5B8" style={styles.consultationTypeIcon} />
+               <Text style={[styles.consultationTypeTitle, isRTL && styles.consultationTypeTitleRTL]}>{language === 'ar' ? 'مكالمة صوتية' : 'Voice Call'}</Text>
+               <Text style={[styles.consultationTypeDesc, isRTL && styles.consultationTypeDescRTL]}>{language === 'ar' ? 'تواصل مباشر' : 'Direct communication'}</Text>
+             </TouchableOpacity>
+             <TouchableOpacity style={[styles.consultationTypeCard, styles.videoCard, isRTL && styles.videoCardRTL]} onPress={() => setConsultationType('video')}>
+               <Icon name="videocam" size={20} color="#49C5B8" style={styles.consultationTypeIcon} />
+               <Text style={[styles.consultationTypeTitle, isRTL && styles.consultationTypeTitleRTL]}>{language === 'ar' ? 'مكالمة مرئية' : 'Video Call'}</Text>
+               <Text style={[styles.consultationTypeDesc, isRTL && styles.consultationTypeDescRTL]}>{language === 'ar' ? 'تفاعل بصري' : 'Visual interaction'}</Text>
+             </TouchableOpacity>
+           </View>
+         </View>
 
-          {/* Available Pharmacists */}
-          <View style={{ marginHorizontal: 8, marginBottom: 20 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 16 }}>{language === 'ar' ? 'الصيادلة المتاحون' : 'Available Pharmacists'}</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}>
-              <Icon name="filter-list" size={14} color="#49C5B8" style={{ marginRight: 4 }} />
-              <Text style={{ color: '#49C5B8', fontWeight: 'bold', fontSize: 14 }}>{language === 'ar' ? 'فلتر' : 'Filter'}</Text>
-            </TouchableOpacity>
-          </View>
-          {filteredPharmacists.map((pharmacist) => (
-            <View key={pharmacist.id} style={{ backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#eee', marginBottom: 12, padding: 14, flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={{ uri: pharmacist.avatar }} style={{ width: 64, height: 64, borderRadius: 32, marginRight: 14 }} />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 15 }}>{language === 'ar' ? pharmacist.name : pharmacist.nameEn}</Text>
-                <Text style={{ color: '#666', fontSize: 13 }}>{language === 'ar' ? pharmacist.specialization : pharmacist.specializationEn}</Text>
-                <Text style={{ color: '#888', fontSize: 12 }}>{language === 'ar' ? pharmacist.experience : pharmacist.experienceEn} • {language === 'ar' ? pharmacist.location : pharmacist.locationEn}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                  <Icon name="star" size={12} color="#fbbf24" style={{ marginRight: 2 }} />
-                  <Text style={{ color: '#666', fontSize: 12 }}>{pharmacist.rating}</Text>
-                  <Text style={{ color: '#aaa', fontSize: 12 }}>({pharmacist.reviewCount})</Text>
-                  <Icon name="schedule" size={12} color="#888" style={{ marginLeft: 8, marginRight: 2 }} />
-                  <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? pharmacist.responseTime : pharmacist.responseTimeEn}</Text>
-                </View>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>
-                  {pharmacist.languages.map((lang, index) => (
-                    <View key={index} style={{ backgroundColor: '#f3f4f6', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, marginRight: 4, marginBottom: 2 }}>
-                      <Text style={{ color: '#444', fontSize: 11 }}>{language === 'ar' ? lang : pharmacist.languagesEn[index]}</Text>
-                    </View>
-                  ))}
-                </View>
-                <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                  <TouchableOpacity style={{ backgroundColor: '#49C5B8', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'chat')}>
-                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'محادثة' : 'Chat'}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: '#49C5B8', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }} onPress={() => handleStartConsultation(pharmacist, 'call')}>
-                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'مكالمة' : 'Call'}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: '#49C5B8', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }} onPress={() => handleStartConsultation(pharmacist, 'video')}>
-                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 13 }}>{language === 'ar' ? 'مرئية' : 'Video'}</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
+                     {/* Available Pharmacists */}
+           <View style={[styles.availablePharmacists, isRTL && styles.availablePharmacistsRTL]}>
+           <View style={[styles.pharmacistsHeader, isRTL && styles.pharmacistsHeaderRTL]}>
+             <Text style={[styles.pharmacistsTitle, isRTL && styles.pharmacistsTitleRTL]}>{language === 'ar' ? 'الصيادلة المتاحون' : 'Available Pharmacists'}</Text>
+             <TouchableOpacity style={[styles.filterButton, isRTL && styles.filterButtonRTL]}>
+               <Icon name="filter-list" size={14} color="#49C5B8" style={[styles.filterIcon, isRTL && styles.filterIconRTL]} />
+               <Text style={[styles.filterText, isRTL && styles.filterTextRTL]}>{language === 'ar' ? 'فلتر' : 'Filter'}</Text>
+             </TouchableOpacity>
+           </View>
+           {filteredPharmacists.map((pharmacist) => (
+             <View key={pharmacist.id} style={[styles.pharmacistCard, isRTL && styles.pharmacistCardRTL]}>
+               <Image source={{ uri: pharmacist.avatar }} style={[styles.pharmacistAvatar, isRTL && styles.pharmacistAvatarRTL]} />
+               <View style={styles.pharmacistInfo}>
+                 <Text style={[styles.pharmacistName, isRTL && styles.pharmacistNameRTL]}>{language === 'ar' ? pharmacist.name : pharmacist.nameEn}</Text>
+                 <Text style={[styles.pharmacistSpecialization, isRTL && styles.pharmacistSpecializationRTL]}>{language === 'ar' ? pharmacist.specialization : pharmacist.specializationEn}</Text>
+                 <Text style={[styles.pharmacistDetails, isRTL && styles.pharmacistDetailsRTL]}>{language === 'ar' ? pharmacist.experience : pharmacist.experienceEn} • {language === 'ar' ? pharmacist.location : pharmacist.locationEn}</Text>
+                 <View style={[styles.pharmacistRating, isRTL && styles.pharmacistRatingRTL]}>
+                   <Icon name="star" size={12} color="#fbbf24" style={[styles.ratingIcon, isRTL && styles.ratingIconRTL]} />
+                   <Text style={[styles.ratingText, isRTL && styles.ratingTextRTL]}>{pharmacist.rating}</Text>
+                   <Text style={[styles.reviewCount, isRTL && styles.reviewCountRTL]}>({pharmacist.reviewCount})</Text>
+                   <Icon name="schedule" size={12} color="#888" style={[styles.scheduleIcon, isRTL && styles.scheduleIconRTL]} />
+                   <Text style={[styles.responseTime, isRTL && styles.responseTimeRTL]}>{language === 'ar' ? pharmacist.responseTime : pharmacist.responseTimeEn}</Text>
+                 </View>
+                 <View style={[styles.languagesContainer, isRTL && styles.languagesContainerRTL]}>
+                   {pharmacist.languages.map((lang, index) => (
+                     <View key={index} style={[styles.languageTag, isRTL && styles.languageTagRTL]}>
+                       <Text style={[styles.languageText, isRTL && styles.languageTextRTL]}>{language === 'ar' ? lang : pharmacist.languagesEn[index]}</Text>
+                     </View>
+                   ))}
+                 </View>
+                 <View style={[styles.pharmacistActions, isRTL && styles.pharmacistActionsRTL]}>
+                   <TouchableOpacity style={[styles.actionButton, styles.chatAction, isRTL && styles.chatActionRTL]} onPress={() => handleStartConsultation(pharmacist, 'chat')}>
+                     <Text style={styles.actionButtonText}>{language === 'ar' ? 'محادثة' : 'Chat'}</Text>
+                   </TouchableOpacity>
+                   <TouchableOpacity style={[styles.actionButton, styles.callAction, isRTL && styles.callActionRTL]} onPress={() => handleStartConsultation(pharmacist, 'call')}>
+                     <Text style={styles.actionButtonText}>{language === 'ar' ? 'مكالمة' : 'Call'}</Text>
+                   </TouchableOpacity>
+                   <TouchableOpacity style={[styles.actionButton, styles.videoAction, isRTL && styles.videoActionRTL]} onPress={() => handleStartConsultation(pharmacist, 'video')}>
+                     <Text style={styles.actionButtonText}>{language === 'ar' ? 'مرئية' : 'Video'}</Text>
+                   </TouchableOpacity>
+                 </View>
+               </View>
+             </View>
+           ))}
+         </View>
 
-          {/* FAQ Section */}
-          <View style={{ backgroundColor: '#f3f4f6', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 16, marginHorizontal: 8, marginBottom: 24 }}>
-          <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 15, marginBottom: 8 }}>{language === 'ar' ? 'أسئلة شائعة' : 'Frequently Asked Questions'}</Text>
-          <View style={{ marginBottom: 10 }}>
-            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 13, marginBottom: 2 }}>{language === 'ar' ? 'ما هي مدة الاستشارة؟' : 'How long is a consultation?'}</Text>
-            <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'عادة ما تستغرق الاستشارة بين 15-30 دقيقة حسب حالتك' : 'Consultations typically last 15-30 minutes depending on your case'}</Text>
-          </View>
-          <View>
-            <Text style={{ fontWeight: 'bold', color: '#222', fontSize: 13, marginBottom: 2 }}>{language === 'ar' ? 'هل المعلومات سرية؟' : 'Is my information confidential?'}</Text>
-            <Text style={{ color: '#666', fontSize: 12 }}>{language === 'ar' ? 'نعم، جميع المعلومات والاستشارات سرية تماماً' : 'Yes, all information and consultations are completely confidential'}</Text>
-          </View>
-        </View>
+                     {/* FAQ Section */}
+           <View style={[styles.faqSection, isRTL && styles.faqSectionRTL]}>
+           <Text style={[styles.faqTitle, isRTL && styles.faqTitleRTL]}>{language === 'ar' ? 'أسئلة شائعة' : 'Frequently Asked Questions'}</Text>
+           <View style={[styles.faqItem, isRTL && styles.faqItemRTL]}>
+             <Text style={[styles.faqQuestion, isRTL && styles.faqQuestionRTL]}>{language === 'ar' ? 'ما هي مدة الاستشارة؟' : 'How long is a consultation?'}</Text>
+             <Text style={[styles.faqAnswer, isRTL && styles.faqAnswerRTL]}>{language === 'ar' ? 'عادة ما تستغرق الاستشارة بين 15-30 دقيقة حسب حالتك' : 'Consultations typically last 15-30 minutes depending on your case'}</Text>
+           </View>
+           <View style={[styles.faqItem, isRTL && styles.faqItemRTL]}>
+             <Text style={[styles.faqQuestion, isRTL && styles.faqQuestionRTL]}>{language === 'ar' ? 'هل المعلومات سرية؟' : 'Is my information confidential?'}</Text>
+             <Text style={[styles.faqAnswer, isRTL && styles.faqAnswerRTL]}>{language === 'ar' ? 'نعم، جميع المعلومات والاستشارات سرية تماماً' : 'Yes, all information and consultations are completely confidential'}</Text>
+           </View>
+         </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  header: { 
-    backgroundColor: '#fff', 
-    borderBottomWidth: 1, 
-    borderColor: '#eee', 
-    paddingHorizontal: 24, 
-    paddingVertical: 16,
-    zIndex: 1000,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerLeft: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  headerCenter: {
-    flex: 2,
-    alignItems: 'center',
-  },
-  headerRight: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  headerTitle: { 
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    color: '#222',
-    textAlign: 'center'
-  },
-});
+ const styles = StyleSheet.create({
+   header: { 
+     backgroundColor: '#fff', 
+     borderBottomWidth: 1, 
+     borderColor: '#eee', 
+     paddingHorizontal: 24, 
+     paddingVertical: 16,
+     zIndex: 1000,
+     elevation: 3,
+     shadowColor: '#000',
+     shadowOffset: { width: 0, height: 2 },
+     shadowOpacity: 0.1,
+     shadowRadius: 4,
+     flexDirection: 'row',
+     alignItems: 'center',
+   },
+   headerRTL: {
+     flexDirection: 'row-reverse',
+   },
+   headerLeft: {
+     flex: 1,
+     alignItems: 'flex-start',
+   },
+   headerLeftRTL: {
+     alignItems: 'flex-end',
+   },
+   headerCenter: {
+     flex: 2,
+     alignItems: 'center',
+   },
+   headerRight: {
+     flex: 1,
+     alignItems: 'flex-end',
+   },
+   headerRightRTL: {
+     alignItems: 'flex-start',
+   },
+   headerTitle: { 
+     fontSize: 20, 
+     fontWeight: 'bold', 
+     color: '#222',
+     textAlign: 'center'
+   },
+   headerTitleRTL: {
+     textAlign: 'center',
+   },
+   backButton: {
+     marginRight: 12,
+   },
+   backButtonRTL: {
+     marginRight: 0,
+     marginLeft: 12,
+   },
+   // Chat Header Styles
+   chatBackButton: {
+     padding: 8,
+     marginRight: 8,
+   },
+   chatBackButtonRTL: {
+     marginRight: 0,
+     marginLeft: 8,
+   },
+   chatAvatar: {
+     width: 48,
+     height: 48,
+     borderRadius: 24,
+     marginRight: 12,
+   },
+   chatAvatarRTL: {
+     marginRight: 0,
+     marginLeft: 12,
+   },
+   chatInfo: {
+     flex: 1,
+   },
+   chatInfoRTL: {
+     alignItems: 'flex-end',
+   },
+   chatName: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 16,
+   },
+   chatNameRTL: {
+     textAlign: 'right',
+   },
+   onlineStatus: {
+     flexDirection: 'row',
+     alignItems: 'center',
+     marginTop: 2,
+   },
+   onlineStatusRTL: {
+     flexDirection: 'row-reverse',
+   },
+   statusDot: {
+     width: 10,
+     height: 10,
+     borderRadius: 5,
+     marginRight: 4,
+   },
+   statusDotRTL: {
+     marginRight: 0,
+     marginLeft: 4,
+   },
+   statusText: {
+     color: '#666',
+     fontSize: 12,
+   },
+   statusTextRTL: {
+     textAlign: 'right',
+   },
+   chatActions: {
+     flexDirection: 'row',
+     alignItems: 'center',
+   },
+   chatActionsRTL: {
+     flexDirection: 'row-reverse',
+   },
+   chatActionButton: {
+     marginHorizontal: 4,
+     padding: 8,
+     borderRadius: 8,
+     backgroundColor: '#f3f4f6',
+   },
+   // Welcome Message Styles
+   welcomeMessageContainer: {
+     flexDirection: 'row',
+     marginBottom: 10,
+   },
+   welcomeMessageContainerRTL: {
+     flexDirection: 'row-reverse',
+   },
+   welcomeMessage: {
+     backgroundColor: '#e0f2fe',
+     borderRadius: 12,
+     padding: 12,
+     maxWidth: '80%',
+   },
+   welcomeMessageRTL: {
+     alignItems: 'flex-end',
+   },
+   welcomeText: {
+     color: '#222',
+     fontSize: 14,
+     marginBottom: 2,
+   },
+   welcomeTextRTL: {
+     textAlign: 'right',
+   },
+   welcomeTime: {
+     color: '#888',
+     fontSize: 11,
+     textAlign: 'right',
+   },
+   welcomeTimeRTL: {
+     textAlign: 'left',
+   },
+   // Consultation Info Styles
+   consultationInfo: {
+     backgroundColor: '#bae6fd',
+     borderRadius: 10,
+     padding: 10,
+     flexDirection: 'row',
+     alignItems: 'center',
+     marginBottom: 10,
+   },
+   consultationInfoRTL: {
+     flexDirection: 'row-reverse',
+   },
+   consultationIcon: {
+     width: 32,
+     height: 32,
+     backgroundColor: '#38bdf8',
+     borderRadius: 8,
+     alignItems: 'center',
+     justifyContent: 'center',
+     marginRight: 10,
+   },
+   consultationIconRTL: {
+     marginRight: 0,
+     marginLeft: 10,
+   },
+   consultationText: {
+     flex: 1,
+   },
+   consultationTitle: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 14,
+   },
+   consultationTitleRTL: {
+     textAlign: 'right',
+   },
+   consultationDesc: {
+     color: '#666',
+     fontSize: 12,
+   },
+   consultationDescRTL: {
+     textAlign: 'right',
+   },
+   // Message Input Styles
+   messageInputContainer: {
+     flexDirection: 'row',
+     alignItems: 'center',
+     backgroundColor: '#fff',
+     borderTopWidth: 1,
+     borderColor: '#eee',
+     padding: 10,
+   },
+   messageInputContainerRTL: {
+     flexDirection: 'row-reverse',
+   },
+   inputActionButton: {
+     marginHorizontal: 4,
+     padding: 8,
+     borderRadius: 8,
+     backgroundColor: '#f3f4f6',
+   },
+   messageInput: {
+     flex: 1,
+     fontSize: 15,
+     color: '#222',
+     backgroundColor: '#f3f4f6',
+     borderRadius: 8,
+     paddingHorizontal: 12,
+     paddingVertical: 8,
+     marginHorizontal: 6,
+   },
+   messageInputRTL: {
+     marginHorizontal: 6,
+   },
+   sendButton: {
+     marginHorizontal: 4,
+     padding: 8,
+     borderRadius: 8,
+     backgroundColor: '#49C5B8',
+   },
+   // Service Overview Styles
+   serviceOverview: {
+     backgroundColor: '#e0f2fe',
+     borderRadius: 12,
+     borderWidth: 1,
+     borderColor: '#bae6fd',
+     padding: 16,
+     marginHorizontal: 8,
+     marginBottom: 16,
+   },
+   serviceOverviewRTL: {
+     alignItems: 'flex-end',
+   },
+   serviceOverviewContent: {
+     flexDirection: 'row',
+     alignItems: 'center',
+   },
+   serviceOverviewContentRTL: {
+     flexDirection: 'row-reverse',
+   },
+   serviceIcon: {
+     width: 40,
+     height: 40,
+     backgroundColor: '#bae6fd',
+     borderRadius: 8,
+     alignItems: 'center',
+     justifyContent: 'center',
+     marginRight: 12,
+   },
+   serviceIconRTL: {
+     marginRight: 0,
+     marginLeft: 12,
+   },
+   serviceText: {
+     flex: 1,
+   },
+   serviceTitle: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 16,
+     marginBottom: 4,
+   },
+   serviceTitleRTL: {
+     textAlign: 'right',
+   },
+   serviceItem: {
+     color: '#666',
+     fontSize: 13,
+   },
+   serviceItemRTL: {
+     textAlign: 'right',
+   },
+   // Consultation Types Styles
+   consultationTypes: {
+     marginHorizontal: 8,
+     marginBottom: 20,
+   },
+   consultationTypesRTL: {
+     alignItems: 'flex-end',
+   },
+   consultationTypesTitle: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 16,
+     marginBottom: 10,
+   },
+   consultationTypesTitleRTL: {
+     textAlign: 'right',
+   },
+   consultationTypesRow: {
+     flexDirection: 'row',
+     justifyContent: 'space-between',
+   },
+   consultationTypesRowRTL: {
+     flexDirection: 'row-reverse',
+   },
+   consultationTypeCard: {
+     flex: 1,
+     backgroundColor: '#e6f7f5',
+     borderRadius: 10,
+     alignItems: 'center',
+     padding: 14,
+   },
+   consultationTypeIcon: {
+     marginBottom: 6,
+   },
+   consultationTypeTitle: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 14,
+   },
+   consultationTypeTitleRTL: {
+     textAlign: 'center',
+   },
+   consultationTypeDesc: {
+     color: '#666',
+     fontSize: 12,
+   },
+   consultationTypeDescRTL: {
+     textAlign: 'center',
+   },
+   chatCard: {
+     marginRight: 6,
+   },
+   chatCardRTL: {
+     marginRight: 0,
+     marginLeft: 6,
+   },
+   callCard: {
+     marginHorizontal: 6,
+   },
+   callCardRTL: {
+     marginHorizontal: 6,
+   },
+   videoCard: {
+     marginLeft: 6,
+   },
+   videoCardRTL: {
+     marginLeft: 0,
+     marginRight: 6,
+   },
+   // Available Pharmacists Styles
+   availablePharmacists: {
+     marginHorizontal: 8,
+     marginBottom: 20,
+   },
+   availablePharmacistsRTL: {
+     alignItems: 'flex-end',
+   },
+   pharmacistsHeader: {
+     flexDirection: 'row',
+     alignItems: 'center',
+     justifyContent: 'space-between',
+     marginBottom: 10,
+   },
+   pharmacistsHeaderRTL: {
+     flexDirection: 'row-reverse',
+   },
+   pharmacistsTitle: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 16,
+   },
+   pharmacistsTitleRTL: {
+     textAlign: 'right',
+   },
+   filterButton: {
+     flexDirection: 'row',
+     alignItems: 'center',
+     backgroundColor: '#f3f4f6',
+     borderRadius: 8,
+     paddingHorizontal: 10,
+     paddingVertical: 6,
+   },
+   filterButtonRTL: {
+     flexDirection: 'row-reverse',
+   },
+   filterIcon: {
+     marginRight: 4,
+   },
+   filterIconRTL: {
+     marginRight: 0,
+     marginLeft: 4,
+   },
+   filterText: {
+     color: '#49C5B8',
+     fontWeight: 'bold',
+     fontSize: 14,
+   },
+   filterTextRTL: {
+     textAlign: 'right',
+   },
+   pharmacistCard: {
+     backgroundColor: '#fff',
+     borderRadius: 12,
+     borderWidth: 1,
+     borderColor: '#eee',
+     marginBottom: 12,
+     padding: 14,
+     flexDirection: 'row',
+     alignItems: 'center',
+   },
+   pharmacistCardRTL: {
+     flexDirection: 'row-reverse',
+   },
+   pharmacistAvatar: {
+     width: 64,
+     height: 64,
+     borderRadius: 32,
+     marginRight: 14,
+   },
+   pharmacistAvatarRTL: {
+     marginRight: 0,
+     marginLeft: 14,
+   },
+   pharmacistInfo: {
+     flex: 1,
+   },
+   pharmacistName: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 15,
+   },
+   pharmacistNameRTL: {
+     textAlign: 'right',
+   },
+   pharmacistSpecialization: {
+     color: '#666',
+     fontSize: 13,
+   },
+   pharmacistSpecializationRTL: {
+     textAlign: 'right',
+   },
+   pharmacistDetails: {
+     color: '#888',
+     fontSize: 12,
+   },
+   pharmacistDetailsRTL: {
+     textAlign: 'right',
+   },
+   pharmacistRating: {
+     flexDirection: 'row',
+     alignItems: 'center',
+     marginTop: 4,
+   },
+   pharmacistRatingRTL: {
+     flexDirection: 'row-reverse',
+   },
+   ratingIcon: {
+     marginRight: 2,
+   },
+   ratingIconRTL: {
+     marginRight: 0,
+     marginLeft: 2,
+   },
+   ratingText: {
+     color: '#666',
+     fontSize: 12,
+   },
+   ratingTextRTL: {
+     textAlign: 'right',
+   },
+   reviewCount: {
+     color: '#aaa',
+     fontSize: 12,
+   },
+   reviewCountRTL: {
+     textAlign: 'right',
+   },
+   scheduleIcon: {
+     marginLeft: 8,
+     marginRight: 2,
+   },
+   scheduleIconRTL: {
+     marginLeft: 2,
+     marginRight: 8,
+   },
+   responseTime: {
+     color: '#666',
+     fontSize: 12,
+   },
+   responseTimeRTL: {
+     textAlign: 'right',
+   },
+   languagesContainer: {
+     flexDirection: 'row',
+     flexWrap: 'wrap',
+     marginTop: 4,
+   },
+   languagesContainerRTL: {
+     flexDirection: 'row-reverse',
+   },
+   languageTag: {
+     backgroundColor: '#f3f4f6',
+     borderRadius: 8,
+     paddingHorizontal: 6,
+     paddingVertical: 2,
+     marginRight: 4,
+     marginBottom: 2,
+   },
+   languageTagRTL: {
+     marginRight: 0,
+     marginLeft: 4,
+   },
+   languageText: {
+     color: '#444',
+     fontSize: 11,
+   },
+   languageTextRTL: {
+     textAlign: 'right',
+   },
+   pharmacistActions: {
+     flexDirection: 'row',
+     marginTop: 8,
+   },
+   pharmacistActionsRTL: {
+     flexDirection: 'row-reverse',
+   },
+   actionButton: {
+     backgroundColor: '#49C5B8',
+     borderRadius: 8,
+     paddingHorizontal: 14,
+     paddingVertical: 8,
+   },
+   actionButtonText: {
+     color: '#fff',
+     fontWeight: 'bold',
+     fontSize: 13,
+   },
+   chatAction: {
+     marginRight: 8,
+   },
+   chatActionRTL: {
+     marginRight: 0,
+     marginLeft: 8,
+   },
+   callAction: {
+     marginRight: 8,
+   },
+   callActionRTL: {
+     marginRight: 0,
+     marginLeft: 8,
+   },
+   videoAction: {
+     marginRight: 0,
+   },
+   videoActionRTL: {
+     marginLeft: 0,
+   },
+   // FAQ Styles
+   faqSection: {
+     backgroundColor: '#f3f4f6',
+     borderRadius: 10,
+     borderWidth: 1,
+     borderColor: '#eee',
+     padding: 16,
+     marginHorizontal: 8,
+     marginBottom: 24,
+   },
+   faqSectionRTL: {
+     alignItems: 'flex-end',
+   },
+   faqTitle: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 15,
+     marginBottom: 8,
+   },
+   faqTitleRTL: {
+     textAlign: 'right',
+   },
+   faqItem: {
+     marginBottom: 10,
+   },
+   faqItemRTL: {
+     alignItems: 'flex-end',
+   },
+   faqQuestion: {
+     fontWeight: 'bold',
+     color: '#222',
+     fontSize: 13,
+     marginBottom: 2,
+   },
+   faqQuestionRTL: {
+     textAlign: 'right',
+   },
+   faqAnswer: {
+     color: '#666',
+     fontSize: 12,
+   },
+   faqAnswerRTL: {
+     textAlign: 'right',
+   },
+ });

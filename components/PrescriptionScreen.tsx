@@ -59,7 +59,7 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
         { name: 'باراسيتامول 500 مجم', nameEn: 'Paracetamol 500mg', quantity: '20 قرص', quantityEn: '20 tablets' },
         { name: 'أموكسيسلين 250 مجم', nameEn: 'Amoxicillin 250mg', quantity: '14 كبسولة', quantityEn: '14 capsules' }
       ],
-      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop',
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop',
       refills: 2
     },
     {
@@ -71,7 +71,7 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
       medicines: [
         { name: 'كلوروكين 250 مجم', nameEn: 'Chloroquine 250mg', quantity: '10 أقراص', quantityEn: '10 tablets' }
       ],
-      image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400&h=300&fit=crop'
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop'
     }
   ]);
 
@@ -275,16 +275,25 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
     }
   };
 
+  const handlePrescriptionPress = (prescription: Prescription) => {
+    // Show prescription details or navigate to detail view
+    Alert.alert(
+      language === 'ar' ? 'تفاصيل الوصفة' : 'Prescription Details',
+      language === 'ar' ? `الطبيب: ${prescription.doctorName}\nالتاريخ: ${new Date(prescription.date).toLocaleDateString('ar-SA')}\nالحالة: ${getStatusText(prescription.status)}` : 
+      `Doctor: ${prescription.doctorNameEn}\nDate: ${new Date(prescription.date).toLocaleDateString('en-US')}\nStatus: ${getStatusText(prescription.status)}`
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       {/* Fixed Header */}
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 16 }, isRTL && styles.headerRTL]}>
         {goBack && (
-          <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <TouchableOpacity onPress={goBack} style={styles.headerButton}>
             <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
         )}
-        <Text style={styles.headerTitle}>
+        <Text style={[styles.headerTitle, isRTL && styles.headerTitleRTL]}>
           {language === 'ar' ? 'الوصفات الطبية' : 'Prescriptions'}
         </Text>
       </View>
@@ -320,47 +329,80 @@ export default function PrescriptionScreen({ navigateTo, goBack }: PrescriptionS
 
           {/* Prescriptions List */}
           <View style={styles.prescriptionsSection}>
-            <Text style={styles.sectionTitle}>
+            <Text style={[styles.sectionTitle, isRTL && styles.sectionTitleRTL]}>
               {language === 'ar' ? 'الوصفات المرفوعة' : 'Uploaded Prescriptions'}
             </Text>
             
-            {uploadedPrescriptions.map((prescription) => (
-              <View key={prescription.id} style={styles.prescriptionCard}>
-                <View style={styles.prescriptionHeader}>
-                  <Image source={{ uri: prescription.image }} style={styles.prescriptionImage} />
-                  <View style={styles.prescriptionInfo}>
-                    <Text style={styles.doctorName}>
-                      {language === 'ar' ? prescription.doctorName : prescription.doctorNameEn}
-                    </Text>
-                    <Text style={styles.prescriptionDate}>{prescription.date}</Text>
-                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(prescription.status) }]}>
-                      <Text style={styles.statusText}>{getStatusText(prescription.status)}</Text>
+            {uploadedPrescriptions.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Icon name="description" size={48} color="#49C5B8" style={styles.emptyIcon} />
+                <Text style={[styles.emptyTitle, isRTL && styles.emptyTitleRTL]}>
+                  {language === 'ar' ? 'لا توجد وصفات مرفوعة' : 'No Uploaded Prescriptions'}
+                </Text>
+                <Text style={[styles.emptyDesc, isRTL && styles.emptyDescRTL]}>
+                  {language === 'ar' ? 'قم برفع وصفة طبية جديدة لتبدأ' : 'Upload a new prescription to get started'}
+                </Text>
+              </View>
+            ) : (
+              uploadedPrescriptions.map((prescription) => (
+                <TouchableOpacity 
+                  key={prescription.id} 
+                  style={styles.prescriptionCard}
+                  onPress={() => handlePrescriptionPress(prescription)}
+                >
+                  <View style={[styles.prescriptionHeader, isRTL && styles.prescriptionHeaderRTL]}>
+                    <Image source={{ uri: prescription.image }} style={[styles.prescriptionImage, isRTL && styles.prescriptionImageRTL]} />
+                    <View style={styles.prescriptionInfo}>
+                      <Text style={[styles.doctorName, isRTL && styles.doctorNameRTL]}>
+                        {language === 'ar' ? prescription.doctorName : prescription.doctorNameEn}
+                      </Text>
+                      <Text style={[styles.prescriptionDate, isRTL && styles.prescriptionDateRTL]}>
+                        {new Date(prescription.date).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')}
+                      </Text>
+                      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(prescription.status) }, isRTL && styles.statusBadgeRTL]}>
+                        <Text style={[styles.statusText, isRTL && styles.statusTextRTL]}>{getStatusText(prescription.status)}</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-                
-                {prescription.medicines.length > 0 && (
-                  <View style={styles.medicinesList}>
-                    {prescription.medicines.map((medicine, index) => (
-                      <Text key={index} style={styles.medicineText}>
-                        • {language === 'ar' ? medicine.name : medicine.nameEn} - {language === 'ar' ? medicine.quantity : medicine.quantityEn}
+                  
+                  {prescription.medicines.length > 0 && (
+                    <View style={styles.medicinesList}>
+                      {prescription.medicines.map((medicine, index) => (
+                        <Text key={index} style={[styles.medicineText, isRTL && styles.medicineTextRTL]}>
+                          • {language === 'ar' ? medicine.name : medicine.nameEn} - {language === 'ar' ? medicine.quantity : medicine.quantityEn}
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                  
+                  {prescription.ocrText && (
+                    <View style={styles.ocrTextContainer}>
+                      <Text style={[styles.ocrTextLabel, isRTL && styles.ocrTextLabelRTL]}>
+                        {language === 'ar' ? 'النص المستخرج:' : 'Extracted Text:'}
                       </Text>
-                    ))}
+                      <Text style={[styles.ocrText, isRTL && styles.ocrTextRTL]} numberOfLines={3}>
+                        {prescription.ocrText}
+                      </Text>
+                    </View>
+                  )}
+                  
+                  <View style={[styles.prescriptionActions, isRTL && styles.prescriptionActionsRTL]}>
+                    <TouchableOpacity style={styles.actionButton}>
+                      <Icon name="visibility" size={16} color="#49C5B8" />
+                      <Text style={[styles.actionButtonText, isRTL && styles.actionButtonTextRTL]}>
+                        {language === 'ar' ? 'عرض' : 'View'}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.actionButton}>
+                      <Icon name="edit" size={16} color="#49C5B8" />
+                      <Text style={[styles.actionButtonText, isRTL && styles.actionButtonTextRTL]}>
+                        {language === 'ar' ? 'تعديل' : 'Edit'}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
-                )}
-                
-                {prescription.ocrText && (
-                  <View style={styles.ocrTextContainer}>
-                    <Text style={styles.ocrTextLabel}>
-                      {language === 'ar' ? 'النص المستخرج:' : 'Extracted Text:'}
-                    </Text>
-                    <Text style={styles.ocrText} numberOfLines={3}>
-                      {prescription.ocrText}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            ))}
+                </TouchableOpacity>
+              ))
+            )}
           </View>
         </View>
       </ScrollView>
@@ -479,14 +521,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  backButton: {
-    padding: 8,
-    marginRight: 8
+  headerRTL: {
+    flexDirection: 'row-reverse',
+  },
+  headerButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#222'
+    color: '#222',
+    marginLeft: 12,
+    flex: 1,
+  },
+  headerTitleRTL: {
+    textAlign: 'right',
+    marginRight: 12,
+    marginLeft: 0,
   },
   body: {
     paddingHorizontal: 16,
@@ -505,6 +559,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#222',
     marginBottom: 8
+  },
+  sectionTitleRTL: {
+    textAlign: 'right',
   },
   sectionSubtitle: {
     fontSize: 14,
@@ -536,6 +593,33 @@ const styles = StyleSheet.create({
   prescriptionsSection: {
     marginBottom: 20
   },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 48,
+    paddingVertical: 32,
+  },
+  emptyIcon: {
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    color: '#222',
+  },
+  emptyTitleRTL: {
+    textAlign: 'right',
+  },
+  emptyDesc: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  emptyDescRTL: {
+    textAlign: 'right',
+  },
   prescriptionCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
@@ -548,11 +632,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 12
   },
+  prescriptionHeaderRTL: {
+    flexDirection: 'row-reverse',
+  },
   prescriptionImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
     marginRight: 12
+  },
+  prescriptionImageRTL: {
+    marginLeft: 12,
+    marginRight: 0,
   },
   prescriptionInfo: {
     flex: 1
@@ -560,13 +651,19 @@ const styles = StyleSheet.create({
   doctorName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#49C5B8',
+    color: '#222',
     marginBottom: 4
+  },
+  doctorNameRTL: {
+    textAlign: 'right',
   },
   prescriptionDate: {
     fontSize: 14,
     color: '#666',
     marginBottom: 8
+  },
+  prescriptionDateRTL: {
+    textAlign: 'right',
   },
   statusBadge: {
     alignSelf: 'flex-start',
@@ -574,18 +671,27 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12
   },
+  statusBadgeRTL: {
+    alignSelf: 'flex-end',
+  },
   statusText: {
     fontSize: 12,
     fontWeight: '600',
     color: '#fff'
+  },
+  statusTextRTL: {
+    textAlign: 'right',
   },
   medicinesList: {
     marginTop: 8
   },
   medicineText: {
     fontSize: 14,
-    color: '#49C5B8',
+    color: '#222',
     marginBottom: 4
+  },
+  medicineTextRTL: {
+    textAlign: 'right',
   },
   ocrTextContainer: {
     marginTop: 12,
@@ -596,13 +702,49 @@ const styles = StyleSheet.create({
   ocrTextLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#49C5B8',
+    color: '#222',
     marginBottom: 4
+  },
+  ocrTextLabelRTL: {
+    textAlign: 'right',
   },
   ocrText: {
     fontSize: 13,
-    color: '#49C5B8',
+    color: '#222',
     lineHeight: 18
+  },
+  ocrTextRTL: {
+    textAlign: 'right',
+  },
+  prescriptionActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderColor: '#f3f4f6'
+  },
+  prescriptionActionsRTL: {
+    flexDirection: 'row-reverse',
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: '#f3f4f6'
+  },
+  actionButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#49C5B8',
+    marginLeft: 4
+  },
+  actionButtonTextRTL: {
+    textAlign: 'right',
+    marginRight: 4,
+    marginLeft: 0,
   },
   modalHeader: {
     flexDirection: 'row',

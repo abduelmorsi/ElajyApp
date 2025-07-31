@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Mod
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from '../services/LocalizationService';
+import MedicineImage from '../ui/MedicineImage';
 
 // Define the interface for PharmacistInventory's props
 interface PharmacistInventoryProps {
@@ -448,7 +449,15 @@ export default function PharmacistInventory({ navigateTo, userData }: Pharmacist
             {filteredItems.map((item) => (
               <View key={item.id} style={styles.inventoryCard}>
                 <View style={styles.inventoryHeader}>
-                  <View style={{ flex: 1 }}>
+                  <View style={styles.itemImageContainer}>
+                    <MedicineImage 
+                      medicineId={item.id}
+                      size={60}
+                      borderRadius={8}
+                      showBorder={true}
+                    />
+                  </View>
+                  <View style={styles.itemInfo}>
                     <Text style={styles.itemName}>{item.name}</Text>
                     <Text style={styles.itemBrand}>{item.brand}</Text>
                   </View>
@@ -896,6 +905,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+  },
+  itemImageContainer: {
+    marginRight: 12,
+  },
+  itemInfo: {
+    flex: 1,
   },
   itemName: {
     fontSize: 16,

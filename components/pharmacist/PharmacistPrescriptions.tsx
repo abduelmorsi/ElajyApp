@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Ale
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useLocalization, useRTL } from '../services/LocalizationService';
+import MedicineImage from '../ui/MedicineImage';
 
 type PharmacistPrescriptionsProps = {
   navigateTo: (screen: string, data?: any) => void;
@@ -381,13 +382,23 @@ export default function PharmacistPrescriptions({ navigateTo, goBack }: Pharmaci
             </View>
             {/* Medications */}
             <View style={styles.card}>
-                             <Text style={[styles.sectionTitle, isRTL && styles.sectionTitleRTL]}>{language === 'ar' ? 'الأدوية' : 'Medications'}</Text>
+              <Text style={[styles.sectionTitle, isRTL && styles.sectionTitleRTL]}>{language === 'ar' ? 'الأدوية' : 'Medications'}</Text>
               {selectedPrescription.medications.map((med, index) => (
-                                 <View key={index} style={styles.medicationItem}>
-                   <Text style={[styles.medicationName, isRTL && styles.medicationNameRTL]}>{med.name}</Text>
-                   <Text style={[styles.medicationDosage, isRTL && styles.medicationDosageRTL]}>{med.dosage}</Text>
-                   <Text style={[styles.medicationDuration, isRTL && styles.medicationDurationRTL]}>{language === 'ar' ? 'المدة:' : 'Duration:'} {med.duration}</Text>
-                 </View>
+                <View key={index} style={styles.medicationItem}>
+                  <View style={styles.medicationImageContainer}>
+                    <MedicineImage 
+                      medicineId={index + 1} // Using index as medicine ID for now
+                      size={50}
+                      borderRadius={6}
+                      showBorder={true}
+                    />
+                  </View>
+                  <View style={styles.medicationInfo}>
+                    <Text style={[styles.medicationName, isRTL && styles.medicationNameRTL]}>{med.name}</Text>
+                    <Text style={[styles.medicationDosage, isRTL && styles.medicationDosageRTL]}>{med.dosage}</Text>
+                    <Text style={[styles.medicationDuration, isRTL && styles.medicationDurationRTL]}>{language === 'ar' ? 'المدة:' : 'Duration:'} {med.duration}</Text>
+                  </View>
+                </View>
               ))}
             </View>
             {/* Actions */}
@@ -657,8 +668,21 @@ const styles = StyleSheet.create({
    activeTabTextRTL: { color: '#fff', textAlign: 'center' },
   emptyText: { fontSize: 16, fontWeight: 'bold', marginBottom: 2, color: '#49C5B8' },
   prescriptionsList: { paddingBottom: 32 },
-  medicationItem: { backgroundColor: '#f3f4f6', borderRadius: 8, padding: 10, marginBottom: 8 },
-     medicationName: { fontSize: 14, fontWeight: 'bold', color: '#49C5B8' },
+  medicationItem: { 
+    backgroundColor: '#f3f4f6', 
+    borderRadius: 8, 
+    padding: 10, 
+    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  medicationImageContainer: {
+    marginRight: 12,
+  },
+  medicationInfo: {
+    flex: 1,
+  },
+  medicationName: { fontSize: 14, fontWeight: 'bold', color: '#49C5B8' },
    medicationNameRTL: { fontSize: 14, fontWeight: 'bold', color: '#49C5B8', textAlign: 'right' },
    medicationDosage: { fontSize: 12, color: '#64748b' },
    medicationDosageRTL: { fontSize: 12, color: '#64748b', textAlign: 'right' },
