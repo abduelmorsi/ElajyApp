@@ -7,36 +7,36 @@ import { useLocalization, useRTL } from '../services/LocalizationService';
 const consultations = [
   {
     id: "CONS-001",
-    patient: "Ahmed Mohamed",
+    patient: "سليم عبد الحميد",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
-    status: "active",
+    status: "نشط",
     startTime: "2024-01-15T10:30:00",
     type: "chat",
-    topic: "Medication side effects",
-    lastMessage: "Thank you for the clarification about the dosage.",
+    topic: "الآثار الجانبية للأدوية",
+    lastMessage: "شكرا عل التوضيح بخصوص الجرعة.",
     unreadCount: 0
   },
   {
     id: "CONS-002", 
-    patient: "Fatima Ali",
+    patient: "تبيان خالد",
     avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100",
-    status: "waiting",
+    status: "في الانتظار",
     startTime: "2024-01-15T11:15:00",
-    type: "chat",
-    topic: "Drug interaction concerns",
-    lastMessage: "I'm taking multiple medications and worried about interactions.",
+    type: "محادثة نصية",
+    topic: "استشارة حول تفاعلات الأدوية",
+    lastMessage: "انا باخد فس دواء جديداسي, هل ممكن تحصل تفاعلات مع أدوية تانية؟",
     unreadCount: 2
   },
   {
     id: "CONS-003",
-    patient: "Mohamed Hassan", 
+    patient: "هديل مأمون", 
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
-    status: "completed",
+    status: "اكتملت",
     startTime: "2024-01-15T09:00:00",
     endTime: "2024-01-15T09:30:00",
-    type: "video",
-    topic: "Prescription guidance",
-    lastMessage: "Consultation completed successfully.",
+    type: "فيديو",
+    topic: "استشارة حول دواء جديد",
+    lastMessage: "تمت الاستشارة بنجاح, شكرا لك.",
     unreadCount: 0
   }
 ];
@@ -44,26 +44,26 @@ const consultations = [
 const chatMessages = [
   {
     id: 1,
-    sender: "patient",
-    message: "Hi Dr. Wilson, I have some questions about my medication.",
+    sender: "مريض",
+    message: "السلام عليكم يا دكتور, عندي استفسار عن الدواء دة",
     timestamp: "10:30 AM"
   },
   {
     id: 2,
-    sender: "pharmacist",
-    message: "Hello John! I'm here to help. What questions do you have about your medication?",
+    sender: "صيدلي",
+    message: "و عليكم السلام, مرحب بيك والله سؤالك شنو؟",
     timestamp: "10:31 AM"
   },
   {
     id: 3,
-    sender: "patient", 
-    message: "I'm experiencing some mild nausea after taking the amoxicillin. Is this normal?",
+    sender: "مريض", 
+    message: "والله ياخ عندي شوية غثيان بعد ما اخدت الاموكسيسيلين, هل ده طبيعي؟",
     timestamp: "10:32 AM"
   },
   {
     id: 4,
-    sender: "pharmacist",
-    message: "Mild nausea can be a common side effect of amoxicillin. Try taking it with food to reduce stomach irritation. If it persists or worsens, please contact your doctor.",
+    sender: "صيدلي",
+    message: "الغثيان ممكن يكون من الآثار الجانبية للدواء, لكن لو استمر أو زاد, لازم تشوف طبيب.",
     timestamp: "10:34 AM"
   }
 ];
