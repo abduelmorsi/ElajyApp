@@ -2,7 +2,7 @@
   "expo": {
     "version": "1.0.0",
     "orientation": "portrait",
-                    "icon": "./assets/images/icon-ar-back.png",
+    "icon": "./assets/images/icon-ar-back.png",
     "scheme": "elajypharmacyapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
