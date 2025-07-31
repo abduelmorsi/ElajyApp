@@ -93,11 +93,9 @@ export default function PatientDonationFlow({ navigateTo }) {
         </Text>
         <View>
           {filteredPharmacies.map((pharmacy) => (
-            <TouchableOpacity
+            <View
               key={pharmacy.id}
               style={styles.pharmacyCard}
-              onPress={() => handlePharmacySelect(pharmacy)}
-              activeOpacity={0.8}
             >
               <View style={styles.pharmacyCardContent}>
                 <View style={styles.pharmacyInfo}>
@@ -121,14 +119,17 @@ export default function PatientDonationFlow({ navigateTo }) {
                       {language === 'ar' ? 'متاح للتبرع' : 'Available for Donation'}
                     </Text>
                   </View>
-                  <TouchableOpacity style={styles.selectButton}>
+                  <TouchableOpacity 
+                    style={styles.selectButton}
+                    onPress={() => handlePharmacySelect(pharmacy)}
+                  >
                     <Text style={styles.selectButtonText}>
                       {language === 'ar' ? 'اختر' : 'Select'}
                     </Text>
                   </TouchableOpacity>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </View>
@@ -208,7 +209,7 @@ export default function PatientDonationFlow({ navigateTo }) {
           {donationItems.map((item) => (
             <View key={item.id} style={styles.donationSummaryRow}>
               <Text style={styles.donationSummaryItem}>{language === 'ar' ? item.name : item.nameEn} × {item.quantity}</Text>
-              <Text style={styles.donationSummaryAmount}>{item.price * item.quantity} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+              <Text style={styles.donationSummaryAmount}>{((Number(item.price) || Number(item.estimatedValue) || 0) * (Number(item.quantity) || 0))} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
             </View>
           ))}
           <View style={styles.donationSummaryTotalRow}>
@@ -236,7 +237,7 @@ export default function PatientDonationFlow({ navigateTo }) {
           {donationItems.map((item) => (
             <View key={item.id} style={styles.confirmMedicineRow}>
               <Text style={styles.confirmMedicineName}>{language === 'ar' ? item.name : item.nameEn}</Text>
-              <Text style={styles.confirmMedicineAmount}>{item.quantity} × {item.price} = {item.quantity * item.price} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
+              <Text style={styles.confirmMedicineAmount}>{item.quantity} × {Number(item.price) || Number(item.estimatedValue) || 0} = {(Number(item.quantity) || 0) * (Number(item.price) || Number(item.estimatedValue) || 0)} {language === 'ar' ? 'ج.س' : 'SDG'}</Text>
             </View>
           ))}
         </View>

@@ -60,7 +60,11 @@ export const getStatusColor = (status: string) => {
 };
 
 export const calculateDonationTotal = (items: any[]) => {
-  return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  return items.reduce((total, item) => {
+    const price = Number(item.price || item.estimatedValue) || 0;
+    const quantity = Number(item.quantity) || 0;
+    return total + (price * quantity);
+  }, 0);
 };
 
 export const formatDonationDate = (dateString: string) => {
