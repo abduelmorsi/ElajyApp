@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const orders = [
   {
@@ -52,10 +53,10 @@ const getStatusColor = (status) => {
 
 const getStatusIcon = (status) => {
   switch (status) {
-    case 'delivered': return '✅';
-    case 'shipped': return '🚚';
-    case 'processing': return '⏳';
-    default: return '📦';
+    case 'delivered': return 'check-circle';
+    case 'shipped': return 'local-shipping';
+    case 'processing': return 'schedule';
+    default: return 'inventory';
   }
 };
 
@@ -74,7 +75,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
         <View style={styles.cardHeader}>
           <View>
             <View style={styles.cardHeaderRow}>
-              <Text style={styles.statusIcon}>{getStatusIcon(order.status)}</Text>
+              <Icon name={getStatusIcon(order.status)} size={20} color="#49C5B8" style={styles.statusIcon} />
               <Text style={styles.orderId}>Order #{order.id}</Text>
             </View>
             <Text style={styles.orderDate}>{new Date(order.date).toLocaleDateString()}</Text>
@@ -106,14 +107,15 @@ export default function OrderHistoryScreen({ navigateTo }) {
     );
   };
 
-  if (selectedOrder) {
-    const statusColor = getStatusColor(selectedOrder.status);
-    return (
-      <SafeAreaView style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
+     if (selectedOrder) {
+     const statusColor = getStatusColor(selectedOrder.status);
+     return (
+       <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+         <View style={styles.container}>
+           {/* Header */}
+           <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <TouchableOpacity onPress={() => setSelectedOrder(null)} style={styles.headerButton}>
-            <Text style={styles.headerIcon}>←</Text>
+            <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Order Details</Text>
           <View style={{ width: 32 }} />
@@ -163,7 +165,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
           {/* Delivery Address */}
           <View style={styles.detailCard}>
             <View style={styles.addressRow}>
-              <Text style={styles.addressIcon}>📍</Text>
+              <Icon name="location-on" size={20} color="#49C5B8" style={styles.addressIcon} />
               <View>
                 <Text style={styles.addressTitle}>Delivery Address</Text>
                 <Text style={styles.addressText}>{selectedOrder.deliveryAddress}</Text>
@@ -184,13 +186,17 @@ export default function OrderHistoryScreen({ navigateTo }) {
               </TouchableOpacity>
             )}
             <TouchableOpacity style={[styles.actionButton, styles.actionButtonOutline]}>
-              <Text style={[styles.actionButtonText, styles.actionButtonOutlineText]}>📞 Contact Support</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Icon name="phone" size={16} color="#49C5B8" style={{ marginRight: 8 }} />
+                <Text style={[styles.actionButtonText, styles.actionButtonOutlineText]}>Contact Support</Text>
+              </View>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
+                 </ScrollView>
+         </View>
+       </SafeAreaView>
+     );
+   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
@@ -198,7 +204,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
         {/* Header */}
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <TouchableOpacity onPress={() => navigateTo('profile')} style={styles.headerButton}>
-            <Text style={styles.headerIcon}>←</Text>
+            <Icon name="arrow-back" size={24} color="#222" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Order History</Text>
           <View style={{ width: 32 }} />
@@ -224,7 +230,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
           {tab === 'active' ? (
             activeOrders.length === 0 ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyIcon}>📦</Text>
+                <Icon name="inventory" size={48} color="#49C5B8" style={styles.emptyIcon} />
                 <Text style={styles.emptyTitle}>No Active Orders</Text>
                 <Text style={styles.emptyDesc}>You don't have any active orders at the moment</Text>
                 <TouchableOpacity style={styles.actionButton} onPress={() => navigateTo('search')}>
@@ -243,7 +249,7 @@ export default function OrderHistoryScreen({ navigateTo }) {
           ) : (
             pastOrders.length === 0 ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyIcon}>⏳</Text>
+                <Icon name="schedule" size={48} color="#49C5B8" style={styles.emptyIcon} />
                 <Text style={styles.emptyTitle}>No Past Orders</Text>
                 <Text style={styles.emptyDesc}>Your completed orders will appear here</Text>
               </View>

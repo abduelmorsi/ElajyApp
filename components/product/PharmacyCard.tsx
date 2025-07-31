@@ -65,7 +65,7 @@ function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall }: Pharmac
             }}
             activeOpacity={0.7}
           >
-            <Icon name="phone" size={16} color="#007bff" />
+            <Icon name="phone" size={16} color="#49C5B8" />
           </TouchableOpacity>
         </View>
       </View>
@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   selectedCard: {
-    borderColor: '#2563eb', // primary
-    backgroundColor: '#eff6ff', // primary/5
+    borderColor: '#49C5B8', // primary
+    backgroundColor: '#e6f7f5', // primary/5
   },
   unselectedCard: {
     borderColor: '#e5e7eb', // gray-200
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   },
   priceText: {
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: '#49C5B8',
     fontSize: 18,
     marginBottom: 2,
   },

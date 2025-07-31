@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { useLocalization } from '../services/LocalizationService';
 
@@ -29,11 +30,11 @@ function ProductInfo({ product }: ProductInfoProps) {
           </Text>
           <View style={styles.row}>
             <View style={styles.ratingRow}>
-              <Text style={styles.icon}>⭐</Text>
+              <Icon name="star" size={14} color="#fbbf24" style={styles.icon} />
               <Text style={styles.ratingText}>{product.rating || 4.5}</Text>
             </View>
             <View style={styles.authenticRow}>
-              <Text style={styles.icon}>🛡️</Text>
+              <Icon name="verified" size={14} color="#15803d" style={styles.icon} />
               <Text style={styles.authenticText}>{language === 'ar' ? 'أصلي' : 'Authentic'}</Text>
             </View>
           </View>

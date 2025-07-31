@@ -25,7 +25,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>(
-    navigationData?.viewMode || 'map'
+    navigationData?.viewMode || 'list'
   );
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showAllMedicines, setShowAllMedicines] = useState(navigationData?.showAllMedicines || false);
@@ -377,7 +377,7 @@ export default function SearchScreen({ navigateTo, addToCart, goBack, navigation
   // Render back button if goBack is provided
   const renderBackButton = () => goBack ? (
     <TouchableOpacity onPress={goBack} style={{ marginRight: 12 }}>
-      <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+      <Icon name="arrow-back" size={24} color="#222" />
     </TouchableOpacity>
   ) : null;
 

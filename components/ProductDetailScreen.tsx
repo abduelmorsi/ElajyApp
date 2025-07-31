@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Alert as RNAlert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert as RNAlert, ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PharmacyCard from './product/PharmacyCard';
 import { createAvailablePharmacies, createProductSpecifications } from './product/productDetailData';
 import { calculateTotal, createEnhancedProduct, handlePhoneCall, validateAddToCart } from './product/productDetailHelpers';
@@ -9,6 +10,7 @@ import { useLocalization } from './services/LocalizationService';
 
 export default function ProductDetailScreen({ product, addToCart, navigateTo, goBack }) {
   const { language } = useLocalization();
+  const insets = useSafeAreaInsets();
   const [quantity, setQuantity] = useState(1);
   const [selectedPharmacy, setSelectedPharmacy] = useState(0);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -70,21 +72,22 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
   const totalAmount = calculateTotal(selectedPharmacyData.price, quantity, selectedPharmacyData.deliveryFee);
 
   return (
-    <ScrollView style={styles.full} contentContainerStyle={styles.scrollContent}>
-      {/* Header */}
-      <View style={styles.header}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView style={styles.full} contentContainerStyle={styles.scrollContent}>
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity style={styles.headerButton} onPress={goBack ? goBack : () => navigateTo('search')}>
-          <Text style={styles.headerIcon}>←</Text>
+          <Icon name="arrow-back" size={24} color="#222" />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
           {language === 'ar' ? product.name : product.nameEn}
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.headerActionButton}>
-            <Text style={styles.headerActionIcon}>♡</Text>
+            <Icon name="favorite-border" size={20} color="#49C5B8" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerActionButton}>
-            <Text style={styles.headerActionIcon}>🔗</Text>
+            <Icon name="share" size={20} color="#49C5B8" />
           </TouchableOpacity>
         </View>
       </View>
@@ -168,11 +171,14 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
           onPress={handleAddToCart}
           disabled={!selectedPharmacyData.inStock || isAddingToCart}
         >
-          <Text style={styles.addToCartButtonText}>
-            🛒 {isAddingToCart 
-              ? (language === 'ar' ? 'جارٍ الإضافة...' : 'Adding...')
-              : (language === 'ar' ? 'أضف للسلة' : 'Add to Cart')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name="shopping-cart" size={20} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.addToCartButtonText}>
+              {isAddingToCart 
+                ? (language === 'ar' ? 'جارٍ الإضافة...' : 'Adding...')
+                : (language === 'ar' ? 'أضف للسلة' : 'Add to Cart')}
+            </Text>
+          </View>
         </TouchableOpacity>
         {!selectedPharmacyData.inStock && (
           <Text style={styles.outOfStockText}>
@@ -180,7 +186,8 @@ export default function ProductDetailScreen({ product, addToCart, navigateTo, go
           </Text>
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

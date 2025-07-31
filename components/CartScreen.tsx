@@ -66,7 +66,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo, goBack
   // Render back button if goBack is provided
   const renderBackButton = () => goBack ? (
     <TouchableOpacity onPress={goBack} style={{ marginRight: 12 }}>
-      <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+      <Icon name="arrow-back" size={24} color="#222" />
     </TouchableOpacity>
   ) : null;
 
@@ -182,7 +182,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo, goBack
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <View style={styles.headerLeft}>
             <TouchableOpacity onPress={() => setCurrentStep('cart')} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+              <Icon name="arrow-back" size={24} color="#222" />
             </TouchableOpacity>
           </View>
           <View style={styles.headerCenter}>
@@ -384,7 +384,7 @@ export default function CartScreen({ cartItems, setCartItems, navigateTo, goBack
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <View style={styles.headerLeft}>
             <TouchableOpacity onPress={() => setCurrentStep('delivery')} style={{ marginRight: 12 }}>
-              <Text style={{ fontSize: 24 }}>{language === 'ar' ? '←' : '←'}</Text>
+              <Icon name="arrow-back" size={24} color="#222" />
             </TouchableOpacity>
           </View>
           <View style={styles.headerCenter}>
