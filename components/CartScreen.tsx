@@ -648,8 +648,20 @@ const styles = StyleSheet.create({
   switchButtonActive: { backgroundColor: '#49C5B8' },
   switchIndicator: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff' },
   switchIndicatorActive: { transform: [{ translateX: 0 }] },
-  placeOrderButton: { backgroundColor: '#49C5B8', borderRadius: 8, paddingVertical: 16, marginTop: 16 },
-  placeOrderButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  placeOrderButton: { 
+    backgroundColor: '#49C5B8', 
+    borderRadius: 8, 
+    paddingVertical: 16, 
+    marginTop: 16,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  placeOrderButtonText: { 
+    color: '#fff', 
+    fontWeight: 'bold', 
+    fontSize: 16,
+    textAlign: 'center'
+  },
   confirmationCard: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#eee', padding: 24, alignItems: 'center' },
   confirmationIcon: { marginBottom: 16 },
   confirmationTitle: { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 8 },

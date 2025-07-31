@@ -27,12 +27,16 @@ function PharmacyCard({ pharmacy, index, isSelected, onSelect, onCall, onNavigat
       <View style={styles.rowBetween}>
         <View style={{ flex: 1 }}>
           <View style={styles.nameRow}>
-            <Text style={styles.nameText} numberOfLines={1}>
-              {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
-            </Text>
-            <Text style={[styles.badge, pharmacy.inStock ? styles.inStockBadge : styles.outOfStockBadge]}>
-              {pharmacy.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
-            </Text>
+            <View style={styles.nameContainer}>
+              <Text style={styles.nameText} numberOfLines={2}>
+                {language === 'ar' ? pharmacy.name : pharmacy.nameEn}
+              </Text>
+            </View>
+            <View style={styles.badgeContainer}>
+              <Text style={[styles.badge, pharmacy.inStock ? styles.inStockBadge : styles.outOfStockBadge]}>
+                {pharmacy.inStock ? (language === 'ar' ? 'متوفر' : 'In Stock') : (language === 'ar' ? 'غير متوفر' : 'Out of Stock')}
+              </Text>
+            </View>
           </View>
           <View style={styles.infoGrid}>
             <View style={styles.infoRow}>
@@ -115,22 +119,27 @@ const styles = StyleSheet.create({
   },
   nameRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 6,
+  },
+  nameContainer: {
+    flex: 1,
+    marginRight: 8,
   },
   nameText: {
     fontWeight: 'bold',
     color: '#222',
     fontSize: 15,
-    marginRight: 8,
-    flexShrink: 1,
+    lineHeight: 20,
+  },
+  badgeContainer: {
+    flexShrink: 0,
   },
   badge: {
     fontSize: 12,
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    marginLeft: 4,
     fontWeight: 'bold',
   },
   inStockBadge: {
@@ -144,14 +153,14 @@ const styles = StyleSheet.create({
   infoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 2,
+    marginTop: 4,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: 12,
     marginBottom: 4,
-    minWidth: 90,
+    minWidth: 80,
   },
   icon: {
     fontSize: 13,
@@ -163,8 +172,8 @@ const styles = StyleSheet.create({
   },
   priceCol: {
     alignItems: 'flex-end',
-    marginLeft: 12,
-    minWidth: 70,
+    marginLeft: 8,
+    minWidth: 65,
   },
   priceText: {
     fontWeight: 'bold',
