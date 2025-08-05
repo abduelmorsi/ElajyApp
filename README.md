@@ -68,12 +68,6 @@ cd elajy-app
 npm install
 ```
 
-or
-
-```bash
-yarn install
-```
-
 ### 3. Start the development server
 
 ```bash
