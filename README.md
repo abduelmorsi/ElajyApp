@@ -1,4 +1,4 @@
-# 🔮 Elajy – علاجي: Sudan’s Lifeline E-Pharmacy App
+# 🔮 Elajy – علاجي: Sudan’s First Lifeline E-Pharmacy App
 
 **Elajy** is a dual-interface mobile app that connects patients and pharmacists across Sudan to streamline medicine access, donations, and consultations, all in **Arabic**.
 
