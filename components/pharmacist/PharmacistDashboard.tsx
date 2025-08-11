@@ -262,7 +262,7 @@ export default function PharmacistDashboard({ navigateTo, userData }: Pharmacist
                   <View style={[styles.metricIcon, { backgroundColor: metric.bgColor }]}>
                     <Icon name={metric.icon} size={20} color={metric.color} />
                   </View>
-                  <View style={[styles.metricChangeBox, { backgroundColor: '#e6f7f5' }]}> {/* Always green for increase */}
+                  <View style={[styles.metricChangeBox, { backgroundColor: '#e6f7f5' }]}>
                     <Icon name="trending-up" size={12} color="#22c55e" />
                     <Text style={styles.metricChangeText}>+{metric.change}%</Text>
                   </View>
