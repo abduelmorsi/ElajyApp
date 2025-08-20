@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Elajy Pharmacy App",
-    "slug": "elajypharmacyapp",
+    "name": "Elajy",
+    "slug": "ElajyPharmacyApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "description": "A pharmacy app for finding medicines and managing donations in Sudan",

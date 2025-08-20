@@ -525,6 +525,31 @@ const translations = {
     'order.delivered': 'تم التوصيل',
     'order.cancelled': 'ملغي',
     'order.outForDelivery': 'في الطريق',
+    'order.processing': 'قيد المعالجة',
+    'order.shipped': 'تم الشحن',
+    
+    // Order History
+    'order.number': 'رقم الطلب',
+    'order.details': 'تفاصيل الطلب',
+    'order.items': 'عناصر',
+    'order.moreItems': 'عناصر أخرى',
+    'order.total': 'الإجمالي',
+    'order.estimatedDelivery': 'التوصيل المتوقع',
+    'order.placedOn': 'تم الطلب في',
+    'order.trackingNumber': 'رقم التتبع',
+    'order.itemsOrdered': 'العناصر المطلوبة',
+    'order.quantity': 'الكمية',
+    'order.deliveryAddress': 'عنوان التوصيل',
+    'order.reorderItems': 'إعادة طلب العناصر',
+    'order.trackPackage': 'تتبع الطرد',
+    'order.contactSupport': 'الاتصال بالدعم',
+    'order.activeOrders': 'الطلبات النشطة',
+    'order.pastOrders': 'الطلبات السابقة',
+    'order.noActiveOrders': 'لا توجد طلبات نشطة',
+    'order.noActiveOrdersDesc': 'ليس لديك أي طلبات نشطة في الوقت الحالي',
+    'order.noPastOrders': 'لا توجد طلبات سابقة',
+    'order.noPastOrdersDesc': 'ستظهر طلباتك المكتملة هنا',
+    'order.browseMedicines': 'تصفح الأدوية',
 
     // Authentication & Account
     'auth.signedOut': 'تم تسجيل الخروج بنجاح',
@@ -1003,6 +1028,57 @@ const translations = {
     'pharmacist.donation.assignedTo': 'Assigned to',
 
     // App Name
+    'app.name': 'Elajy',
+
+    // Order Status
+    'order.pending': 'Pending',
+    'order.confirmed': 'Confirmed',
+    'order.preparing': 'Preparing',
+    'order.ready': 'Ready for Pickup',
+    'order.delivered': 'Delivered',
+    'order.cancelled': 'Cancelled',
+    'order.outForDelivery': 'Out for Delivery',
+    'order.processing': 'Processing',
+    'order.shipped': 'Shipped',
+    
+    // Order History
+    'order.number': 'Order Number',
+    'order.details': 'Order Details',
+    'order.items': 'items',
+    'order.moreItems': 'more items',
+    'order.total': 'Total',
+    'order.estimatedDelivery': 'Est. delivery',
+    'order.placedOn': 'Placed on',
+    'order.trackingNumber': 'Tracking Number',
+    'order.itemsOrdered': 'Items Ordered',
+    'order.quantity': 'Qty',
+    'order.deliveryAddress': 'Delivery Address',
+    'order.reorderItems': 'Reorder Items',
+    'order.trackPackage': 'Track Package',
+    'order.contactSupport': 'Contact Support',
+    'order.activeOrders': 'Active Orders',
+    'order.pastOrders': 'Past Orders',
+    'order.noActiveOrders': 'No Active Orders',
+    'order.noActiveOrdersDesc': 'You don\'t have any active orders at the moment',
+    'order.noPastOrders': 'No Past Orders',
+    'order.noPastOrdersDesc': 'Your completed orders will appear here',
+    'order.browseMedicines': 'Browse Medicines',
+
+    // Profile
+    'profile.title': 'Profile',
+    'profile.personalInfo': 'Personal Information',
+    'profile.medicalInfo': 'Medical Information',
+    'profile.preferences': 'Preferences',
+    'profile.language': 'Language',
+    'profile.notifications': 'Notifications',
+    'profile.privacy': 'Privacy',
+    'profile.support': 'Support',
+    'profile.about': 'About',
+    'profile.logout': 'Logout',
+    'profile.editProfile': 'Edit Profile',
+    'profile.changePassword': 'Change Password',
+    'profile.orderHistory': 'Order History',
+    'profile.prescriptionHistory': 'Prescription History',
   
   }
 };
@@ -1166,7 +1242,7 @@ export const sudanesePharmaceuticalData = {
       name: 'باراسيتامول 500 مجم',
       nameEn: 'Paracetamol 500mg',
       genericName: 'Acetaminophen',
-              brand: 'علاجي',
+      brand: 'علاجي',
       brandEn: 'Sudan Pharma',
       manufacturer: 'مصنع الأدوية السوداني',
       manufacturerEn: 'Sudanese Pharmaceutical Factory',
@@ -1189,7 +1265,9 @@ export const sudanesePharmaceuticalData = {
       usage: 'قرص واحد كل 6-8 ساعات عند الحاجة، بحد أقصى 4 أقراص يومياً',
       warnings: 'لا يُستخدم مع أدوية أخرى تحتوي على الباراسيتامول',
       sideEffects: 'نادراً: طفح جلدي، غثيان',
-      contraindications: 'فرط الحساسية للباراسيتامول، أمراض الكبد الشديدة'
+      contraindications: 'فرط الحساسية للباراسيتامول، أمراض الكبد الشديدة',
+      image: require('../../assets/images/medicines/paracetamol.png'),
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format'
     },
     {
       id: 2,
@@ -1218,7 +1296,9 @@ export const sudanesePharmaceuticalData = {
       usage: 'كيس واحد يُذاب في 200 مل ماء نظيف، يُشرب خلال ساعة من التحضير',
       warnings: 'لا يُحفظ المحلول أكثر من 24 ساعة',
       sideEffects: 'نادراً: غثيان، انتفاخ',
-      contraindications: 'فشل كلوي شديد، انسداد معوي'
+      contraindications: 'فشل كلوي شديد، انسداد معوي',
+      image: require('../../assets/images/medicines/ors.png'),
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format'
     },
     {
       id: 3,
@@ -1247,7 +1327,9 @@ export const sudanesePharmaceuticalData = {
       usage: 'حسب إرشادات الطبيب - عادة 4 أقراص في اليوم الأول، ثم قرصان يومياً لمدة يومين',
       warnings: 'يمكن أن يسبب مشاكل في العين والسمع مع الاستخدام المطول',
       sideEffects: 'صداع، دوخة، غثيان، إسهال',
-      contraindications: 'أمراض الشبكية، الصدفية، أمراض القلب الشديدة'
+      contraindications: 'أمراض الشبكية، الصدفية، أمراض القلب الشديدة',
+      image: require('../../assets/images/medicines/chloroquine.png'),
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format'
     },
     {
       id: 4,
@@ -1276,7 +1358,9 @@ export const sudanesePharmaceuticalData = {
       usage: 'كبسولة واحدة كل 8 ساعات لمدة 7-10 أيام أو حسب إرشادات الطبيب',
       warnings: 'أخبر طبيبك عن أي حساسية من البنسلين',
       sideEffects: 'إسهال، غثيان، طفح جلدي، التهاب المهبل الفطري',
-      contraindications: 'حساسية من البنسلين أو مشتقاته'
+      contraindications: 'حساسية من البنسلين أو مشتقاته',
+      image: require('../../assets/images/medicines/amoxicillin.png'),
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format'
     },
     {
       id: 5,
@@ -1305,7 +1389,9 @@ export const sudanesePharmaceuticalData = {
       usage: 'قرص واحد يومياً مع الطعام أو حسب إرشادات الطبيب',
       warnings: 'لا تتجاوز الجرعة الموصى بها',
       sideEffects: 'نادراً: غثيان، إمساك، فقدان الشهية',
-      contraindications: 'فرط كالسيوم الدم، فرط فيتامين د'
+      contraindications: 'فرط كالسيوم الدم، فرط فيتامين د',
+      image: require('../../assets/images/medicines/vitamin-d3.png'),
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format'
     },
     {
       id: 6,
@@ -1334,7 +1420,9 @@ export const sudanesePharmaceuticalData = {
       usage: 'قرص واحد يومياً على معدة فارغة أو حسب إرشادات الطبيب',
       warnings: 'قد يسبب تلون البراز باللون الأسود (طبيعي)',
       sideEffects: 'إمساك، إسهال، غثيان، ألم في المعدة',
-      contraindications: 'زيادة الحديد في الجسم، قرحة هضمية نشطة'
+      contraindications: 'زيادة الحديد في الجسم، قرحة هضمية نشطة',
+      image: require('../../assets/images/medicines/iron-tablets.png'),
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop&auto=format'
     }
   ],
 
@@ -1383,6 +1471,24 @@ export const getIconSource = (language: string) => {
   return language === 'ar' 
     ? require('../../assets/images/icon-ar-back.png')
     : require('../../assets/images/icon-en-back.png');
+};
+
+// Helper function to get medicine image with fallback
+export const getMedicineImage = (medicine: any) => {
+  if (medicine?.image) {
+    return medicine.image;
+  }
+  if (medicine?.imageUrl) {
+    return { uri: medicine.imageUrl };
+  }
+  // Default medicine image
+  return require('../../assets/images/medicines/default-medicine.png');
+};
+
+// Helper function to get medicine image by ID
+export const getMedicineImageById = (medicineId: number) => {
+  const medicine = sudanesePharmaceuticalData.commonMedicines.find(m => m.id === medicineId);
+  return getMedicineImage(medicine);
 };
 
 export default LocalizationProvider;

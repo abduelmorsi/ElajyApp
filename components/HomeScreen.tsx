@@ -116,7 +116,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
       brandEn: 'Blue Nile',
       price: 35,
       originalPrice: 40,
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&h=200&fit=crop',
+      image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
       rating: 4.8,
       discount: 12,
       isPopular: false
@@ -129,7 +129,7 @@ export default function HomeScreen({ navigateTo, userData, goBack, isMain, addTo
       brandEn: 'Delta Pharma',
       price: 120,
       originalPrice: 135,
-      image: 'https://images.unsplash.com/photo-1550572017-cdefed14b9c1?w=200&h=200&fit=crop',
+      image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
       rating: 4.9,
       discount: 11,
       isPopular: true
